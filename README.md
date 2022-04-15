@@ -1,2 +1,2 @@
-# Sooktoring-Bakend
-숙토링 백엔드 레포
+# Sooktoring-SpringBoot
+숙토링 스프링부트 레포
