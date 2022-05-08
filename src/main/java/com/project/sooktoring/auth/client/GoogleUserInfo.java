@@ -19,7 +19,7 @@ public class GoogleUserInfo implements UserInfo {
     @Override
     public User getUser(String accessToken) {
         GoogleUserResponse googleUserResponse = webClient.get()
-                .uri("https://oauth2.googleapis.com/tokeninfo", builder -> builder.queryParam("id_token", accessToken).build())
+                .uri("https://www.googleapis.com/oauth2/v1/userinfo", builder -> builder.queryParam("access_token", accessToken).build())
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError, response -> Mono.error(new TokenValidFailedException("Social Access Token is unauthorized")))
                 .onStatus(HttpStatus::is5xxServerError, response -> Mono.error(new TokenValidFailedException("Internal Server Error")))
@@ -28,7 +28,7 @@ public class GoogleUserInfo implements UserInfo {
 
         assert googleUserResponse != null;
         return User.builder()
-                .providerId(googleUserResponse.getSub())
+                .providerId(googleUserResponse.getId())
                 .name(googleUserResponse.getName())
                 .email(googleUserResponse.getEmail())
                 .provider(AuthProvider.GOOGLE)
