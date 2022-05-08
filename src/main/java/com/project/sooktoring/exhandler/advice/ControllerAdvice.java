@@ -1,4 +1,4 @@
-package com.project.sooktoring.exception.advice;
+package com.project.sooktoring.exhandler.advice;
 
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
