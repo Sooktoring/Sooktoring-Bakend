@@ -1,4 +1,6 @@
 .gradle
 .idea
+build/
+bin/
 application-db.properties
 application-oauth.properties
