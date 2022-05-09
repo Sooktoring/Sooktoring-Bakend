@@ -1,6 +1,7 @@
 package com.project.sooktoring.auth.jwt;
 
 import io.jsonwebtoken.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,11 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import java.security.Key;
 import java.util.Date;
 
+@Getter
 @Slf4j
 @RequiredArgsConstructor
 public class AuthToken {
 
-    @Getter
     private final String token;
     private final Key key; //토큰 생성시 사용할 비밀키
 

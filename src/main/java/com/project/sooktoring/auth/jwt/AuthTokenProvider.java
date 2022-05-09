@@ -21,21 +21,27 @@ import java.util.Date;
 @Component
 public class AuthTokenProvider {
 
-   @Value("${app.auth.tokenExpiry}")
-   private String expiry;
+   @Value("${app.auth.appTokenExpiry}")
+   private String appTokenExpiry;
+
+   @Value("${app.auth.refreshTokenExpiry}")
+   private String refreshTokenExpiry;
+
    private final Key key;
 
    public AuthTokenProvider(@Value("${app.auth.tokenSecret}") String secretKey) {
        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
    }
 
-   public AuthToken createToken(String providerId, String expiry) {
-       Date expiryDate = getExpiryDate(expiry);
+    // USER에 대한 AccessToken(AppToken) 생성
+   public AuthToken createUserAppToken(String providerId) {
+       Date expiryDate = getExpiryDate(appTokenExpiry);
        return new AuthToken(providerId, expiryDate, key);
    }
 
-   public AuthToken createUserAppToken(String providerId) {
-       return createToken(providerId, expiry);
+   public AuthToken createUserRefreshToken(String providerId) {
+       Date expiryDate = getExpiryDate(refreshTokenExpiry);
+       return new AuthToken(providerId, expiryDate, key);
    }
 
    public AuthToken convertAuthToken(String token) {

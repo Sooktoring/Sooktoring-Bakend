@@ -46,7 +46,6 @@ public class AuthController {
         String appToken = JwtHeaderUtil.getAccessToken(request);
         AuthToken authToken = authTokenProvider.convertAuthToken(appToken);
 
-        //** 약간 이상함......
         if (!authToken.validate()) { // 형식에 맞지 않는 token
             return ApiResponse.forbidden(null);
         }
