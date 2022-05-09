@@ -12,5 +12,6 @@ import lombok.NoArgsConstructor;
 public class AuthResponse {
 
     private String appToken;
+    private String refreshToken;
     private Boolean isNewUser;
 }
