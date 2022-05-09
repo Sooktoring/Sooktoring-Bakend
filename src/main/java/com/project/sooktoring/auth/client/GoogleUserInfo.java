@@ -19,6 +19,7 @@ public class GoogleUserInfo implements UserInfo {
     @Override
     public User getUser(String accessToken) {
         GoogleUserResponse googleUserResponse = webClient.get()
+                //API 요청 url -> id_token 사용 불가 () -> https://oauth2.googleapis.com/tokeninfo?id_token= (현재 profile scope 접근이 안됨...)
                 .uri("https://www.googleapis.com/oauth2/v1/userinfo", builder -> builder.queryParam("access_token", accessToken).build())
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError, response -> Mono.error(new TokenValidFailedException("Social Access Token is unauthorized")))

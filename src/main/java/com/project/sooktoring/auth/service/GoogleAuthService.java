@@ -27,11 +27,13 @@ public class GoogleAuthService {
         String providerId = user.getProviderId();
         Optional<User> userOptional = userRepository.findByProviderId(providerId);
         AuthToken appToken = authTokenProvider.createUserAppToken(providerId);
+        AuthToken refreshToken = authTokenProvider.createUserRefreshToken(providerId);
 
         //기존 사용자
         if (userOptional.isPresent()) {
             return AuthResponse.builder()
                     .appToken(appToken.getToken())
+                    .refreshToken(refreshToken.getToken())
                     .isNewUser(Boolean.FALSE)
                     .build();
         }
@@ -40,6 +42,7 @@ public class GoogleAuthService {
         userRepository.save(user);
         return AuthResponse.builder()
                 .appToken(appToken.getToken())
+                .refreshToken(refreshToken.getToken())
                 .isNewUser(Boolean.TRUE)
                 .build();
     }
