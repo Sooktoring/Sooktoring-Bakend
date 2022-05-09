@@ -11,8 +11,7 @@ import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
-@Configuration
-public class SwaggerConfig extends WebMvcConfigurationSupport {
+public class SwaggerConfig {
 
     private static final String API_NAME = "Sooktoring API";
     private static final String API_VERSION = "0.0.1";
@@ -35,14 +34,5 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
                 .description("<h2>" + API_DESCRIPTION + "</h2>")
                 .version(API_VERSION)
                 .build();
-    }
-
-    //springboot 2.6.x 버전과 swagger 3.x.x 버전 사이의 충돌 문제 해결
-    @Override
-    protected void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/swagger-ui/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/springfox-swagger-ui/");
-        registry.addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/springfox-swagger-ui/");
     }
 }
