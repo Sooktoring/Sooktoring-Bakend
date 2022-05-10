@@ -53,12 +53,12 @@ public class AuthTokenProvider {
    }
 
    public Authentication getAuthentication(AuthToken authToken) {
-       if(authToken.validate()) {
+       if(authToken.validateToken()) {
            Claims claims = authToken.getTokenClaims();
            Collection<? extends GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
-           UserPrincipal principal = UserPrincipal.create(claims.getSubject(), "", authorities);
 
-           return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
+           UserPrincipal principal = UserPrincipal.create(claims.getSubject(), "", authorities);
+           return new UsernamePasswordAuthenticationToken(principal, "", authorities);
        } else {
            throw new TokenValidFailedException();
        }

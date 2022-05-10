@@ -2,6 +2,7 @@ package com.project.sooktoring.auth.controller;
 
 import com.project.sooktoring.auth.dto.AuthRequest;
 import com.project.sooktoring.auth.dto.AuthResponse;
+import com.project.sooktoring.auth.dto.TokenRequest;
 import com.project.sooktoring.auth.jwt.AuthToken;
 import com.project.sooktoring.auth.jwt.JwtHeaderUtil;
 import com.project.sooktoring.auth.service.AuthService;
@@ -23,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 public class AuthController {
 
     private final GoogleAuthService googleAuthService;
-    private final AuthTokenProvider authTokenProvider;
     private final AuthService authService;
 
     /**
@@ -37,23 +37,17 @@ public class AuthController {
     }
 
     /**
+     * App Token 오류시 왔다갔다하는 로직 구상
+     */
+
+    /**
      * appToken 갱신
      * @return ResponseEntity<AuthResponse>
      */
-    @ApiOperation(value = "appToken 갱신", notes = "appToken 갱신")
+    @ApiOperation(value = "appToken 만료에 따른 appToken, refreshToken 갱신", notes = "appToken, refreshToken 갱신")
     @GetMapping("/refresh")
-    public ResponseEntity<AuthResponse> refreshToken (HttpServletRequest request) {
-        String appToken = JwtHeaderUtil.getAccessToken(request);
-        AuthToken authToken = authTokenProvider.convertAuthToken(appToken);
-
-        if (!authToken.validate()) { // 형식에 맞지 않는 token
-            return ApiResponse.forbidden(null);
-        }
-
-        AuthResponse authResponse = authService.updateToken(authToken);
-        if (authResponse == null) { // token 만료
-            return ApiResponse.forbidden(null);
-        }
+    public ResponseEntity<AuthResponse> refreshToken (@RequestBody TokenRequest tokenRequest) {
+        AuthResponse authResponse = authService.refresh(tokenRequest);
         return ApiResponse.success(authResponse);
     }
 }

@@ -30,17 +30,14 @@ public class AuthToken {
                 .compact();
     }
 
-    public boolean validate() {
-        return this.getTokenClaims() != null;
-    }
-
-    public Claims getTokenClaims() {
+    public boolean validateToken() {
         try {
-            return Jwts.parserBuilder()
+            Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
+            return true;
         } catch (SecurityException e) {
             log.info("Invalid JWT signature.");
         } catch (MalformedJwtException e) {
@@ -52,6 +49,19 @@ public class AuthToken {
         } catch (IllegalArgumentException e) {
             log.info("JWT token compact of handler are invalid.");
         }
-        return null;
+        return false;
+    }
+
+    //만료된 토큰이어도 Claims 꺼내기 위해
+    public Claims getTokenClaims() {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        }
     }
 }
