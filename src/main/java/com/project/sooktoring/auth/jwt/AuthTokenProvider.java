@@ -1,7 +1,7 @@
 package com.project.sooktoring.auth.jwt;
 
-import com.project.sooktoring.auth.client.UserPrincipal;
-import com.project.sooktoring.auth.exception.TokenValidFailedException;
+import com.project.sooktoring.auth.user.UserPrincipal;
+import com.project.sooktoring.auth.exception.InvalidGoogleAccessTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -39,28 +39,24 @@ public class AuthTokenProvider {
        return new AuthToken(providerId, expiryDate, key);
    }
 
-   public AuthToken createUserRefreshToken(String providerId) {
+   public AuthToken createUserRefreshToken() {
        Date expiryDate = getExpiryDate(refreshTokenExpiry);
-       return new AuthToken(providerId, expiryDate, key);
+       return new AuthToken(expiryDate, key);
    }
+
+    private static Date getExpiryDate(String expiry) {
+        return new Date(System.currentTimeMillis() + Long.parseLong(expiry));
+    }
 
    public AuthToken convertAuthToken(String token) {
        return new AuthToken(token, key);
    }
 
-   public static Date getExpiryDate(String expiry) {
-       return new Date(System.currentTimeMillis() + Long.parseLong(expiry));
-   }
-
    public Authentication getAuthentication(AuthToken authToken) {
-       if(authToken.validateToken()) {
-           Claims claims = authToken.getTokenClaims();
-           Collection<? extends GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+       Claims claims = authToken.getTokenClaims();
+       Collection<? extends GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
 
-           UserPrincipal principal = UserPrincipal.create(claims.getSubject(), "", authorities);
-           return new UsernamePasswordAuthenticationToken(principal, "", authorities);
-       } else {
-           throw new TokenValidFailedException();
-       }
+       UserPrincipal principal = UserPrincipal.create(claims.getSubject(), "", authorities);
+       return new UsernamePasswordAuthenticationToken(principal, "", authorities);
    }
 }

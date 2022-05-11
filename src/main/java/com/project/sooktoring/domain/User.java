@@ -1,6 +1,6 @@
 package com.project.sooktoring.domain;
 
-import com.project.sooktoring.enumerate.AuthProvider;
+import com.project.sooktoring.auth.enumerate.AuthProvider;
 import lombok.*;
 
 import javax.persistence.*;

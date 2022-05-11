@@ -22,11 +22,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authorizationHeader = request.getHeader("Authorization");
+        if (request.getRequestURI().startsWith("/auth")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
+        String authorizationHeader = request.getHeader("Authorization");
         //프론트에서 보낸 appToken(서버에서 발급한 accessToken) 검증
-        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer")) {
-            String tokenStr = JwtHeaderUtil.getAccessToken(request);
+        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            String tokenStr = authorizationHeader.substring(7);
             AuthToken token = tokenProvider.convertAuthToken(tokenStr);
 
             if(token.validateToken()) {

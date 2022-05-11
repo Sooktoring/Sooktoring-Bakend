@@ -1,7 +1,8 @@
 package com.project.sooktoring.auth.jwt;
 
+import com.project.sooktoring.auth.exception.ExpiredAppTokenException;
+import com.project.sooktoring.auth.exception.ExpiredRefreshTokenException;
 import io.jsonwebtoken.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +23,16 @@ public class AuthToken {
         this.token = createAuthToken(providerId, expiry);
     }
 
+    AuthToken(Date expiry, Key key) {
+        this.key = key;
+        this.token = createAuthToken(null, expiry);
+    }
+
     private String createAuthToken(String providerId, Date expiry) {
         return Jwts.builder()
                 .setSubject(providerId)
                 .signWith(key, SignatureAlgorithm.HS256)
+                .setIssuedAt(new Date())
                 .setExpiration(expiry)
                 .compact();
     }
@@ -37,19 +44,14 @@ public class AuthToken {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-            return true;
-        } catch (SecurityException e) {
-            log.info("Invalid JWT signature.");
-        } catch (MalformedJwtException e) {
-            log.info("Invalid JWT token.");
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT token.");
-        } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT token.");
-        } catch (IllegalArgumentException e) {
-            log.info("JWT token compact of handler are invalid.");
+            if (e.getClaims().getSubject() != null) {
+                throw new ExpiredAppTokenException(e.getHeader(), e.getClaims(), "Expired App Token");
+            } else {
+                throw new ExpiredRefreshTokenException(e.getHeader(), e.getClaims(), "Expired Refresh Token");
+            }
         }
-        return false;
+        return true;
     }
 
     //만료된 토큰이어도 Claims 꺼내기 위해

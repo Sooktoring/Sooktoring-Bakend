@@ -1,6 +1,6 @@
 package com.project.sooktoring.auth.service;
 
-import com.project.sooktoring.auth.client.GoogleUserInfo;
+import com.project.sooktoring.auth.user.GoogleUserInfo;
 import com.project.sooktoring.auth.dto.AuthRequest;
 import com.project.sooktoring.auth.dto.AuthResponse;
 import com.project.sooktoring.auth.jwt.AuthToken;
@@ -30,7 +30,7 @@ public class GoogleAuthService {
         String providerId = user.getProviderId();
         Optional<User> userOptional = userRepository.findByProviderId(providerId);
         AuthToken appToken = authTokenProvider.createUserAppToken(providerId);
-        AuthToken refreshToken = authTokenProvider.createUserRefreshToken(providerId);
+        AuthToken refreshToken = authTokenProvider.createUserRefreshToken();
 
         //refreshToken DB에 저장
         refreshTokenRepository.save(RefreshToken.builder()
@@ -40,7 +40,7 @@ public class GoogleAuthService {
 
         //기존 사용자
         if (userOptional.isPresent()) {
-            //기존 사용자 정보 업데이트
+            //기존 사용자 정보 업데이트 (by. dirty checking)
             User dbUser = userOptional.get();
             dbUser.updateUser(user);
 
