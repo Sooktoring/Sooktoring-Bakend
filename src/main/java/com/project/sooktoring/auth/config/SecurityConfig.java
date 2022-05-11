@@ -1,5 +1,6 @@
 package com.project.sooktoring.auth.config;
 
+import com.project.sooktoring.auth.exception.exhandler.AuthExceptionHandlerFilter;
 import com.project.sooktoring.auth.jwt.JwtAuthenticationFilter;
 import com.project.sooktoring.auth.jwt.AuthTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final AuthTokenProvider tokenProvider;
-    private final JwtAuthenticationFilter tokenAuthenticationFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final AuthExceptionHandlerFilter authExceptionHandlerFilter;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -34,6 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(authExceptionHandlerFilter, JwtAuthenticationFilter.class);
     }
 }

@@ -1,4 +1,4 @@
-package com.project.sooktoring.auth.client;
+package com.project.sooktoring.auth.user;
 
 import lombok.Builder;
 import lombok.Getter;

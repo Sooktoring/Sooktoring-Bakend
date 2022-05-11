@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GoogleUserResponse {
+public class TokenRequest {
 
-    private String id; //구글 내 아이디
-    private String email;
-    private String name;
-    private String picture;
+    private String appToken;
+    private String refreshToken;
 }

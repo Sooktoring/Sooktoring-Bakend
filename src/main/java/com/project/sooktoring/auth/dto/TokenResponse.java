@@ -1,16 +1,16 @@
 package com.project.sooktoring.auth.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GoogleUserResponse {
+public class TokenResponse {
 
-    private String id; //구글 내 아이디
-    private String email;
-    private String name;
-    private String picture;
+    private String appToken;
+    private String refreshToken;
 }

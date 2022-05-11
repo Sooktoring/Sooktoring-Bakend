@@ -1,18 +1,16 @@
 package com.project.sooktoring.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.sooktoring.enumerate.AuthProvider;
+import com.project.sooktoring.auth.enumerate.AuthProvider;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
 
 import static javax.persistence.GenerationType.*;
 
-@Getter
 @Entity
 @Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
@@ -43,4 +41,11 @@ public class User {
     //구글에서 이메일 외에 사용자 별로 부여하는 고유한 번호?
     @Column(nullable = false)
     private String providerId;
+
+    public void updateUser(User user) {
+        this.providerId = user.getProviderId();
+        this.name = user.getName();
+        this.email = user.getEmail();
+        this.imageUrl = user.getImageUrl();
+    }
 }
