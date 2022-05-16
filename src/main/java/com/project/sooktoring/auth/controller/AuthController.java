@@ -49,7 +49,7 @@ public class AuthController {
      */
     @ApiOperation(value = "appToken, refreshToken 갱신", notes = "appToken 만료에 따른 appToken, refreshToken 갱신")
     @ApiResponses({
-            @ApiResponse(code = 400, message = "만료되거나 유효하지 않은 리프레시 토큰",
+            @ApiResponse(code = 400, message = "만료된 리프레시 토큰",
                     examples = @Example(value = {
                             @ExampleProperty(mediaType = "application/json",
                                     value = ExJson.EXPIRED_REFRESH_TOKEN),

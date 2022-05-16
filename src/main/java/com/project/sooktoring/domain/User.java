@@ -1,6 +1,7 @@
 package com.project.sooktoring.domain;
 
 import com.project.sooktoring.auth.enumerate.AuthProvider;
+import com.project.sooktoring.common.BaseTimeEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,7 +14,7 @@ import static javax.persistence.GenerationType.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class User extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = IDENTITY)
     @Column(name = "user_id")
