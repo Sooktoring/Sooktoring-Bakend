@@ -1,10 +1,10 @@
 package com.project.sooktoring.auth.exception.exhandler;
 
 import com.project.sooktoring.auth.dto.AuthExResponse;
-import com.project.sooktoring.auth.exception.ExpiredAppTokenException;
+import com.project.sooktoring.auth.exception.ExpiredAccessTokenException;
 import com.project.sooktoring.auth.exception.ExpiredRefreshTokenException;
 import com.project.sooktoring.auth.exception.GoogleResourceServerAccessException;
-import com.project.sooktoring.auth.exception.InvalidGoogleAccessTokenException;
+import com.project.sooktoring.auth.exception.InvalidGoogleIdTokenException;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,12 +18,12 @@ public class AuthControllerAdvice {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public AuthExResponse invalidGoogleAccessTokenExceptionHandler(InvalidGoogleAccessTokenException e) {
+    public AuthExResponse invalidGoogleIdTokenExceptionHandler(InvalidGoogleIdTokenException e) {
         log.error(e.getMessage());
         return AuthExResponse.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .message(e.getMessage())
-                .redirectUri("/auth/login")
+                .redirectPath("/auth/login")
                 .build();
     }
 
@@ -34,18 +34,18 @@ public class AuthControllerAdvice {
         return AuthExResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .message(e.getMessage())
-                .redirectUri("")
+                .redirectPath("")
                 .build();
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public AuthExResponse expiredJwtExceptionHandler(ExpiredAppTokenException e) {
+    public AuthExResponse expiredJwtExceptionHandler(ExpiredAccessTokenException e) {
         log.error(e.getMessage());
         return AuthExResponse.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .message(e.getMessage())
-                .redirectUri("/auth/refresh")
+                .redirectPath("/auth/refresh")
                 .build();
     }
 
@@ -56,7 +56,7 @@ public class AuthControllerAdvice {
         return AuthExResponse.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .message(e.getMessage())
-                .redirectUri("/auth/login")
+                .redirectPath("/auth/login")
                 .build();
     }
 
@@ -67,7 +67,7 @@ public class AuthControllerAdvice {
         return AuthExResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .message(e.getMessage())
-                .redirectUri("/auth/login")
+                .redirectPath("/auth/login")
                 .build();
     }
 }

@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(value = "구글 엑세스 토큰", description = "구글 리소스 서버 접근 위한 엑세스 토큰 전달")
+@ApiModel(value = "구글 id token", description = "인증된 구글 이용자 정보 저장하기 위한 id token 전달")
 public class AuthRequest {
 
-    @ApiModelProperty(value = "구글 엑세스 토큰")
-    private String accessToken;
+    @ApiModelProperty(value = "구글 id token")
+    private String idToken;
 }

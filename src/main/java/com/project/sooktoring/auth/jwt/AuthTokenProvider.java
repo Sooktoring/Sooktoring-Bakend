@@ -1,7 +1,6 @@
 package com.project.sooktoring.auth.jwt;
 
 import com.project.sooktoring.auth.user.UserPrincipal;
-import com.project.sooktoring.auth.exception.InvalidGoogleAccessTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +20,8 @@ import java.util.Date;
 @Component
 public class AuthTokenProvider {
 
-   @Value("${app.auth.appTokenExpiry}")
-   private String appTokenExpiry;
+   @Value("${app.auth.accessTokenExpiry}")
+   private String accessTokenExpiry;
 
    @Value("${app.auth.refreshTokenExpiry}")
    private String refreshTokenExpiry;
@@ -33,13 +32,13 @@ public class AuthTokenProvider {
        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
    }
 
-    // USER에 대한 AccessToken(AppToken) 생성
-   public AuthToken createUserAppToken(String providerId) {
-       Date expiryDate = getExpiryDate(appTokenExpiry);
+    // USER에 대한 AccessToken 생성
+   public AuthToken createAccessToken(String providerId) {
+       Date expiryDate = getExpiryDate(accessTokenExpiry);
        return new AuthToken(providerId, expiryDate, key);
    }
 
-   public AuthToken createUserRefreshToken() {
+   public AuthToken createRefreshToken() {
        Date expiryDate = getExpiryDate(refreshTokenExpiry);
        return new AuthToken(expiryDate, key);
    }

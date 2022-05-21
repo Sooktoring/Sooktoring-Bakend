@@ -11,12 +11,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(value = "앱 토큰, 리프레시 토큰, 새로운 사용자인지", description = "구글 리소스 서버 접근후, 생성한 앱 토큰, 리프레시 토큰 반환")
+@ApiModel(value = "access token, refresh token, 새로운 사용자인지", description = "구글 이용자 정보 저장후, 생성한 access token, refresh token 반환")
 public class AuthResponse {
 
-    @ApiModelProperty(value = "발급된 앱 토큰")
-    private String appToken;
-    @ApiModelProperty(value = "발급된 리프레시 토큰")
+    @ApiModelProperty(value = "발급된 access token")
+    private String accessToken;
+    @ApiModelProperty(value = "발급된 refresh token")
     private String refreshToken;
     @ApiModelProperty(value = "새로운 사용자인지 여부")
     private Boolean isNewUser;

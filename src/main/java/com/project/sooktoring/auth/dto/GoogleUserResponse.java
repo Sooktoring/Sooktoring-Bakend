@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class GoogleUserResponse {
 
-    private String id; //구글 내 아이디
+    private String sub; //구글 내 아이디
     private String email;
     private String name;
     private String picture;

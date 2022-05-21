@@ -20,8 +20,8 @@ public class AuthExResponse {
     private int status;
     @ApiModelProperty(notes = "에러 메시지")
     private String message;
-    @ApiModelProperty(notes = "리다이렉트 할 uri")
-    private String redirectUri;
+    @ApiModelProperty(notes = "리다이렉트 할 path")
+    private String redirectPath;
 
     public String convertToJson() {
         try {

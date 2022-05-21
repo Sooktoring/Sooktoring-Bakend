@@ -4,5 +4,5 @@ import com.project.sooktoring.domain.User;
 
 public interface UserInfo {
 
-    User getUser(String accessToken);
+    User getUser(String idToken);
 }

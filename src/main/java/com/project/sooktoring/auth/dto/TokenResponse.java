@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(value = "앱 토큰, 리프레시 토큰", description = "재발급된 앱 토큰과 리프레시 토큰 반환")
+@ApiModel(value = "access token, refresh token", description = "재발급된 access token과 refresh token 반환")
 public class TokenResponse {
 
-    @ApiModelProperty(value = "재발급된 앱 토큰")
-    private String appToken;
-    @ApiModelProperty(value = "재발급된 리프레시 토큰")
+    @ApiModelProperty(value = "재발급된 access token")
+    private String accessToken;
+    @ApiModelProperty(value = "재발급된 refresh token")
     private String refreshToken;
 }

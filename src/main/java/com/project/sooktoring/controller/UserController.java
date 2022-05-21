@@ -22,12 +22,12 @@ public class UserController {
 
     @ApiOperation(value = "사용자 정보 조회", notes = "로그인 상태의 사용자 정보 조회")
     @ApiResponses({
-            @ApiResponse(code = 400, message = "만료된 앱 토큰",
+            @ApiResponse(code = 400, message = "만료된 access token",
                     examples = @Example(value = {
                             @ExampleProperty(mediaType = "application/json",
-                                    value = ExJson.EXPIRED_APP_TOKEN),
+                                    value = ExJson.EXPIRED_ACCESS_TOKEN),
                     })),
-            @ApiResponse(code = 500, message = "유효하지 않은 JWT 토큰",
+            @ApiResponse(code = 500, message = "유효하지 않은 JWT token",
                     examples = @Example(value = {
                             @ExampleProperty(mediaType = "application/json",
                                     value = ExJson.INVALID_JWT_TOKEN),

@@ -19,17 +19,16 @@ public class AuthController {
 
     private final GoogleAuthService googleAuthService;
     private final AuthService authService;
-    private String googleAccessToken;
 
     /**
      * GOOGLE 소셜 로그인 기능
      */
-    @ApiOperation(value = "구글 로그인", notes = "구글 엑세스 토큰을 이용하여 사용자 정보 받아 저장하고 앱 토큰 반환")
+    @ApiOperation(value = "구글 로그인", notes = "구글 id token을 이용하여 사용자 정보 받아 저장하고 access token 반환")
     @ApiResponses({
-            @ApiResponse(code = 400, message = "유효하지 않은 구글 엑세스 토큰",
+            @ApiResponse(code = 400, message = "유효하지 않은 구글 id token",
                     examples = @Example(value = {
                             @ExampleProperty(mediaType = "application/json",
-                                    value = ExJson.GOOGLE_ACCESS_TOKEN),
+                                    value = ExJson.GOOGLE_ID_TOKEN),
                     })),
             @ApiResponse(code = 500, message = "구글 리소스 서버 접근 거부",
                     examples = @Example(value = {
@@ -45,18 +44,18 @@ public class AuthController {
     }
 
     /**
-     * appToken 갱신
+     * accessToken 갱신
      */
-    @ApiOperation(value = "appToken, refreshToken 갱신", notes = "appToken 만료에 따른 appToken, refreshToken 갱신")
+    @ApiOperation(value = "access token, refresh token 갱신", notes = "access token 만료에 따른 access token, refresh token 갱신")
     @ApiResponses({
-            @ApiResponse(code = 400, message = "만료된 리프레시 토큰",
+            @ApiResponse(code = 400, message = "만료된 refresh token",
                     examples = @Example(value = {
                             @ExampleProperty(mediaType = "application/json",
                                     value = ExJson.EXPIRED_REFRESH_TOKEN),
                             @ExampleProperty(mediaType = "application/json",
                                     value = ExJson.INVALID_REFRESH_TOKEN),
                     })),
-            @ApiResponse(code = 500, message = "유효하지 않은 JWT 토큰",
+            @ApiResponse(code = 500, message = "유효하지 않은 JWT token",
                     examples = @Example(value = {
                             @ExampleProperty(mediaType = "application/json",
                                     value = ExJson.INVALID_JWT_TOKEN),

@@ -21,13 +21,13 @@ public class AuthService {
 
     @Transactional
     public TokenResponse refresh(TokenRequest tokenRequest) {
-        AuthToken appToken = authTokenProvider.convertAuthToken(tokenRequest.getAppToken());
+        AuthToken accessToken = authTokenProvider.convertAuthToken(tokenRequest.getAccessToken());
         AuthToken refreshToken = authTokenProvider.convertAuthToken(tokenRequest.getRefreshToken());
 
         //Refresh Token 검증
         if(refreshToken.validateToken()) {
-            //App Token에서 providerId get
-            String providerId = appToken.getTokenClaims().getSubject();
+            //Access Token에서 providerId get
+            String providerId = accessToken.getTokenClaims().getSubject();
 
             //DB에서 providerId 기반으로 Refresh Token 값 get
             RefreshToken dbRefreshToken = refreshTokenRepository.findByKey(providerId)
@@ -38,13 +38,13 @@ public class AuthService {
             }
 
             //새로운 토큰 생성
-            AuthToken newAppToken = authTokenProvider.createUserAppToken(providerId);
-            AuthToken newRefreshToken = authTokenProvider.createUserRefreshToken();
+            AuthToken newAccessToken = authTokenProvider.createAccessToken(providerId);
+            AuthToken newRefreshToken = authTokenProvider.createRefreshToken();
             //DB Refresh Token 업데이트
             dbRefreshToken.updateToken(newRefreshToken.getToken());
 
             return TokenResponse.builder()
-                    .appToken(newAppToken.getToken())
+                    .accessToken(newAccessToken.getToken())
                     .refreshToken(newRefreshToken.getToken())
                     .build();
         }

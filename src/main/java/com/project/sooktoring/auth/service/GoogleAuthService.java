@@ -26,11 +26,12 @@ public class GoogleAuthService {
 
     @Transactional
     public AuthResponse login(AuthRequest authRequest) {
-        User user = googleUserInfo.getUser(authRequest.getAccessToken());
+        User user = googleUserInfo.getUser(authRequest.getIdToken());
         String providerId = user.getProviderId();
         Optional<User> userOptional = userRepository.findByProviderId(providerId);
-        AuthToken appToken = authTokenProvider.createUserAppToken(providerId);
-        AuthToken refreshToken = authTokenProvider.createUserRefreshToken();
+
+        AuthToken accessToken = authTokenProvider.createAccessToken(providerId);
+        AuthToken refreshToken = authTokenProvider.createRefreshToken();
 
         //refreshToken DB에 저장
         refreshTokenRepository.save(RefreshToken.builder()
@@ -45,7 +46,7 @@ public class GoogleAuthService {
             dbUser.updateUser(user);
 
             return AuthResponse.builder()
-                    .appToken(appToken.getToken())
+                    .accessToken(accessToken.getToken())
                     .refreshToken(refreshToken.getToken())
                     .isNewUser(Boolean.FALSE)
                     .build();
@@ -54,7 +55,7 @@ public class GoogleAuthService {
         //새로운 사용자
         userRepository.save(user);
         return AuthResponse.builder()
-                .appToken(appToken.getToken())
+                .accessToken(accessToken.getToken())
                 .refreshToken(refreshToken.getToken())
                 .isNewUser(Boolean.TRUE)
                 .build();

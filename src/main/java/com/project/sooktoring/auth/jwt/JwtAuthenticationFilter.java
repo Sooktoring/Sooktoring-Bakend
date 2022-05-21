@@ -28,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String authorizationHeader = request.getHeader("Authorization");
-        //프론트에서 보낸 appToken(서버에서 발급한 accessToken) 검증
+        //프론트에서 보낸 accessToken(백서버에서 발급) 검증
         if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String tokenStr = authorizationHeader.substring(7);
             AuthToken token = tokenProvider.convertAuthToken(tokenStr);

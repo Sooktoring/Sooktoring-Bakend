@@ -1,6 +1,6 @@
 package com.project.sooktoring.auth.jwt;
 
-import com.project.sooktoring.auth.exception.ExpiredAppTokenException;
+import com.project.sooktoring.auth.exception.ExpiredAccessTokenException;
 import com.project.sooktoring.auth.exception.ExpiredRefreshTokenException;
 import io.jsonwebtoken.*;
 import lombok.Getter;
@@ -46,7 +46,7 @@ public class AuthToken {
                     .getBody();
         } catch (ExpiredJwtException e) {
             if (e.getClaims().getSubject() != null) {
-                throw new ExpiredAppTokenException(e.getHeader(), e.getClaims(), "Expired App Token");
+                throw new ExpiredAccessTokenException(e.getHeader(), e.getClaims(), "Expired Access Token");
             } else {
                 throw new ExpiredRefreshTokenException(e.getHeader(), e.getClaims(), "Expired Refresh Token");
             }
