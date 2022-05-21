@@ -35,7 +35,7 @@ public class UserController {
     })
     @GetMapping("/me")
     public User getUser(@CurrentUser UserPrincipal currentUser) {
-        Optional<User> userOptional = userRepository.findByProviderId(currentUser.getProviderId());
+        Optional<User> userOptional = userRepository.findById(currentUser.getUserId());
         return userOptional.orElse(null);
     }
 }

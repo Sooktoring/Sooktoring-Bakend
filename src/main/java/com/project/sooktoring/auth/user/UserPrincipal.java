@@ -11,14 +11,14 @@ import java.util.Collection;
 @Getter
 public class UserPrincipal implements UserDetails {
 
+    private Long userId;
     private String providerId;
-    private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public static UserPrincipal create(String providerId, String password, Collection<? extends GrantedAuthority> authorities) {
+    public static UserPrincipal create(Long userId, String providerId, Collection<? extends GrantedAuthority> authorities) {
         return UserPrincipal.builder()
+                .userId(userId)
                 .providerId(providerId)
-                .password(password)
                 .authorities(authorities)
                 .build();
     }
@@ -30,7 +30,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getPassword() {
-        return password;
+        return "";
     }
 
     @Override

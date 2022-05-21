@@ -6,6 +6,7 @@ import io.jsonwebtoken.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.Nullable;
 
 import java.security.Key;
 import java.util.Date;
@@ -18,23 +19,23 @@ public class AuthToken {
     private final String token;
     private final Key key; //토큰 생성시 사용할 비밀키
 
-    AuthToken(String providerId, Date expiry, Key key) {
+    AuthToken(String providerId, Long userId, Date expiry, Key key) {
         this.key = key;
-        this.token = createAuthToken(providerId, expiry);
+        this.token = createAuthToken(providerId, userId, expiry);
     }
 
     AuthToken(Date expiry, Key key) {
         this.key = key;
-        this.token = createAuthToken(null, expiry);
+        this.token = createAuthToken(null, null, expiry);
     }
 
-    private String createAuthToken(String providerId, Date expiry) {
-        return Jwts.builder()
+    private String createAuthToken(String providerId, Long userId, Date expiry) {
+        JwtBuilder jwtBuilder = Jwts.builder()
                 .setSubject(providerId)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setIssuedAt(new Date())
-                .setExpiration(expiry)
-                .compact();
+                .setExpiration(expiry);
+        return (userId != null ? jwtBuilder.claim("userId", userId) : jwtBuilder).compact();
     }
 
     public boolean validateToken() {

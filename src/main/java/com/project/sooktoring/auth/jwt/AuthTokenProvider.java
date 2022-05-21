@@ -33,9 +33,9 @@ public class AuthTokenProvider {
    }
 
     // USER에 대한 AccessToken 생성
-   public AuthToken createAccessToken(String providerId) {
+   public AuthToken createAccessToken(String providerId, Long userId) {
        Date expiryDate = getExpiryDate(accessTokenExpiry);
-       return new AuthToken(providerId, expiryDate, key);
+       return new AuthToken(providerId, userId, expiryDate, key);
    }
 
    public AuthToken createRefreshToken() {
@@ -53,9 +53,9 @@ public class AuthTokenProvider {
 
    public Authentication getAuthentication(AuthToken authToken) {
        Claims claims = authToken.getTokenClaims();
-       Collection<? extends GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+       Collection<? extends GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")); //**
 
-       UserPrincipal principal = UserPrincipal.create(claims.getSubject(), "", authorities);
+       UserPrincipal principal = UserPrincipal.create(claims.get("userId", Long.class), claims.getSubject(), authorities);
        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
    }
 }

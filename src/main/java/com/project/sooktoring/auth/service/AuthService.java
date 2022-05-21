@@ -28,6 +28,7 @@ public class AuthService {
         if(refreshToken.validateToken()) {
             //Access Token에서 providerId get
             String providerId = accessToken.getTokenClaims().getSubject();
+            Long userId = accessToken.getTokenClaims().get("userId", Long.class);
 
             //DB에서 providerId 기반으로 Refresh Token 값 get
             RefreshToken dbRefreshToken = refreshTokenRepository.findByKey(providerId)
@@ -38,7 +39,7 @@ public class AuthService {
             }
 
             //새로운 토큰 생성
-            AuthToken newAccessToken = authTokenProvider.createAccessToken(providerId);
+            AuthToken newAccessToken = authTokenProvider.createAccessToken(providerId, userId);
             AuthToken newRefreshToken = authTokenProvider.createRefreshToken();
             //DB Refresh Token 업데이트
             dbRefreshToken.updateToken(newRefreshToken.getToken());

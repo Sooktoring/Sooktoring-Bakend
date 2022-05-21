@@ -26,11 +26,29 @@ public class GoogleAuthService {
 
     @Transactional
     public AuthResponse login(AuthRequest authRequest) {
-        User user = googleUserInfo.getUser(authRequest.getIdToken());
+        User user = googleUserInfo.getUser(authRequest.getIdToken()); //구글에서 받아온 이용자 정보
         String providerId = user.getProviderId();
-        Optional<User> userOptional = userRepository.findByProviderId(providerId);
 
-        AuthToken accessToken = authTokenProvider.createAccessToken(providerId);
+        Optional<User> userOptional = userRepository.findByProviderId(providerId);
+        Long userId;
+        boolean isNewUser;
+
+        //기존 사용자
+        if (userOptional.isPresent()) {
+            //기존 사용자 정보 업데이트 (by. dirty checking)
+            User findUser = userOptional.get();
+            findUser.updateUser(user);
+            userId = findUser.getId();
+            isNewUser = false;
+        }
+        //새로운 사용자
+        else {
+            userRepository.save(user);
+            userId = user.getId();
+            isNewUser = true;
+        }
+
+        AuthToken accessToken = authTokenProvider.createAccessToken(providerId, userId);
         AuthToken refreshToken = authTokenProvider.createRefreshToken();
 
         //refreshToken DB에 저장
@@ -39,25 +57,10 @@ public class GoogleAuthService {
                 .value(refreshToken.getToken())
                 .build());
 
-        //기존 사용자
-        if (userOptional.isPresent()) {
-            //기존 사용자 정보 업데이트 (by. dirty checking)
-            User dbUser = userOptional.get();
-            dbUser.updateUser(user);
-
-            return AuthResponse.builder()
-                    .accessToken(accessToken.getToken())
-                    .refreshToken(refreshToken.getToken())
-                    .isNewUser(Boolean.FALSE)
-                    .build();
-        }
-
-        //새로운 사용자
-        userRepository.save(user);
         return AuthResponse.builder()
                 .accessToken(accessToken.getToken())
                 .refreshToken(refreshToken.getToken())
-                .isNewUser(Boolean.TRUE)
+                .isNewUser(isNewUser)
                 .build();
     }
 }
