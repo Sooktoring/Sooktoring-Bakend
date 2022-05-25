@@ -1,9 +1,6 @@
 package com.project.sooktoring.service;
 
-import com.project.sooktoring.domain.Activity;
-import com.project.sooktoring.domain.Career;
-import com.project.sooktoring.domain.User;
-import com.project.sooktoring.domain.UserProfile;
+import com.project.sooktoring.domain.*;
 import com.project.sooktoring.dto.request.*;
 import com.project.sooktoring.dto.response.UserProfileResponse;
 import com.project.sooktoring.repository.ActivityRepository;
@@ -32,7 +29,10 @@ public class UserProfileService {
         Optional<User> userOptional = userRepository.findById(userId);
 
         if (userOptional.isPresent()) {
-            UserProfile userProfile = UserProfile.create(userProfileRequest, userOptional.get());
+            User user = userOptional.get();
+            user.changeRole(userProfileRequest.getIsMentor()); //User ROLE 업데이트
+
+            UserProfile userProfile = UserProfile.create(userProfileRequest, user);
             userProfileRepository.save(userProfile);
 
             for (ActivityRequest activityRequest : userProfileRequest.getActivityRequests()) {
@@ -68,7 +68,14 @@ public class UserProfileService {
 
     @Transactional
     public void update(UserProfileRequest userProfileRequest, Long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
         Optional<UserProfile> userProfileOptional = userProfileRepository.findById(userId);
+
+        if(userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.changeRole(userProfileRequest.getIsMentor()); //User ROLE 업데이트
+        }
+
         if(userProfileOptional.isPresent()) {
             List<ActivityRequest> activities = userProfileRequest.getActivityRequests();
             List<CareerRequest> careers = userProfileRequest.getCareerRequests();

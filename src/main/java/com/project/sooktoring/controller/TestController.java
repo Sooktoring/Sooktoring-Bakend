@@ -12,4 +12,14 @@ public class TestController {
     public String test() {
         return "hello world!";
     }
+
+//    @GetMapping("/mentee")
+//    public String mentee() {
+//        return "hi mentee!";
+//    }
+//
+//    @GetMapping("/mentor")
+//    public String mentor() {
+//        return "hi mentor!";
+//    }
 }

@@ -27,6 +27,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers("/v3/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**", "/auth/**", "/", "/test").permitAll()
                 .antMatchers("/**").permitAll() //채팅 테스트 위한 전체 권한 허용
+//                .antMatchers("/mentor").hasRole("MENTOR")
+//                .antMatchers("/mentee").hasRole("MENTEE")
                 .anyRequest().authenticated().and()
                 .headers()
                 .frameOptions()

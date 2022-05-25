@@ -30,11 +30,10 @@ public class User extends BaseTimeEntity {
 
     private String imageUrl;
 
-    /*
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role = Role.ROLE_MENTEE;
-     */
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -49,5 +48,13 @@ public class User extends BaseTimeEntity {
         this.name = user.getName();
         this.email = user.getEmail();
         this.imageUrl = user.getImageUrl();
+    }
+
+    public void changeRole(Boolean isMentor) {
+        if (role == Role.ROLE_MENTEE && isMentor) {
+           role = Role.ROLE_MENTOR;
+        } else if (role == Role.ROLE_MENTOR && !isMentor) {
+            role = Role.ROLE_MENTEE;
+        }
     }
 }
