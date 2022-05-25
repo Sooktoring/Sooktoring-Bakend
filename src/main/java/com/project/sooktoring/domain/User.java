@@ -8,12 +8,13 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 
 import static javax.persistence.GenerationType.*;
+import static lombok.AccessLevel.*;
 
 @Entity
-@Builder
 @Getter
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor(access = PROTECTED)
 public class User extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = IDENTITY)
@@ -32,7 +33,7 @@ public class User extends BaseTimeEntity {
     /*
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    private Role role = Role.ROLE_MENTEE;
      */
 
     @Enumerated(EnumType.STRING)
