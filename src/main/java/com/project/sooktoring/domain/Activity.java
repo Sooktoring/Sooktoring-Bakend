@@ -37,6 +37,7 @@ public class Activity {
     @Column(name = "activity_end_date")
     private YearMonth endDate;
 
+    //연관관계 편의 메소드를 public으로 바꾸고 밖에서 호출하는게 나을라나?
     public static Activity create(String details, YearMonth startDate, YearMonth endDate, UserProfile userProfile) {
         return Activity.builder()
                 .details(details)

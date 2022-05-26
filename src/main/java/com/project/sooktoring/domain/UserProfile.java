@@ -37,8 +37,12 @@ public class UserProfile implements Serializable {
     private List<Career> careers = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "userProfile")
-    private List<Mentoring> mentoringList = new ArrayList<>();
+    @OneToMany(mappedBy = "mentorUserProfile")
+    private List<Mentoring> mentoringListToMe = new ArrayList<>(); //현재 이용자가 멘토일 때에만 추가
+
+    @Builder.Default
+    @OneToMany(mappedBy = "menteeUserProfile")
+    private List<Mentoring> mentoringListFromMe = new ArrayList<>();
 
     //아래 3개 enum 타입으로 바꿀 것
     @Column(nullable = false)
@@ -52,6 +56,7 @@ public class UserProfile implements Serializable {
 
     @Column(name = "user_job", nullable = false)
     private String job;
+
     @Column(nullable = false)
     private Boolean isMentor = false;
 
