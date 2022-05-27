@@ -24,6 +24,9 @@ public class UserProfileRequest {
     private YearMonth gradDate;
 
     private String job;
+    private Long workYear;
+
+    @NotNull
     private Boolean isMentor;
 
     @JsonProperty("activities")

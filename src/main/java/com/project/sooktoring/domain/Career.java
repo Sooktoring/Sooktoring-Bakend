@@ -29,18 +29,21 @@ public class Career {
     @JoinColumn(name = "user_id", nullable = false)
     private UserProfile userProfile;
 
-    @Column(name = "career_details", nullable = false)
-    private String details;
+    @Column(nullable = false)
+    private String job;
 
-    @Column(name = "career_start_date", nullable = false)
+    @Column(nullable = false)
+    private String company;
+
+    @Column(nullable = false)
     private YearMonth startDate;
 
-    @Column(name = "career_end_date")
     private YearMonth endDate;
 
-    public static Career create(String details, YearMonth startDate, YearMonth endDate, UserProfile userProfile) {
+    public static Career create(String job, String company, YearMonth startDate, YearMonth endDate, UserProfile userProfile) {
         return Career.builder()
-                .details(details)
+                .job(job)
+                .company(company)
                 .startDate(startDate)
                 .endDate(endDate)
                 .build()
@@ -48,7 +51,8 @@ public class Career {
     }
 
     public void update(CareerRequest careerRequest) {
-        this.details = careerRequest.getDetails();
+        this.job = careerRequest.getJob();
+        this.company = careerRequest.getCompany(); 
         this.startDate = careerRequest.getStartDate();
         this.endDate = careerRequest.getEndDate();
     }

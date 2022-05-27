@@ -25,6 +25,8 @@ public class UserProfileResponse {
     private YearMonth gradDate;
 
     private String job;
+    private Long workYear;
+
     private Boolean isMentor;
 
     @JsonProperty("activities")
@@ -32,7 +34,7 @@ public class UserProfileResponse {
     @JsonProperty("careers")
     private List<CareerResponse> careerResponses;
 
-    public UserProfileResponse(Long id, String mainMajor, String doubleMajor, String minor, YearMonth entranceDate, YearMonth gradDate, String job, Boolean isMentor) {
+    public UserProfileResponse(Long id, String mainMajor, String doubleMajor, String minor, YearMonth entranceDate, YearMonth gradDate, String job, Long workYear, Boolean isMentor) {
         this.id = id;
         this.mainMajor = mainMajor;
         this.doubleMajor = doubleMajor;
@@ -40,6 +42,7 @@ public class UserProfileResponse {
         this.entranceDate = entranceDate;
         this.gradDate = gradDate;
         this.job = job;
+        this.workYear = workYear;
         this.isMentor = isMentor;
     }
 

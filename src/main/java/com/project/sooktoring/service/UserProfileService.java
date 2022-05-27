@@ -38,17 +38,19 @@ public class UserProfileService {
             for (ActivityRequest activityRequest : userProfileRequest.getActivityRequests()) {
                 activityRepository.save(
                         Activity.create(
-                            activityRequest.getDetails(),
-                            activityRequest.getStartDate(),
-                            activityRequest.getEndDate(),
-                            userProfile
+                                activityRequest.getTitle(),
+                                activityRequest.getDetails(),
+                                activityRequest.getStartDate(),
+                                activityRequest.getEndDate(),
+                                userProfile
                         )
                 );
             }
             for (CareerRequest careerRequest : userProfileRequest.getCareerRequests()) {
                 careerRepository.save(
                         Career.create(
-                                careerRequest.getDetails(),
+                                careerRequest.getJob(),
+                                careerRequest.getCompany(),
                                 careerRequest.getStartDate(),
                                 careerRequest.getEndDate(),
                                 userProfile
@@ -88,6 +90,7 @@ public class UserProfileService {
                         activityRepository.findById(activityRequest.getId()).isEmpty()) {
                     activityRepository.save(
                             Activity.create(
+                                    activityRequest.getTitle(),
                                     activityRequest.getDetails(),
                                     activityRequest.getStartDate(),
                                     activityRequest.getEndDate(),
@@ -105,7 +108,8 @@ public class UserProfileService {
                         careerRepository.findById(careerRequest.getId()).isEmpty()) {
                     careerRepository.save(
                             Career.create(
-                                    careerRequest.getDetails(),
+                                    careerRequest.getJob(),
+                                    careerRequest.getCompany(),
                                     careerRequest.getStartDate(),
                                     careerRequest.getEndDate(),
                                     userProfile

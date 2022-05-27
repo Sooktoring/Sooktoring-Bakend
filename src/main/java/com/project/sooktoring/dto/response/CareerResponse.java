@@ -16,7 +16,9 @@ public class CareerResponse {
     @JsonProperty("careerId")
     private Long id;
 
-    private String details;
+    private String job;
+
+    private String company;
 
     @JsonFormat(pattern = "yyyy/MM")
     private YearMonth startDate;

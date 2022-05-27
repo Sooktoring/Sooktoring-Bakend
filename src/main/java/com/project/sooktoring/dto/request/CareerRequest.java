@@ -18,7 +18,10 @@ public class CareerRequest {
     private Long id;
 
     @NotNull
-    private String details;
+    private String job;
+
+    @NotNull
+    private String company;
 
     @NotNull
     @JsonFormat(pattern = "yyyy/MM")

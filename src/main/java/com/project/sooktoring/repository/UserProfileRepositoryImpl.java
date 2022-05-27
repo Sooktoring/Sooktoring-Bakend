@@ -34,6 +34,7 @@ public class UserProfileRepositoryImpl implements UserProfileRepositoryCustom {
                                 userProfile.entranceDate,
                                 userProfile.gradDate,
                                 userProfile.job,
+                                userProfile.workYear,
                                 userProfile.isMentor
                         )
                 )
@@ -45,6 +46,7 @@ public class UserProfileRepositoryImpl implements UserProfileRepositoryCustom {
                 .select(
                         Projections.constructor(ActivityResponse.class,
                                 activity.id,
+                                activity.title,
                                 activity.details,
                                 activity.startDate,
                                 activity.endDate
@@ -58,7 +60,8 @@ public class UserProfileRepositoryImpl implements UserProfileRepositoryCustom {
                 .select(
                         Projections.constructor(CareerResponse.class,
                                 career.id,
-                                career.details,
+                                career.job,
+                                career.company,
                                 career.startDate,
                                 career.endDate
                         )
@@ -87,6 +90,7 @@ public class UserProfileRepositoryImpl implements UserProfileRepositoryCustom {
                                 userProfile.entranceDate,
                                 userProfile.gradDate,
                                 userProfile.job,
+                                userProfile.workYear,
                                 userProfile.isMentor
                         )
                 )
@@ -98,6 +102,7 @@ public class UserProfileRepositoryImpl implements UserProfileRepositoryCustom {
                 .select(
                         Projections.constructor(ActivityResponse.class,
                                 activity.id,
+                                activity.title,
                                 activity.details,
                                 activity.startDate,
                                 activity.endDate
@@ -121,7 +126,8 @@ public class UserProfileRepositoryImpl implements UserProfileRepositoryCustom {
                 .select(
                         Projections.constructor(CareerResponse.class,
                                 career.id,
-                                career.details,
+                                career.job,
+                                career.company,
                                 career.startDate,
                                 career.endDate
                         ),

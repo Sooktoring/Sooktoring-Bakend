@@ -54,8 +54,9 @@ public class UserProfile implements Serializable {
     private YearMonth entranceDate; //년월만 다룸
     private YearMonth gradDate;
 
-    @Column(name = "user_job", nullable = false)
     private String job;
+
+    private Long workYear;
 
     @Column(nullable = false)
     private Boolean isMentor = false;
@@ -69,6 +70,7 @@ public class UserProfile implements Serializable {
                 .entranceDate(userProfileRequest.getEntranceDate())
                 .gradDate(userProfileRequest.getGradDate())
                 .job(userProfileRequest.getJob())
+                .workYear(userProfileRequest.getWorkYear())
                 .isMentor(userProfileRequest.getIsMentor())
                 .build();
     }
@@ -80,6 +82,7 @@ public class UserProfile implements Serializable {
         this.entranceDate = userProfileRequest.getEntranceDate();
         this.gradDate = userProfileRequest.getGradDate();
         this.job = userProfileRequest.getJob();
+        this.workYear = userProfileRequest.getWorkYear();
         this.isMentor = userProfileRequest.getIsMentor();
     }
 }

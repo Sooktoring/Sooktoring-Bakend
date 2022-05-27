@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum MentoringCat {
 
-    INTRODUCTION("자소서"), PERSONALITY("인적성"), INTERVIEW("면접"), PORTFOLIO("포트폴리오");
+    INTRODUCTION("자소서"), PERSONALITY("인적성"), INTERVIEW("면접"), PORTFOLIO("포트폴리오"), EXPERIENCE("실무경험");
 
     private final String value;
 

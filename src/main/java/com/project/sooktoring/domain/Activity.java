@@ -28,18 +28,21 @@ public class Activity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserProfile userProfile;
 
-    @Column(name = "activity_details", nullable = false)
+    @Column(nullable = false)
+    private String title;
+
+    @Column(nullable = false)
     private String details;
 
-    @Column(name = "activity_start_date", nullable = false)
+    @Column(nullable = false)
     private YearMonth startDate;
 
-    @Column(name = "activity_end_date")
     private YearMonth endDate;
 
     //연관관계 편의 메소드를 public으로 바꾸고 밖에서 호출하는게 나을라나?
-    public static Activity create(String details, YearMonth startDate, YearMonth endDate, UserProfile userProfile) {
+    public static Activity create(String title, String details, YearMonth startDate, YearMonth endDate, UserProfile userProfile) {
         return Activity.builder()
+                .title(title)
                 .details(details)
                 .startDate(startDate)
                 .endDate(endDate)
@@ -48,6 +51,7 @@ public class Activity {
     }
 
     public void update(ActivityRequest activityRequest) {
+        this.title = activityRequest.getTitle();
         this.details = activityRequest.getDetails();
         this.startDate = activityRequest.getStartDate();
         this.endDate = activityRequest.getEndDate();

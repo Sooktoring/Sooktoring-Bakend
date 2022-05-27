@@ -16,6 +16,8 @@ public class ActivityResponse {
     @JsonProperty("activityId")
     private Long id;
 
+    private String title;
+
     private String details;
 
     @JsonFormat(pattern = "yyyy/MM")
