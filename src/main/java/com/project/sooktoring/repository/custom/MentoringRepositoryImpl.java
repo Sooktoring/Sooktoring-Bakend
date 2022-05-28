@@ -1,4 +1,4 @@
-package com.project.sooktoring.repository;
+package com.project.sooktoring.repository.custom;
 
 import com.project.sooktoring.domain.QUserProfile;
 import com.project.sooktoring.dto.response.MtrFromResponse;

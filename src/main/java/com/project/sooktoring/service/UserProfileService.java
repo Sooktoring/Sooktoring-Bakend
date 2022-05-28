@@ -1,5 +1,6 @@
 package com.project.sooktoring.service;
 
+import com.project.sooktoring.auth.domain.User;
 import com.project.sooktoring.domain.*;
 import com.project.sooktoring.dto.request.*;
 import com.project.sooktoring.dto.response.UserProfileResponse;

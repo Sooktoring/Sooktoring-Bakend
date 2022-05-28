@@ -3,7 +3,7 @@ package com.project.sooktoring.auth.jwt;
 import com.project.sooktoring.auth.exception.ExpiredAccessTokenException;
 import com.project.sooktoring.auth.user.UserPrincipal;
 import com.project.sooktoring.enumerate.Role;
-import com.project.sooktoring.domain.User;
+import com.project.sooktoring.auth.domain.User;
 import com.project.sooktoring.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.Keys;

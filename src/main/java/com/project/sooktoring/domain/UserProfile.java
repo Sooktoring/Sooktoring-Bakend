@@ -1,5 +1,6 @@
 package com.project.sooktoring.domain;
 
+import com.project.sooktoring.auth.domain.User;
 import com.project.sooktoring.dto.request.UserProfileRequest;
 import lombok.*;
 

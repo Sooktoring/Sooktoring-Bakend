@@ -1,5 +1,7 @@
 package com.project.sooktoring.config;
 
+import com.fasterxml.classmate.TypeResolver;
+import com.project.sooktoring.auth.dto.response.AuthExResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -17,8 +19,11 @@ public class SwaggerConfig {
     private static final String API_DESCRIPTION = "Sooktoring API 명세서";
 
     @Bean
-    public Docket api() {
+    public Docket api(TypeResolver typeResolver) {
         return new Docket(DocumentationType.OAS_30)
+                .additionalModels(
+                        typeResolver.resolve(AuthExResponse.class)
+                )
                 .useDefaultResponseMessages(false)
                 .select()
                 .apis(RequestHandlerSelectors.any())

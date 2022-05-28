@@ -1,10 +1,17 @@
 package com.project.sooktoring.auth.controller;
 
-import com.project.sooktoring.auth.common.ExJson;
-import com.project.sooktoring.auth.dto.*;
+import com.project.sooktoring.auth.dto.request.AuthRequest;
+import com.project.sooktoring.auth.dto.request.TokenRequest;
+import com.project.sooktoring.auth.dto.response.AuthExResponse;
+import com.project.sooktoring.auth.dto.response.AuthResponse;
+import com.project.sooktoring.auth.dto.response.TokenResponse;
 import com.project.sooktoring.auth.service.AuthService;
 import com.project.sooktoring.auth.service.GoogleAuthService;
 import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Api(tags = "인증 API")
 public class AuthController {
 
     private final GoogleAuthService googleAuthService;
@@ -23,18 +31,23 @@ public class AuthController {
     /**
      * GOOGLE 소셜 로그인 기능
      */
-    @ApiOperation(value = "구글 로그인", notes = "구글 id token을 이용하여 사용자 정보 받아 저장하고 access token 반환")
-    @ApiResponses({
-            @ApiResponse(code = 400, message = "유효하지 않은 구글 id token",
-                    examples = @Example(value = {
-                            @ExampleProperty(mediaType = "application/json",
-                                    value = ExJson.GOOGLE_ID_TOKEN),
-                    })),
-            @ApiResponse(code = 500, message = "구글 리소스 서버 접근 거부",
-                    examples = @Example(value = {
-                            @ExampleProperty(mediaType = "application/json",
-                                    value = ExJson.GOOGLE_RESOURCE_SERVER),
-                    })),
+    @Operation(summary = "구글 로그인", description = "구글 아이디 토큰을 이용하여 사용자 정보 받아 저장하고 엑세스 토큰 반환", responses = {
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "유효하지 않은 구글 아이디 토큰",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = AuthExResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "구글 리소스 서버 접근 거부",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = AuthExResponse.class)
+                    )
+            )
     })
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> googleAuthRequest(@RequestBody AuthRequest authRequest) {
@@ -46,20 +59,23 @@ public class AuthController {
     /**
      * accessToken 갱신
      */
-    @ApiOperation(value = "access token, refresh token 갱신", notes = "access token 만료에 따른 access token, refresh token 갱신")
-    @ApiResponses({
-            @ApiResponse(code = 400, message = "만료된 refresh token",
-                    examples = @Example(value = {
-                            @ExampleProperty(mediaType = "application/json",
-                                    value = ExJson.EXPIRED_REFRESH_TOKEN),
-                            @ExampleProperty(mediaType = "application/json",
-                                    value = ExJson.INVALID_REFRESH_TOKEN),
-                    })),
-            @ApiResponse(code = 500, message = "유효하지 않은 JWT token",
-                    examples = @Example(value = {
-                            @ExampleProperty(mediaType = "application/json",
-                                    value = ExJson.INVALID_JWT_TOKEN),
-                    })),
+    @Operation(summary = "엑세스, 리프레시 토큰 갱신", description = "엑세스 토큰 만료에 따른 엑세스, 리프레시 토큰 갱신", responses = {
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "만료된 리프레시 토큰",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = AuthExResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "유효하지 않은 JWT 토큰",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = AuthExResponse.class)
+                    )
+            )
     })
     @GetMapping("/refresh")
     public ResponseEntity<TokenResponse> refreshToken (@RequestBody TokenRequest tokenRequest) {

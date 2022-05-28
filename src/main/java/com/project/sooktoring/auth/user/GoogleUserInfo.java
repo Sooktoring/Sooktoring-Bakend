@@ -1,9 +1,9 @@
 package com.project.sooktoring.auth.user;
 
-import com.project.sooktoring.auth.dto.GoogleUserResponse;
+import com.project.sooktoring.auth.dto.response.GoogleUserResponse;
 import com.project.sooktoring.auth.exception.GoogleResourceServerAccessException;
 import com.project.sooktoring.auth.exception.InvalidGoogleIdTokenException;
-import com.project.sooktoring.domain.User;
+import com.project.sooktoring.auth.domain.User;
 import com.project.sooktoring.auth.enumerate.AuthProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -1,13 +1,12 @@
 package com.project.sooktoring.auth.service;
 
-import com.project.sooktoring.auth.dto.TokenRequest;
-import com.project.sooktoring.auth.dto.TokenResponse;
+import com.project.sooktoring.auth.dto.request.TokenRequest;
+import com.project.sooktoring.auth.dto.response.TokenResponse;
 import com.project.sooktoring.auth.exception.ExpiredRefreshTokenException;
 import com.project.sooktoring.auth.jwt.AuthToken;
 import com.project.sooktoring.auth.jwt.AuthTokenProvider;
 import com.project.sooktoring.auth.jwt.RefreshToken;
 import com.project.sooktoring.auth.jwt.RefreshTokenRepository;
-import com.project.sooktoring.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

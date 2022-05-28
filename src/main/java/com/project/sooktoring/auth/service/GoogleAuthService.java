@@ -1,13 +1,13 @@
 package com.project.sooktoring.auth.service;
 
 import com.project.sooktoring.auth.user.GoogleUserInfo;
-import com.project.sooktoring.auth.dto.AuthRequest;
-import com.project.sooktoring.auth.dto.AuthResponse;
+import com.project.sooktoring.auth.dto.request.AuthRequest;
+import com.project.sooktoring.auth.dto.response.AuthResponse;
 import com.project.sooktoring.auth.jwt.AuthToken;
 import com.project.sooktoring.auth.jwt.AuthTokenProvider;
 import com.project.sooktoring.auth.jwt.RefreshToken;
 import com.project.sooktoring.auth.jwt.RefreshTokenRepository;
-import com.project.sooktoring.domain.User;
+import com.project.sooktoring.auth.domain.User;
 import com.project.sooktoring.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.project.sooktoring.domain;
+package com.project.sooktoring.auth.domain;
 
 import com.project.sooktoring.auth.enumerate.AuthProvider;
 import com.project.sooktoring.common.BaseTimeEntity;
@@ -51,6 +51,7 @@ public class User extends BaseTimeEntity {
         this.imageUrl = user.getImageUrl();
     }
 
+    //UserProfile로 이동!!!!!!!!!!!!
     public void changeRole(Boolean isMentor) {
         if (role == Role.ROLE_MENTEE && isMentor) {
            role = Role.ROLE_MENTOR;

@@ -1,6 +1,6 @@
 package com.project.sooktoring.auth.exception.exhandler;
 
-import com.project.sooktoring.auth.dto.AuthExResponse;
+import com.project.sooktoring.auth.dto.response.AuthExResponse;
 import com.project.sooktoring.auth.exception.ExpiredAccessTokenException;
 import com.project.sooktoring.auth.exception.ExpiredRefreshTokenException;
 import com.project.sooktoring.auth.exception.GoogleResourceServerAccessException;
