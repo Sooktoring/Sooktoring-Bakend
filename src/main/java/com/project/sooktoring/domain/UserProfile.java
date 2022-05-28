@@ -44,11 +44,16 @@ public class UserProfile implements Serializable {
     @OneToMany(mappedBy = "menteeUserProfile")
     private List<Mentoring> mentoringListFromMe = new ArrayList<>();
 
-    //아래 3개 enum 타입으로 바꿀 것
+    //아래 3개 enum 타입으로 바꿀 것 MajorUnit
+    @Embedded
     @Column(nullable = false)
-    private String mainMajor;
-    private String doubleMajor;
-    private String minor;
+    private MainMajor mainMajor;
+
+    @Embedded
+    private DoubleMajor doubleMajor;
+
+    @Embedded
+    private Minor minor;
 
     @Column(nullable = false)
     private YearMonth entranceDate; //년월만 다룸

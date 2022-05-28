@@ -2,6 +2,9 @@ package com.project.sooktoring.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.sooktoring.domain.DoubleMajor;
+import com.project.sooktoring.domain.MainMajor;
+import com.project.sooktoring.domain.Minor;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
@@ -13,9 +16,9 @@ import java.util.List;
 public class UserProfileRequest {
 
     @NotNull
-    private String mainMajor;
-    private String doubleMajor;
-    private String minor;
+    private MainMajor mainMajor;
+    private DoubleMajor doubleMajor;
+    private Minor minor;
 
     @NotNull
     @JsonFormat(pattern = "yyyy/MM")

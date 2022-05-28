@@ -1,4 +1,4 @@
-package com.project.sooktoring.domain;
+package com.project.sooktoring.enumerate;
 
 public enum Role {
 

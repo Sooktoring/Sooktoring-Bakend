@@ -1,4 +1,4 @@
-package com.project.sooktoring.domain;
+package com.project.sooktoring.enumerate;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

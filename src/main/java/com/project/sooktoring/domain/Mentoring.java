@@ -1,5 +1,6 @@
 package com.project.sooktoring.domain;
 
+import com.project.sooktoring.enumerate.MentoringCat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

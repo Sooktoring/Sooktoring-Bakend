@@ -1,6 +1,6 @@
 package com.project.sooktoring.dto.response;
 
-import com.project.sooktoring.domain.MentoringCat;
+import com.project.sooktoring.enumerate.MentoringCat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -2,13 +2,11 @@ package com.project.sooktoring.auth.jwt;
 
 import com.project.sooktoring.auth.exception.ExpiredAccessTokenException;
 import com.project.sooktoring.auth.user.UserPrincipal;
-import com.project.sooktoring.domain.Role;
+import com.project.sooktoring.enumerate.Role;
 import com.project.sooktoring.domain.User;
 import com.project.sooktoring.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.Keys;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

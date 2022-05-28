@@ -2,6 +2,9 @@ package com.project.sooktoring.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.sooktoring.domain.DoubleMajor;
+import com.project.sooktoring.domain.MainMajor;
+import com.project.sooktoring.domain.Minor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,9 +18,9 @@ public class UserProfileResponse {
     @JsonProperty("userId")
     private Long id;
 
-    private String mainMajor;
-    private String doubleMajor;
-    private String minor;
+    private MainMajor mainMajor;
+    private DoubleMajor doubleMajor;
+    private Minor minor;
 
     @JsonFormat(pattern = "yyyy/MM")
     private YearMonth entranceDate; //년월만 다룸
@@ -34,7 +37,8 @@ public class UserProfileResponse {
     @JsonProperty("careers")
     private List<CareerResponse> careerResponses;
 
-    public UserProfileResponse(Long id, String mainMajor, String doubleMajor, String minor, YearMonth entranceDate, YearMonth gradDate, String job, Long workYear, Boolean isMentor) {
+    public UserProfileResponse(Long id, MainMajor mainMajor, DoubleMajor doubleMajor, Minor minor,
+                               YearMonth entranceDate, YearMonth gradDate, String job, Long workYear, Boolean isMentor) {
         this.id = id;
         this.mainMajor = mainMajor;
         this.doubleMajor = doubleMajor;
