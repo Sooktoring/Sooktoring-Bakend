@@ -1,6 +1,10 @@
 package com.project.sooktoring.auth.jwt;
 
+import com.project.sooktoring.auth.exception.ExpiredAccessTokenException;
 import com.project.sooktoring.auth.user.UserPrincipal;
+import com.project.sooktoring.enumerate.Role;
+import com.project.sooktoring.auth.domain.User;
+import com.project.sooktoring.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +19,7 @@ import java.security.Key;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -27,9 +32,11 @@ public class AuthTokenProvider {
    private String refreshTokenExpiry;
 
    private final Key key;
+   private final UserRepository userRepository;
 
-   public AuthTokenProvider(@Value("${app.auth.tokenSecret}") String secretKey) {
+   public AuthTokenProvider(@Value("${app.auth.tokenSecret}") String secretKey, UserRepository userRepository) {
        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
+       this.userRepository = userRepository;
    }
 
     // USER에 대한 AccessToken 생성
@@ -53,9 +60,16 @@ public class AuthTokenProvider {
 
    public Authentication getAuthentication(AuthToken authToken) {
        Claims claims = authToken.getTokenClaims();
-       Collection<? extends GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")); //**
+       Long userId = claims.get("userId", Long.class);
+       Optional<User> userOptional = userRepository.findById(userId);
+       if (userOptional.isEmpty()) {
+          throw new ExpiredAccessTokenException(null, claims, "탈퇴한 이용자입니다.");
+       }
 
-       UserPrincipal principal = UserPrincipal.create(claims.get("userId", Long.class), claims.getSubject(), authorities);
+       Role role = userOptional.get().getRole();
+       Collection<? extends GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role.name()));
+
+       UserPrincipal principal = UserPrincipal.create(userId, claims.getSubject(), authorities);
        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
    }
 }

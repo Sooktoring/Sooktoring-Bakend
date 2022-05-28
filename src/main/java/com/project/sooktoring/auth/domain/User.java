@@ -1,19 +1,21 @@
-package com.project.sooktoring.domain;
+package com.project.sooktoring.auth.domain;
 
 import com.project.sooktoring.auth.enumerate.AuthProvider;
 import com.project.sooktoring.common.BaseTimeEntity;
+import com.project.sooktoring.enumerate.Role;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 
 import static javax.persistence.GenerationType.*;
+import static lombok.AccessLevel.*;
 
 @Entity
-@Builder
 @Getter
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor(access = PROTECTED)
 public class User extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = IDENTITY)
@@ -29,11 +31,10 @@ public class User extends BaseTimeEntity {
 
     private String imageUrl;
 
-    /*
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
-     */
+    private Role role = Role.ROLE_MENTEE;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -48,5 +49,13 @@ public class User extends BaseTimeEntity {
         this.name = user.getName();
         this.email = user.getEmail();
         this.imageUrl = user.getImageUrl();
+    }
+
+    public void changeRole(Boolean isMentor) {
+        if (role == Role.ROLE_MENTEE && isMentor) {
+           role = Role.ROLE_MENTOR;
+        } else if (role == Role.ROLE_MENTOR && !isMentor) {
+            role = Role.ROLE_MENTEE;
+        }
     }
 }

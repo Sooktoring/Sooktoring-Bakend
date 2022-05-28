@@ -1,11 +1,15 @@
 package com.project.sooktoring.controller;
 
-import com.project.sooktoring.auth.common.ExJson;
+import com.project.sooktoring.auth.dto.response.AuthExResponse;
 import com.project.sooktoring.auth.user.CurrentUser;
 import com.project.sooktoring.auth.user.UserPrincipal;
-import com.project.sooktoring.domain.User;
+import com.project.sooktoring.auth.domain.User;
 import com.project.sooktoring.repository.UserRepository;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,22 +20,28 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
+@Api(tags = "유저 API")
 public class UserController {
 
     private final UserRepository userRepository;
 
-    @ApiOperation(value = "사용자 정보 조회", notes = "로그인 상태의 사용자 정보 조회")
-    @ApiResponses({
-            @ApiResponse(code = 400, message = "만료된 access token",
-                    examples = @Example(value = {
-                            @ExampleProperty(mediaType = "application/json",
-                                    value = ExJson.EXPIRED_ACCESS_TOKEN),
-                    })),
-            @ApiResponse(code = 500, message = "유효하지 않은 JWT token",
-                    examples = @Example(value = {
-                            @ExampleProperty(mediaType = "application/json",
-                                    value = ExJson.INVALID_JWT_TOKEN),
-                    })),
+    @Operation(summary = "유저 정보 조회", description = "로그인 상태의 유저 정보 조회", responses = {
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "만료된 엑세스 토큰이 전달된 경우",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = AuthExResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "유효하지 않은 JWT 토큰 전달된 경우",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = AuthExResponse.class)
+                    )
+            )
     })
     @GetMapping("/me")
     public User getUser(@CurrentUser UserPrincipal currentUser) {
