@@ -51,7 +51,6 @@ public class User extends BaseTimeEntity {
         this.imageUrl = user.getImageUrl();
     }
 
-    //UserProfile로 이동!!!!!!!!!!!!
     public void changeRole(Boolean isMentor) {
         if (role == Role.ROLE_MENTEE && isMentor) {
            role = Role.ROLE_MENTOR;

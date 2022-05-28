@@ -1,12 +1,12 @@
 package com.project.sooktoring.domain;
 
 import com.project.sooktoring.auth.domain.User;
+import com.project.sooktoring.common.BaseTimeEntity;
 import com.project.sooktoring.dto.request.UserProfileRequest;
 import lombok.*;
 
 import javax.persistence.*;
 
-import java.io.Serializable;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ import static javax.persistence.FetchType.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserProfile implements Serializable {
+public class UserProfile extends BaseTimeEntity {
 
     @Id
     @Column(name = "user_id")

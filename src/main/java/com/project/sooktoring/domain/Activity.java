@@ -1,5 +1,6 @@
 package com.project.sooktoring.domain;
 
+import com.project.sooktoring.common.BaseTimeEntity;
 import com.project.sooktoring.dto.request.ActivityRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +19,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
-public class Activity {
+public class Activity extends BaseTimeEntity {
 
     @Id @GeneratedValue
     @Column(name = "activity_id")

@@ -1,5 +1,6 @@
 package com.project.sooktoring.domain;
 
+import com.project.sooktoring.common.BaseTimeEntity;
 import com.project.sooktoring.dto.request.CareerRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +20,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
-public class Career {
+public class Career extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = IDENTITY)
     @Column(name = "career_id")

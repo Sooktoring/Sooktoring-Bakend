@@ -1,5 +1,6 @@
 package com.project.sooktoring.domain;
 
+import com.project.sooktoring.common.BaseTimeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +20,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
-public class ChatRoom {
+public class ChatRoom extends BaseTimeEntity {
 
     @Id
     @Column(name = "chat_room_id")

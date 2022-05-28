@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
+import static com.project.sooktoring.auth.domain.QUser.user;
 import static com.project.sooktoring.domain.QMentoring.*;
-import static com.project.sooktoring.domain.QUser.*;
 
 @RequiredArgsConstructor
 public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
