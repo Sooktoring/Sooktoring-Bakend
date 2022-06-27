@@ -82,9 +82,9 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                         )
                 )
                 .from(mentoring)
-                .join(mentoring.mentorUserProfile, mentee)
+                .join(mentoring.menteeUserProfile, mentee)
                 .join(mentee.user, user)
-                .where( mentoring.id.eq(mtrId))
+                .where(mentoring.id.eq(mtrId))
                 .fetchOne();
     }
 
