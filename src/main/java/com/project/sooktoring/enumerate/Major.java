@@ -2,6 +2,7 @@ package com.project.sooktoring.enumerate;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.project.sooktoring.exception.EnumConversionException;
 
 public enum Major {
     CULTURE_TOURISM_MAJOR("문화관광학전공"),
@@ -31,7 +32,7 @@ public enum Major {
                 return major;
             }
         }
-        return null;
+        throw new EnumConversionException("일치하는 Major 타입 enum 값이 없습니다.", name);
     }
 
     //직렬화

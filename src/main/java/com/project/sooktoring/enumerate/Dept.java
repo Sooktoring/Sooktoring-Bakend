@@ -2,6 +2,7 @@ package com.project.sooktoring.enumerate;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.project.sooktoring.exception.EnumConversionException;
 
 public enum Dept {
     KOREA_LITERATURE_DEPT("한국어문학부"),
@@ -67,7 +68,7 @@ public enum Dept {
                 return dept;
             }
         }
-        return null;
+        throw new EnumConversionException("일치하는 Dept 타입 enum 값이 없습니다.", name);
     }
 
     //직렬화

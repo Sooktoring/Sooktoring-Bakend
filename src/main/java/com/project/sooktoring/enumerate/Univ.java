@@ -2,6 +2,7 @@ package com.project.sooktoring.enumerate;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.project.sooktoring.exception.EnumConversionException;
 
 public enum Univ {
     LIBERAL_ARTS_COLLEGE("문과대학"),
@@ -31,7 +32,7 @@ public enum Univ {
                 return univ;
             }
         }
-        return null;
+        throw new EnumConversionException("일치하는 Univ 타입 enum 값이 없습니다.", name);
     }
 
     //직렬화
