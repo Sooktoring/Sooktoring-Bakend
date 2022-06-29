@@ -12,8 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -69,6 +71,7 @@ public class UserProfileService {
         return userProfileRepository.findAllDto();
     }
 
+    //Activity, Career 추가, 수정, 삭제 한번에 수행
     @Transactional
     public void update(UserProfileRequest userProfileRequest, Long userId) {
         Optional<User> userOptional = userRepository.findById(userId);
@@ -86,10 +89,12 @@ public class UserProfileService {
             UserProfile userProfile = userProfileOptional.get();
             userProfile.update(userProfileRequest); //updated by dirty checking
 
+            //Activity 추가, 수정, 삭제
+            List<Long> activityIds = new ArrayList<>();
             for (ActivityRequest activityRequest : activities) {
-                if(activityRequest.getId() == null |
+                if(activityRequest.getId() == null ||
                         activityRepository.findById(activityRequest.getId()).isEmpty()) {
-                    activityRepository.save(
+                    Activity activity = activityRepository.save(
                             Activity.create(
                                     activityRequest.getTitle(),
                                     activityRequest.getDetails(),
@@ -98,16 +103,22 @@ public class UserProfileService {
                                     userProfile
                             )
                     );
+                    activityIds.add(activity.getId());
                 } else {
                     Activity activity = activityRepository.findById(activityRequest.getId()).get();
                     activity.update(activityRequest); //updated by dirty checking
+                    activityIds.add(activity.getId());
                 }
             }
+            //DTO에 포함되지 않은 activity 삭제
+            activityRepository.deleteByIdNotInBatch(userId, activityIds);
 
+            //Career 추가, 수정, 삭제
+            List<Long> careerIds = new ArrayList<>();
             for (CareerRequest careerRequest : careers) {
-                if (careerRequest.getId() == null |
+                if (careerRequest.getId() == null ||
                         careerRepository.findById(careerRequest.getId()).isEmpty()) {
-                    careerRepository.save(
+                    Career career = careerRepository.save(
                             Career.create(
                                     careerRequest.getJob(),
                                     careerRequest.getCompany(),
@@ -116,11 +127,15 @@ public class UserProfileService {
                                     userProfile
                             )
                     );
+                    careerIds.add(career.getId());
                 } else {
                     Career career = careerRepository.findById(careerRequest.getId()).get();
                     career.update(careerRequest); //updated by dirty checking
+                    careerIds.add(career.getId());
                 }
             }
+            //DTO에 포함되지 않은 career 삭제
+            careerRepository.deleteByIdNotInBatch(userId, careerIds);
         }
     }
 }
