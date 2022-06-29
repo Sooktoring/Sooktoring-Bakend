@@ -5,12 +5,14 @@ import com.project.sooktoring.auth.user.CurrentUser;
 import com.project.sooktoring.auth.user.UserPrincipal;
 import com.project.sooktoring.auth.domain.User;
 import com.project.sooktoring.repository.UserRepository;
+import com.project.sooktoring.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +26,7 @@ import java.util.Optional;
 public class UserController {
 
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @Operation(summary = "유저 정보 조회", description = "로그인 상태의 유저 정보 조회", responses = {
             @ApiResponse(
@@ -47,5 +50,11 @@ public class UserController {
     public User getUser(@CurrentUser UserPrincipal currentUser) {
         Optional<User> userOptional = userRepository.findById(currentUser.getUserId());
         return userOptional.orElse(null);
+    }
+
+    @DeleteMapping("/me")
+    public String withdraw(@CurrentUser UserPrincipal currentUser) {
+        userService.withdrawById(currentUser.getUserId());
+        return "회원 탈퇴가 완료되었습니다.";
     }
 }
