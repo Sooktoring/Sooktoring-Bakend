@@ -7,16 +7,14 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface MentoringRepository extends JpaRepository<Mentoring, Long>, MentoringRepositoryCustom {
 
-    @Query("select mtr from Mentoring mtr " +
-            "where mtr.mentorUserProfile.id = :userId or mtr.menteeUserProfile.id = :userId")
-    List<Mentoring> findByUserId(Long userId);
+    @Modifying
+    @Query("update Mentoring mtr set mtr.mentorUserProfile.id = null where mtr.mentorUserProfile.id = :userId")
+    void updateMentorByUserId(Long userId);
 
     @Modifying
-    @Query("delete from Mentoring mtr where mtr.id in :mtrIds")
-    void deleteAllById(List<Long> mtrIds);
+    @Query("update Mentoring mtr set mtr.menteeUserProfile.id = null where mtr.menteeUserProfile.id = :userId")
+    void updateMenteeByUserId(Long userId);
 }

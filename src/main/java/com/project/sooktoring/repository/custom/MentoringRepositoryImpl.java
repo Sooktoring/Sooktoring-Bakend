@@ -35,9 +35,9 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                         )
                 )
                 .from(mentoring)
-                .join(mentoring.mentorUserProfile, mentor)
-                .join(mentor.user, user)
-                .where( mentoring.id.eq(mtrId))
+                .leftJoin(mentoring.mentorUserProfile, mentor)
+                .leftJoin(mentor.user, user)
+                .where(mentoring.id.eq(mtrId))
                 .fetchOne();
     }
 
@@ -59,8 +59,8 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                         )
                 )
                 .from(mentoring)
-                .join(mentoring.mentorUserProfile, mentor)
-                .join(mentor.user, user)
+                .leftJoin(mentoring.mentorUserProfile, mentor)
+                .leftJoin(mentor.user, user)
                 .where(mentoring.menteeUserProfile.id.eq(menteeId))
                 .fetch();
     }
@@ -82,8 +82,8 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                         )
                 )
                 .from(mentoring)
-                .join(mentoring.menteeUserProfile, mentee)
-                .join(mentee.user, user)
+                .leftJoin(mentoring.menteeUserProfile, mentee)
+                .leftJoin(mentee.user, user)
                 .where(mentoring.id.eq(mtrId))
                 .fetchOne();
     }
@@ -105,8 +105,8 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                         )
                 )
                 .from(mentoring)
-                .join(mentoring.menteeUserProfile, mentee)
-                .join(mentee.user, user)
+                .leftJoin(mentoring.menteeUserProfile, mentee)
+                .leftJoin(mentee.user, user)
                 .where(mentoring.mentorUserProfile.id.eq(mentorId))
                 .fetch();
     }
