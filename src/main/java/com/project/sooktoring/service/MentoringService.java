@@ -7,6 +7,8 @@ import com.project.sooktoring.dto.request.MtrRequest;
 import com.project.sooktoring.dto.request.MtrUpdateRequest;
 import com.project.sooktoring.dto.response.MtrFromResponse;
 import com.project.sooktoring.dto.response.MtrToResponse;
+import com.project.sooktoring.exception.MtrDuplicateException;
+import com.project.sooktoring.exception.MtrTargetException;
 import com.project.sooktoring.repository.ChatRoomRepository;
 import com.project.sooktoring.repository.MentoringRepository;
 import com.project.sooktoring.repository.UserProfileRepository;
@@ -27,14 +29,28 @@ public class MentoringService {
 
     @Transactional
     public void save(MtrRequest mtrRequest, Long menteeId) {
+        //같은 멘토링 신청내역 존재하는 경우
+        Optional<Mentoring> mentoringOptional = mentoringRepository.findByMentorIdAndCat(mtrRequest.getMentorId(), mtrRequest.getCat());
+        if (mentoringOptional.isPresent()) {
+            throw new MtrDuplicateException("같은 신청내역이 이미 존재합니다.", mtrRequest);
+        }
+
         Optional<UserProfile> mentorOptional = userProfileRepository.findById(mtrRequest.getMentorId());
         Optional<UserProfile> menteeOptional = userProfileRepository.findById(menteeId);
 
         if(mentorOptional.isPresent() && menteeOptional.isPresent()) {
             UserProfile mentor = mentorOptional.get();
             UserProfile mentee = menteeOptional.get();
-            Mentoring mentoring = Mentoring.create(mtrRequest.getCat(), mtrRequest.getReason(), mtrRequest.getTalk());
 
+            //멘토와 멘티가 같거나, 멘티에게 멘토링 신청한 경우
+            if (mentor == mentee) {
+                throw new MtrTargetException("자신에게 멘토링 신청은 불가능합니다.", mtrRequest);
+            }
+            if (!mentor.getIsMentor()) {
+                throw new MtrTargetException("멘티에게 멘토링 신청은 불가능합니다.", mtrRequest);
+            }
+
+            Mentoring mentoring = Mentoring.create(mtrRequest.getCat(), mtrRequest.getReason(), mtrRequest.getTalk());
             mentoring.setMentorMentee(mentor, mentee);
             mentoringRepository.save(mentoring);
         }
