@@ -1,18 +1,29 @@
 package com.project.sooktoring.controller;
 
+import com.project.sooktoring.domain.ChatRoom;
+import com.project.sooktoring.service.ChatService;
 import io.swagger.annotations.Api;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.stereotype.Controller;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+import java.util.List;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/chat")
 @Api(tags = "채팅 API")
 public class ChatController {
 
-    @MessageMapping("/hello")
-    @SendTo("/sub/hello")
-    public String greeting(String message) throws Exception {
-        return "Hello ! " + message;
+    private final ChatService chatService;
+
+    @PostMapping("/room")
+    public ChatRoom createRoom(@RequestBody String name) {
+        return chatService.createRoom(name);
+    }
+
+    @GetMapping("/room")
+    public List<ChatRoom> findAllRoom() {
+        return chatService.findAllRoom();
     }
 
 }

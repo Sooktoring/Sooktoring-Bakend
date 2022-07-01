@@ -1,40 +1,19 @@
 package com.project.sooktoring.domain;
 
-import com.project.sooktoring.common.BaseTimeEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.*;
-
-import java.time.LocalDateTime;
-
-import static javax.persistence.FetchType.*;
-import static javax.persistence.GenerationType.*;
-import static lombok.AccessLevel.PROTECTED;
-
-@Entity
 @Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor(access = PROTECTED)
-public class ChatMessage extends BaseTimeEntity {
+@Setter
+public class ChatMessage {
 
-    @Id @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "chat_message_id")
-    private Long id;
+    public enum MessageType {
+        ENTER, TALK
+    }
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "chat_room_id", nullable = false)
-    private ChatRoom chatRoom;
+    private String roomId;
+    private MessageType type;
+    private String sender;
+    private String message;
 
-    @Column(name = "chat_sender_id", nullable = false)
-    private Long senderId;
-
-    @Column(name = "chat_sent_message", nullable = false)
-    private String sentMessage;
-
-    @Column(name = "chat_sent_date", nullable = false)
-    private LocalDateTime sentDate;
 }

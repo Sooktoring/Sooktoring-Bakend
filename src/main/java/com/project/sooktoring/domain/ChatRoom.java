@@ -1,47 +1,36 @@
 package com.project.sooktoring.domain;
 
-import com.project.sooktoring.common.BaseTimeEntity;
-import lombok.AllArgsConstructor;
+import com.project.sooktoring.service.ChatService;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import org.springframework.web.socket.WebSocketSession;
 
-import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import static javax.persistence.FetchType.LAZY;
-import static lombok.AccessLevel.PROTECTED;
-
-@Entity
 @Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor(access = PROTECTED)
-public class ChatRoom extends BaseTimeEntity {
+public class ChatRoom {
 
-    @Id
-    @Column(name = "chat_room_id")
-    private Long id;
+    private String roomId;
+    private String name;
+    private Set<WebSocketSession> sessions = new HashSet<>();
 
-    @MapsId
-    @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "chat_room_id")
-    private Mentoring mentoring; //FK이면서 PK
-
-    @Builder.Default
-    @OneToMany(mappedBy = "chatRoom")
-    private List<ChatMessage> chatMessages = new ArrayList<>();
-
-    @Column(name = "chat_created_date")
-    private LocalDateTime createdDate;
-
-    public static ChatRoom create(Mentoring mentoring) {
-        return ChatRoom.builder()
-                .mentoring(mentoring)
-                .createdDate(LocalDateTime.now())
-                .build();
+    @Builder
+    public ChatRoom(String roomId, String name) {
+        this.roomId = roomId;
+        this.name = name;
     }
+
+    public void handleActions(WebSocketSession session, ChatMessage chatMessage, ChatService chatService) {
+        if (chatMessage.getType().equals(ChatMessage.MessageType.ENTER)) {
+            sessions.add(session);
+            chatMessage.setMessage(chatMessage.getSender() + "님이 입장했습니다.");
+        }
+        sendMessage(chatMessage, chatService);
+    }
+
+    public <T> void sendMessage(T message, ChatService chatService) {
+        sessions.parallelStream().forEach(session -> chatService.sendMessage(session, message));
+    }
+
 }

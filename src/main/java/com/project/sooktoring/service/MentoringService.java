@@ -1,13 +1,11 @@
 package com.project.sooktoring.service;
 
-import com.project.sooktoring.domain.ChatRoom;
 import com.project.sooktoring.domain.Mentoring;
 import com.project.sooktoring.domain.UserProfile;
 import com.project.sooktoring.dto.request.MtrRequest;
 import com.project.sooktoring.dto.request.MtrUpdateRequest;
 import com.project.sooktoring.dto.response.MtrFromResponse;
 import com.project.sooktoring.dto.response.MtrToResponse;
-import com.project.sooktoring.repository.ChatRoomRepository;
 import com.project.sooktoring.repository.MentoringRepository;
 import com.project.sooktoring.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +21,7 @@ public class MentoringService {
 
     private final UserProfileRepository userProfileRepository;
     private final MentoringRepository mentoringRepository;
-    private final ChatRoomRepository chatRoomRepository;
+    //private final ChatRoomRepository chatRoomRepository;
 
     @Transactional
     public void save(MtrRequest mtrRequest, Long menteeId) {
@@ -83,8 +81,8 @@ public class MentoringService {
             Mentoring mentoring = mentoringOptional.get();
             mentoring.accept();
 
-            ChatRoom chatRoom = ChatRoom.create(mentoring);
-            chatRoomRepository.save(chatRoom);
+            //ChatRoom chatRoom = ChatRoom.create(mentoring);
+            //chatRoomRepository.save(chatRoom);
         }
     }
 
@@ -95,7 +93,7 @@ public class MentoringService {
             Mentoring mentoring = mentoringOptional.get();
             mentoring.reject();
 
-            chatRoomRepository.deleteById(mtrId); //일단 삭제! 나중에 삭제 여부 필드 추가
+            //chatRoomRepository.deleteById(mtrId); //일단 삭제! 나중에 삭제 여부 필드 추가
         }
     }
 }
