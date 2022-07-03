@@ -26,11 +26,11 @@ public class Mentoring extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "mentor_id", nullable = false)
+    @JoinColumn(name = "mentor_id")
     private UserProfile mentorUserProfile;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "mentee_id", nullable = false)
+    @JoinColumn(name = "mentee_id")
     private UserProfile menteeUserProfile;
 
     @Enumerated(value = STRING)
