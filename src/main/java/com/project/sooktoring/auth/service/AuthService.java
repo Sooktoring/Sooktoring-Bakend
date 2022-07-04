@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -19,7 +22,7 @@ public class AuthService {
     private final AuthTokenProvider authTokenProvider;
 
     @Transactional
-    public TokenResponse refresh(TokenRequest tokenRequest) {
+    public TokenResponse refresh(TokenRequest tokenRequest, HttpServletRequest request) {
         AuthToken accessToken = authTokenProvider.convertAuthToken(tokenRequest.getAccessToken());
         AuthToken refreshToken = authTokenProvider.convertAuthToken(tokenRequest.getRefreshToken());
 
@@ -42,6 +45,20 @@ public class AuthService {
             AuthToken newRefreshToken = authTokenProvider.createRefreshToken();
             //DB Refresh Token 업데이트
             dbRefreshToken.updateToken(newRefreshToken.getToken());
+
+            //Access Token 만료 시, 요청 데이터 get
+            HttpSession session = request.getSession(false); //세션 존재하지 않으면 null 반환
+            //세션 존재
+            if (session != null && request.isRequestedSessionIdValid()) {
+                Object object = session.getAttribute("tokenResponse");
+                session.invalidate(); //세션 종료
+
+                if (object != null) {
+                    TokenResponse tokenResponse = (TokenResponse) object;
+                    tokenResponse.setToken(newAccessToken.getToken(), newRefreshToken.getToken());
+                    return tokenResponse;
+                }
+            }
 
             return TokenResponse.builder()
                     .accessToken(newAccessToken.getToken())
