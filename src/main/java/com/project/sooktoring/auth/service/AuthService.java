@@ -33,7 +33,7 @@ public class AuthService {
             Long userId = accessToken.getTokenClaims().get("userId", Long.class);
 
             //DB에서 providerId 기반으로 Refresh Token 값 get
-            RefreshToken dbRefreshToken = refreshTokenRepository.findByKey(providerId)
+            RefreshToken dbRefreshToken = refreshTokenRepository.findByKey(userId)
                     .orElseThrow(() -> new ExpiredRefreshTokenException("Expired Refresh Token"));
             //Refresh Token 일치 검사
             if (!dbRefreshToken.getValue().equals(refreshToken.getToken())) {

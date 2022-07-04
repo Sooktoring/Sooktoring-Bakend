@@ -39,30 +39,28 @@ public class GoogleAuthService {
         String providerId = user.getProviderId();
 
         Optional<User> userOptional = userRepository.findByProviderId(providerId);
-        Long userId;
+        User loginUser;
         boolean isNewUser;
 
         //기존 사용자
         if (userOptional.isPresent()) {
             //기존 사용자 정보 업데이트 (by. dirty checking)
-            User findUser = userOptional.get();
-            findUser.updateUser(user);
-            userId = findUser.getId();
+            loginUser = userOptional.get();
+            loginUser.updateUser(user);
             isNewUser = false;
         }
         //새로운 사용자
         else {
-            userRepository.save(user);
-            userId = user.getId();
+            loginUser = userRepository.save(user);
             isNewUser = true;
         }
 
-        AuthToken accessToken = authTokenProvider.createAccessToken(providerId, userId);
+        AuthToken accessToken = authTokenProvider.createAccessToken(providerId, loginUser.getId());
         AuthToken refreshToken = authTokenProvider.createRefreshToken();
 
         //refreshToken DB에 저장
         refreshTokenRepository.save(RefreshToken.builder()
-                .key(providerId)
+                .loginUser(loginUser)
                 .value(refreshToken.getToken())
                 .build());
 
