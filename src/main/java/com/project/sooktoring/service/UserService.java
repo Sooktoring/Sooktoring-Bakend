@@ -1,5 +1,6 @@
 package com.project.sooktoring.service;
 
+import com.project.sooktoring.auth.jwt.RefreshTokenRepository;
 import com.project.sooktoring.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserProfileRepository userProfileRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final ActivityRepository activityRepository;
     private final CareerRepository careerRepository;
     private final MentoringRepository mentoringRepository;
@@ -26,6 +28,7 @@ public class UserService {
         mentoringRepository.updateMenteeByUserId(userId);
 
         //PK로 삭제
+        refreshTokenRepository.deleteById(userId);
         userProfileRepository.deleteById(userId);
         userRepository.deleteById(userId);
     }

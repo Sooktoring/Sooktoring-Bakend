@@ -1,6 +1,8 @@
 package com.project.sooktoring.auth.exception.exhandler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.sooktoring.auth.dto.response.AuthExResponse;
+import com.project.sooktoring.auth.dto.response.TokenResponse;
 import com.project.sooktoring.auth.exception.ExpiredAccessTokenException;
 import com.project.sooktoring.auth.exception.ExpiredRefreshTokenException;
 import io.jsonwebtoken.JwtException;
@@ -13,6 +15,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @Slf4j
@@ -24,7 +27,18 @@ public class AuthExceptionHandlerFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (ExpiredAccessTokenException e) {
-            log.error(e.getMessage());
+            ObjectMapper mapper = new ObjectMapper();
+            Object requestBody = mapper.readValue(request.getInputStream(), Object.class); //요청 body json
+
+            TokenResponse tokenResponse = TokenResponse.builder()
+                    .requestMethod(request.getMethod())
+                    .requestURI(request.getRequestURI())
+                    .requestBody(requestBody)
+                    .build();
+
+            HttpSession session = request.getSession(); //세션 생성
+            session.setAttribute("tokenResponse", tokenResponse); //세션에 저장
+
             setErrorResponse(HttpStatus.BAD_REQUEST, response, e, "/auth/refresh");
         } catch (ExpiredRefreshTokenException e) {
             log.error(e.getMessage());
@@ -37,7 +51,7 @@ public class AuthExceptionHandlerFilter extends OncePerRequestFilter {
 
     private void setErrorResponse(HttpStatus status, HttpServletResponse response, Throwable e, String redirectUri) throws IOException {
         response.setStatus(status.value());
-        response.setContentType("application/json");
+        response.setContentType("application/json; charset=UTF-8");
 
         AuthExResponse authExResponse = AuthExResponse.builder()
                 .status(status.value())

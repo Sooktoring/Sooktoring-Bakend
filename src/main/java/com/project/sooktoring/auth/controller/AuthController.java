@@ -18,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Slf4j
 @RestController
 @RequestMapping("/auth")
@@ -50,10 +52,11 @@ public class AuthController {
             )
     })
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> googleAuthRequest(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<AuthResponse> googleAuthRequest(@RequestBody AuthRequest authRequest,
+                                                          HttpServletRequest request) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(googleAuthService.login(authRequest));
+                .body(googleAuthService.login(authRequest, request));
     }
 
     /**
@@ -78,9 +81,10 @@ public class AuthController {
             )
     })
     @GetMapping("/refresh")
-    public ResponseEntity<TokenResponse> refreshToken (@RequestBody TokenRequest tokenRequest) {
+    public ResponseEntity<TokenResponse> refreshToken (@RequestBody TokenRequest tokenRequest,
+                                                       HttpServletRequest request) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(authService.refresh(tokenRequest));
+                .body(authService.refresh(tokenRequest, request));
     }
 }

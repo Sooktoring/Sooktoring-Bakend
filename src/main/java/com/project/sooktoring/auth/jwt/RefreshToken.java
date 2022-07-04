@@ -1,10 +1,11 @@
 package com.project.sooktoring.auth.jwt;
 
+import com.project.sooktoring.auth.domain.User;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+
+import static javax.persistence.FetchType.*;
 
 @Getter
 @Entity
@@ -15,7 +16,12 @@ public class RefreshToken {
 
     @Id
     @Column(name = "token_key")
-    private String key; //providerId 값
+    private Long key;
+
+    @MapsId
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "token_key")
+    private User loginUser; //FK이면서 PK
 
     @Column(name = "token_value")
     private String value;

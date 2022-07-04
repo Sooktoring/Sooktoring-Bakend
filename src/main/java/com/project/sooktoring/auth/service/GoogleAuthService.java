@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
 @Service
@@ -25,35 +27,40 @@ public class GoogleAuthService {
     private final AuthTokenProvider authTokenProvider;
 
     @Transactional
-    public AuthResponse login(AuthRequest authRequest) {
+    public AuthResponse login(AuthRequest authRequest, HttpServletRequest request) {
+        //Refresh Token 만료에 따른 재로그인일 때, Access Token 만료 시 시작한 세션 종료
+        HttpSession session = request.getSession(false); //세션 존재하지 않으면 null 반환
+        //세션 존재
+        if (session != null && request.isRequestedSessionIdValid()) {
+            session.invalidate(); //세션 종료
+        }
+
         User user = googleUserInfo.getUser(authRequest.getIdToken()); //구글에서 받아온 이용자 정보
         String providerId = user.getProviderId();
 
         Optional<User> userOptional = userRepository.findByProviderId(providerId);
-        Long userId;
+        User loginUser;
         boolean isNewUser;
 
         //기존 사용자
         if (userOptional.isPresent()) {
             //기존 사용자 정보 업데이트 (by. dirty checking)
-            User findUser = userOptional.get();
-            findUser.updateUser(user);
-            userId = findUser.getId();
+            loginUser = userOptional.get();
+            loginUser.updateUser(user);
             isNewUser = false;
         }
         //새로운 사용자
         else {
-            userRepository.save(user);
-            userId = user.getId();
+            loginUser = userRepository.save(user);
             isNewUser = true;
         }
 
-        AuthToken accessToken = authTokenProvider.createAccessToken(providerId, userId);
+        AuthToken accessToken = authTokenProvider.createAccessToken(providerId, loginUser.getId());
         AuthToken refreshToken = authTokenProvider.createRefreshToken();
 
         //refreshToken DB에 저장
         refreshTokenRepository.save(RefreshToken.builder()
-                .key(providerId)
+                .loginUser(loginUser)
                 .value(refreshToken.getToken())
                 .build());
 

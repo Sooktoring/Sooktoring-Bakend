@@ -18,4 +18,15 @@ public class TokenResponse {
 
     @Schema(description = "재발급된 리프레시 토큰")
     private String refreshToken;
+
+    private String requestMethod;
+
+    private String requestURI;
+
+    private Object requestBody;
+
+    public void setToken(String accessToken, String refreshToken) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+    }
 }
