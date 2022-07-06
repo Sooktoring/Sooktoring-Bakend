@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +25,18 @@ public class UserProfileService {
     private final UserProfileRepository userProfileRepository;
     private final ActivityRepository activityRepository;
     private final CareerRepository careerRepository;
+
+    public List<UserProfileResponse> getUserProfiles() {
+        return userProfileRepository.findAllDto();
+    }
+
+    public UserProfileResponse getUserProfile(Long userId) {
+        Optional<UserProfile> userProfileOptional = userProfileRepository.findById(userId);
+        if (userProfileOptional.isPresent()) {
+            return userProfileRepository.findDtoById(userId);
+        }
+        return null;
+    }
 
     @Transactional
     public void save(UserProfileRequest userProfileRequest, Long userId) {
@@ -61,14 +72,6 @@ public class UserProfileService {
                 );
             }
         }
-    }
-
-    public UserProfileResponse getUserProfile(Long userId) {
-        return userProfileRepository.findDtoById(userId);
-    }
-
-    public List<UserProfileResponse> getUserProfiles() {
-        return userProfileRepository.findAllDto();
     }
 
     //Activity, Career 추가, 수정, 삭제 한번에 수행

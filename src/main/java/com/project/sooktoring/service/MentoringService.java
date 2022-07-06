@@ -1,10 +1,10 @@
 package com.project.sooktoring.service;
 
-import com.project.sooktoring.domain.ChatRoom;
 import com.project.sooktoring.domain.Mentoring;
 import com.project.sooktoring.domain.UserProfile;
 import com.project.sooktoring.dto.request.MtrRequest;
 import com.project.sooktoring.dto.request.MtrUpdateRequest;
+import com.project.sooktoring.dto.response.MentorResponse;
 import com.project.sooktoring.dto.response.MtrFromResponse;
 import com.project.sooktoring.dto.response.MtrToResponse;
 import com.project.sooktoring.exception.MtrDuplicateException;
@@ -25,6 +25,30 @@ public class MentoringService {
     private final UserProfileRepository userProfileRepository;
     private final MentoringRepository mentoringRepository;
     //private final ChatRoomRepository chatRoomRepository;
+
+    public List<MentorResponse> getMentorList() {
+        return userProfileRepository.findMentors();
+    }
+
+    public MentorResponse getMentor(Long mentorId) {
+        return userProfileRepository.findMentor(mentorId);
+    }
+
+    public List<MtrFromResponse> getMyMentoringList(Long menteeId) {
+        return mentoringRepository.findAllFromDto(menteeId);
+    }
+
+    public MtrFromResponse getMyMentoring(Long mtrId) {
+        return mentoringRepository.findFromDtoById(mtrId);
+    }
+
+    public List<MtrToResponse> getMentoringListToMe(Long mentorId) {
+        return mentoringRepository.findAllToDto(mentorId);
+    }
+
+    public MtrToResponse getMentoringToMe(Long mtrId) {
+        return mentoringRepository.findToDtoById(mtrId);
+    }
 
     @Transactional
     public void save(MtrRequest mtrRequest, Long menteeId) {
@@ -54,22 +78,6 @@ public class MentoringService {
             mentoringRepository.save(mentoring);
         }
         //나머지 경우 에러 throw
-    }
-
-    public List<MtrFromResponse> getMyMentoringList(Long menteeId) {
-        return mentoringRepository.findAllFromDto(menteeId);
-    }
-
-    public MtrFromResponse getMyMentoring(Long mtrId) {
-        return mentoringRepository.findFromDtoById(mtrId);
-    }
-
-    public List<MtrToResponse> getMentoringListToMe(Long mentorId) {
-        return mentoringRepository.findAllToDto(mentorId);
-    }
-
-    public MtrToResponse getMentoringToMe(Long mtrId) {
-        return mentoringRepository.findToDtoById(mtrId);
     }
 
     @Transactional

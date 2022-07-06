@@ -1,8 +1,6 @@
 package com.project.sooktoring.repository.custom;
 
-import com.project.sooktoring.dto.response.ActivityResponse;
-import com.project.sooktoring.dto.response.CareerResponse;
-import com.project.sooktoring.dto.response.UserProfileResponse;
+import com.project.sooktoring.dto.response.*;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -12,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.project.sooktoring.auth.domain.QUser.*;
 import static com.project.sooktoring.domain.QActivity.*;
 import static com.project.sooktoring.domain.QCareer.*;
 import static com.project.sooktoring.domain.QUserProfile.*;
@@ -20,6 +19,43 @@ import static com.project.sooktoring.domain.QUserProfile.*;
 public class UserProfileRepositoryImpl implements UserProfileRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
+
+    @Override
+    public List<MentorResponse> findMentors() {
+        return queryFactory
+                .select(
+                        Projections.constructor(MentorResponse.class,
+                                userProfile.id,
+                                user.name,
+                                userProfile.job,
+                                userProfile.workYear,
+                                userProfile.mainMajor
+                        )
+                )
+                .from(userProfile)
+                .join(userProfile.user, user)
+                .where(userProfile.isMentor.eq(true))
+                .fetch();
+    }
+
+    @Override
+    public MentorResponse findMentor(Long mentorId) {
+        return queryFactory
+                .select(
+                        Projections.constructor(MentorResponse.class,
+                                userProfile.id,
+                                user.name,
+                                userProfile.job,
+                                userProfile.workYear,
+                                userProfile.mainMajor
+                        )
+                )
+                .from(userProfile)
+                .join(userProfile.user, user)
+                .on(user.id.eq(mentorId))
+                .where(userProfile.isMentor.eq(true))
+                .fetchOne();
+    }
 
     @Override
     public UserProfileResponse findDtoById(Long userId) {
