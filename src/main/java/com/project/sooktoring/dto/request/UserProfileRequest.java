@@ -18,8 +18,12 @@ import static com.fasterxml.jackson.annotation.JsonFormat.Shape.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "유저 프로필 등록, 수정 시 정보 전달하는 DTO")
+@Schema(description = "유저 프로필 수정 시 정보 전달하는 DTO")
 public class UserProfileRequest {
+
+    @Schema(required = true, description = "현재 이용자 실명")
+    @NotNull
+    private String realName;
 
     @Schema(required = true, description = "주전공")
     @NotNull

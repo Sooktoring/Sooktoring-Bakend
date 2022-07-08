@@ -38,42 +38,6 @@ public class UserProfileService {
         return null;
     }
 
-    @Transactional
-    public void save(UserProfileRequest userProfileRequest, Long userId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            user.changeRole(userProfileRequest.getIsMentor()); //User ROLE 업데이트
-
-            UserProfile userProfile = UserProfile.create(userProfileRequest, user);
-            userProfileRepository.save(userProfile);
-
-            for (ActivityRequest activityRequest : userProfileRequest.getActivityRequests()) {
-                activityRepository.save(
-                        Activity.create(
-                                activityRequest.getTitle(),
-                                activityRequest.getDetails(),
-                                activityRequest.getStartDate(),
-                                activityRequest.getEndDate(),
-                                userProfile
-                        )
-                );
-            }
-            for (CareerRequest careerRequest : userProfileRequest.getCareerRequests()) {
-                careerRepository.save(
-                        Career.create(
-                                careerRequest.getJob(),
-                                careerRequest.getCompany(),
-                                careerRequest.getStartDate(),
-                                careerRequest.getEndDate(),
-                                userProfile
-                        )
-                );
-            }
-        }
-    }
-
     //Activity, Career 추가, 수정, 삭제 한번에 수행
     @Transactional
     public void update(UserProfileRequest userProfileRequest, Long userId) {

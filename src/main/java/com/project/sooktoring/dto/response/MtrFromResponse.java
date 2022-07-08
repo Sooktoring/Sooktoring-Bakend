@@ -21,8 +21,8 @@ public class MtrFromResponse {
     @Schema(description = "신청한 멘토 id", example = "1")
     private Long mentorId;
 
-    @Schema(description = "신청한 멘토 이름", example = "김영희")
-    private String mentorName;
+    @Schema(description = "신청한 멘토 실명", example = "김영희")
+    private String mentorRealName;
 
     @Schema(description = "신청한 멘토 주전공")
     private MainMajor mentorMainMajor;

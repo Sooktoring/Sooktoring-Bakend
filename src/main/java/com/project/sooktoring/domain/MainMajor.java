@@ -30,4 +30,10 @@ public class MainMajor {
     @Enumerated(value = STRING)
     @Column(name = "main_major")
     private Major major;
+
+    public MainMajor() {
+        univ = Univ.DEFAULT;
+        dept = Dept.DEFAULT;
+        major = Major.DEFAULT;
+    }
 }

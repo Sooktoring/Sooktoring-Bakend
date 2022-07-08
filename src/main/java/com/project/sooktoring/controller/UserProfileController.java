@@ -27,13 +27,7 @@ public class UserProfileController {
         return userProfileService.getUserProfile(currentUser.getUserId());
     }
 
-    @Operation(summary = "나의 프로필 등록", description = "나의 프로필 등록 - 로그인/회원가입 후 가능")
-    @PostMapping("/profile")
-    public String saveMyUserProfile(@RequestBody @Validated UserProfileRequest userProfileRequest,
-                                  @CurrentUser UserPrincipal currentUser) {
-        userProfileService.save(userProfileRequest, currentUser.getUserId());
-        return "프로필 설정이 완료되었습니다."; //나중에 DTO로 변경
-    }
+    //프로필 등록 API 사용X -> 회원가입 시 자동으로 기본값으로 초기화 -> 이후 계속 수정만 가능
 
     @Operation(summary = "나의 프로필 수정", description = "나의 프로필 수정")
     @PutMapping("/profile")
@@ -50,7 +44,7 @@ public class UserProfileController {
     }
 
     @Operation(summary = "특정 이용자 프로필 상세조회", description = "아이디 유효하지 않으면 null 반환")
-    @GetMapping("/profile/{userId}")
+    @GetMapping("/profiles/{userId}")
     public UserProfileResponse getUserProfile(@PathVariable Long userId) {
         return userProfileService.getUserProfile(userId);
     }

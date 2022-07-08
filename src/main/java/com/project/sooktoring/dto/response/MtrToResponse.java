@@ -21,8 +21,8 @@ public class MtrToResponse {
     @Schema(description = "신청한 멘티 id", example = "2")
     private Long menteeId;
 
-    @Schema(description = "신청한 멘티 이름", example = "이영희")
-    private String menteeName;
+    @Schema(description = "신청한 멘티 실명", example = "이영희")
+    private String menteeRealName;
 
     @Schema(description = "신청한 멘티 주전공")
     private MainMajor menteeMainMajor;

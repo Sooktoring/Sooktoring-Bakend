@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
-import static com.project.sooktoring.auth.domain.QUser.user;
 import static com.project.sooktoring.domain.QMentoring.*;
 
 @RequiredArgsConstructor
@@ -25,7 +24,7 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                         Projections.constructor(MtrFromResponse.class,
                                 mentoring.id,
                                 mentor.id,
-                                user.name,
+                                mentor.realName,
                                 mentor.mainMajor,
                                 mentor.job,
                                 mentoring.cat,
@@ -36,7 +35,6 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                 )
                 .from(mentoring)
                 .leftJoin(mentoring.mentorUserProfile, mentor)
-                .leftJoin(mentor.user, user)
                 .where(mentoring.id.eq(mtrId))
                 .fetchOne();
     }
@@ -49,7 +47,7 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                         Projections.constructor(MtrFromResponse.class,
                                 mentoring.id,
                                 mentor.id,
-                                user.name,
+                                mentor.realName,
                                 mentor.mainMajor,
                                 mentor.job,
                                 mentoring.cat,
@@ -60,7 +58,6 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                 )
                 .from(mentoring)
                 .leftJoin(mentoring.mentorUserProfile, mentor)
-                .leftJoin(mentor.user, user)
                 .where(mentoring.menteeUserProfile.id.eq(menteeId))
                 .fetch();
     }
@@ -73,7 +70,7 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                         Projections.constructor(MtrToResponse.class,
                                 mentoring.id,
                                 mentee.id,
-                                user.name,
+                                mentee.realName,
                                 mentee.mainMajor,
                                 mentoring.cat,
                                 mentoring.reason,
@@ -83,7 +80,6 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                 )
                 .from(mentoring)
                 .leftJoin(mentoring.menteeUserProfile, mentee)
-                .leftJoin(mentee.user, user)
                 .where(mentoring.id.eq(mtrId))
                 .fetchOne();
     }
@@ -96,7 +92,7 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                         Projections.constructor(MtrToResponse.class,
                                 mentoring.id,
                                 mentee.id,
-                                user.name,
+                                mentee.realName,
                                 mentee.mainMajor,
                                 mentoring.cat,
                                 mentoring.reason,
@@ -106,7 +102,6 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                 )
                 .from(mentoring)
                 .leftJoin(mentoring.menteeUserProfile, mentee)
-                .leftJoin(mentee.user, user)
                 .where(mentoring.mentorUserProfile.id.eq(mentorId))
                 .fetch();
     }
