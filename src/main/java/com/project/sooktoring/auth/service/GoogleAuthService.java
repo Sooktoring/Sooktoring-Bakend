@@ -43,6 +43,7 @@ public class GoogleAuthService {
 
         Optional<User> userOptional = userRepository.findByProviderId(providerId);
         User loginUser;
+        RefreshToken dbRefreshToken = null;
         boolean isNewUser;
 
         //기존 사용자
@@ -51,6 +52,8 @@ public class GoogleAuthService {
             loginUser = userOptional.get();
             loginUser.updateUser(user);
             isNewUser = false;
+
+            dbRefreshToken = refreshTokenRepository.findByKey(loginUser.getId()).orElse(null);
         }
         //새로운 사용자
         else {
@@ -65,11 +68,15 @@ public class GoogleAuthService {
         AuthToken accessToken = authTokenProvider.createAccessToken(providerId, loginUser.getId());
         AuthToken refreshToken = authTokenProvider.createRefreshToken();
 
-        //refreshToken DB에 저장 //**
-        refreshTokenRepository.save(RefreshToken.builder()
-                .loginUser(loginUser)
-                .value(refreshToken.getToken())
-                .build());
+        //refreshToken update or insert
+        if (!isNewUser && dbRefreshToken != null) {
+            dbRefreshToken.updateToken(refreshToken.getToken());
+        } else {
+            refreshTokenRepository.save(RefreshToken.builder()
+                    .loginUser(loginUser)
+                    .value(refreshToken.getToken())
+                    .build());
+        }
 
         return AuthResponse.builder()
                 .accessToken(accessToken.getToken())
