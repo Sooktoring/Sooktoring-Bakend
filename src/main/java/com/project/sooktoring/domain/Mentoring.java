@@ -71,6 +71,10 @@ public class Mentoring extends BaseTimeEntity {
         this.state = REJECT;
     }
 
+    public void end() {
+        this.state = END;
+    }
+
     //연관관계 편의 메소드
     public void setMentorMentee(UserProfile mentorUserProfile, UserProfile menteeUserProfile) {
         this.mentorUserProfile = mentorUserProfile;

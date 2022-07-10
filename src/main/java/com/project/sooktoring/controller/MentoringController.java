@@ -63,8 +63,7 @@ public class MentoringController {
     public String updateMentoring(@RequestBody MtrUpdateRequest mtrUpdateRequest,
                                   @Parameter(description = "멘토링 id") @PathVariable Long mtrId) {
         //카테고리, 이유, 한마디
-        mentoringService.update(mtrUpdateRequest, mtrId);
-        return "멘토링 수정이 완료되었습니다.";
+        return mentoringService.update(mtrUpdateRequest, mtrId) ? "멘토링 수정이 완료되었습니다." : "해당 멘토링 신청이 존재하지 않거나 중복되는 신청내역 또는 신청(APPLY) 상태가 아닌 멘토링입니다.";
     }
 
     @Operation(summary = "멘토링 신청내역 삭제", description = "멘토링 신청내역 삭제 - 멘토링 상태가 APPLY, REJECT, INVALID, WITHDRAW일 때만 가능")
@@ -89,16 +88,20 @@ public class MentoringController {
     }
 
     @Operation(summary = "나에게 요청된 멘토링 신청내역 수락", description = "ACCEPT 상태로 변경 - 후에는 END로만 상태변경 가능")
-    @PutMapping("/to/{mtrId}")
+    @PostMapping("/to/{mtrId}")
     public String acceptMentoringToMe(@Parameter(description = "멘토링 id") @PathVariable Long mtrId) {
-        mentoringService.accept(mtrId);
-        return "멘토링 신청을 수락하였습니다";
+        return mentoringService.accept(mtrId) ? "멘토링 신청을 수락하였습니다" : "멘토링이 신청(APPLY) 상태가 아니므로 수락 불가합니다.";
     }
 
     @Operation(summary = "나에게 요청된 멘토링 신청내역 거부", description = "REJECT 상태로 변경 - 번복 불가")
-    @DeleteMapping("/to/{mtrId}")
+    @PutMapping("/to/{mtrId}")
     public String rejectMentoringToMe(@Parameter(description = "멘토링 id") @PathVariable Long mtrId) {
-        mentoringService.reject(mtrId);
-        return "멘토링 신청을 거부하였습니다";
+        return mentoringService.reject(mtrId) ? "멘토링 신청을 거부하였습니다" : "멘토링이 신청(APPLY) 상태가 아니므로 거부 불가합니다.";
+    }
+
+    @Operation(summary = "수락한 멘토링 진행 후 종료", description = "END 상태로 변경 - 멘토링 상태가 ACCEPT일 때만 가능")
+    @DeleteMapping("/to/{mtrId}")
+    public String endMentoringToMe(@Parameter(description = "멘토링 id") @PathVariable Long mtrId) {
+        return mentoringService.end(mtrId) ? "멘토링 진행을 종료합니다." : "멘토링 수락 후 종료해주세요.";
     }
 }
