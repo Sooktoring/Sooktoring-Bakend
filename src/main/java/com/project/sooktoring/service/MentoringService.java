@@ -7,6 +7,7 @@ import com.project.sooktoring.dto.request.MtrUpdateRequest;
 import com.project.sooktoring.dto.response.MentorResponse;
 import com.project.sooktoring.dto.response.MtrFromResponse;
 import com.project.sooktoring.dto.response.MtrToResponse;
+import com.project.sooktoring.enumerate.MentoringState;
 import com.project.sooktoring.exception.MtrDuplicateException;
 import com.project.sooktoring.exception.MtrTargetException;
 import com.project.sooktoring.repository.MentoringRepository;
@@ -92,7 +93,9 @@ public class MentoringService {
     @Transactional
     public boolean cancel(Long mtrId) {
         Optional<Mentoring> mentoringOptional = mentoringRepository.findById(mtrId);
-        if (mentoringOptional.isEmpty() || mentoringOptional.get().getIsAccept()) {
+        if (mentoringOptional.isEmpty() ||
+                mentoringOptional.get().getState() == MentoringState.ACCEPT ||
+                mentoringOptional.get().getState() == MentoringState.END) {
             return false;
         }
         mentoringRepository.deleteById(mtrId);

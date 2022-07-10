@@ -30,7 +30,7 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                                 mentoring.cat,
                                 mentoring.reason,
                                 mentoring.talk,
-                                mentoring.isAccept
+                                mentoring.state
                         )
                 )
                 .from(mentoring)
@@ -53,7 +53,7 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                                 mentoring.cat,
                                 mentoring.reason,
                                 mentoring.talk,
-                                mentoring.isAccept
+                                mentoring.state
                         )
                 )
                 .from(mentoring)
@@ -75,7 +75,7 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                                 mentoring.cat,
                                 mentoring.reason,
                                 mentoring.talk,
-                                mentoring.isAccept
+                                mentoring.state
                         )
                 )
                 .from(mentoring)
@@ -97,7 +97,7 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                                 mentoring.cat,
                                 mentoring.reason,
                                 mentoring.talk,
-                                mentoring.isAccept
+                                mentoring.state
                         )
                 )
                 .from(mentoring)

@@ -2,6 +2,7 @@ package com.project.sooktoring.domain;
 
 import com.project.sooktoring.common.BaseTimeEntity;
 import com.project.sooktoring.enumerate.MentoringCat;
+import com.project.sooktoring.enumerate.MentoringState;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import static com.project.sooktoring.enumerate.MentoringState.*;
 import static javax.persistence.EnumType.*;
 import static javax.persistence.FetchType.*;
 import static javax.persistence.GenerationType.*;
@@ -45,7 +47,7 @@ public class Mentoring extends BaseTimeEntity {
 
     @Builder.Default
     @Column(nullable = false)
-    private Boolean isAccept = false;
+    private MentoringState state = APPLY;
 
     public static Mentoring create(MentoringCat cat, String reason, String talk) {
         return Mentoring.builder()
@@ -62,11 +64,11 @@ public class Mentoring extends BaseTimeEntity {
     }
 
     public void accept() {
-        this.isAccept = true;
+        this.state = ACCEPT;
     }
 
     public void reject() {
-        this.isAccept = false;
+        this.state = REJECT;
     }
 
     //연관관계 편의 메소드
