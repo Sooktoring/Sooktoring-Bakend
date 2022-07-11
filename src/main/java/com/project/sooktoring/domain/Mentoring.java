@@ -46,7 +46,8 @@ public class Mentoring extends BaseTimeEntity {
     private String talk;
 
     @Builder.Default
-    @Column(nullable = false)
+    @Enumerated(value = STRING)
+    @Column(name = "mtr_state", nullable = false)
     private MentoringState state = APPLY;
 
     public static Mentoring create(MentoringCat cat, String reason, String talk) {
@@ -63,6 +64,10 @@ public class Mentoring extends BaseTimeEntity {
         this.talk = talk;
     }
 
+    public void apply() {
+        this.state = APPLY;
+    }
+
     public void accept() {
         this.state = ACCEPT;
     }
@@ -73,6 +78,14 @@ public class Mentoring extends BaseTimeEntity {
 
     public void end() {
         this.state = END;
+    }
+
+    public void invalid() {
+        this.state = INVALID;
+    }
+
+    public void withdraw() {
+        this.state = WITHDRAW;
     }
 
     //연관관계 편의 메소드
