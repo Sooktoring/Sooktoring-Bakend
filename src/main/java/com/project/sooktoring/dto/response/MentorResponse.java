@@ -15,8 +15,8 @@ public class MentorResponse {
     @JsonProperty("mentorId")
     private Long id;
 
-    @Schema(description = "멘토 이름", example = "김멘토")
-    private String name; //조회시 user, user_profile 테이블 조인 필요 -> user_profile에 name 필드 추가?
+    @Schema(description = "멘토 실명", example = "김멘토")
+    private String realName;
 
     @Schema(description = "현재 직업", example = "프론트엔드 개발자")
     private String job;

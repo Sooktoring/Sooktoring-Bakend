@@ -45,7 +45,10 @@ public class UserProfile extends BaseTimeEntity {
     @OneToMany(mappedBy = "menteeUserProfile")
     private List<Mentoring> mentoringListFromMe = new ArrayList<>();
 
-    //아래 3개 enum 타입으로 바꿀 것 MajorUnit
+    //User의 name은 실명 아닐 수 있음 -> 프로필 등록 시 직접 입력받음 (일단 실명 인증 API 생략)
+    @Column(nullable = false)
+    private String realName;
+
     @Embedded
     @Column(nullable = false)
     private MainMajor mainMajor;
@@ -64,24 +67,26 @@ public class UserProfile extends BaseTimeEntity {
 
     private Long workYear;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean isMentor = false;
 
-    public static UserProfile create(UserProfileRequest userProfileRequest, User user) {
+    public static UserProfile initByUser(User user) {
         return UserProfile.builder()
                 .user(user)
-                .mainMajor(userProfileRequest.getMainMajor())
-                .doubleMajor(userProfileRequest.getDoubleMajor())
-                .minor(userProfileRequest.getMinor())
-                .entranceDate(userProfileRequest.getEntranceDate())
-                .gradDate(userProfileRequest.getGradDate())
-                .job(userProfileRequest.getJob())
-                .workYear(userProfileRequest.getWorkYear())
-                .isMentor(userProfileRequest.getIsMentor())
+                .realName(user.getName())
+                .mainMajor(new MainMajor())
+                .doubleMajor(new DoubleMajor())
+                .minor(new Minor())
+                .entranceDate(YearMonth.now())
+                .gradDate(YearMonth.now())
+                .job("")
+                .workYear(0L)
                 .build();
     }
 
     public void update(UserProfileRequest userProfileRequest) {
+        this.realName = userProfileRequest.getRealName();
         this.mainMajor = userProfileRequest.getMainMajor();
         this.doubleMajor = userProfileRequest.getDoubleMajor();
         this.minor = userProfileRequest.getMinor();

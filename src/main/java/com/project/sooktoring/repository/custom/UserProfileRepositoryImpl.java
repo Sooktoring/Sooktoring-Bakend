@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.project.sooktoring.auth.domain.QUser.*;
 import static com.project.sooktoring.domain.QActivity.*;
 import static com.project.sooktoring.domain.QCareer.*;
 import static com.project.sooktoring.domain.QUserProfile.*;
@@ -26,14 +25,13 @@ public class UserProfileRepositoryImpl implements UserProfileRepositoryCustom {
                 .select(
                         Projections.constructor(MentorResponse.class,
                                 userProfile.id,
-                                user.name,
+                                userProfile.realName,
                                 userProfile.job,
                                 userProfile.workYear,
                                 userProfile.mainMajor
                         )
                 )
                 .from(userProfile)
-                .join(userProfile.user, user)
                 .where(userProfile.isMentor.eq(true))
                 .fetch();
     }
@@ -44,16 +42,14 @@ public class UserProfileRepositoryImpl implements UserProfileRepositoryCustom {
                 .select(
                         Projections.constructor(MentorResponse.class,
                                 userProfile.id,
-                                user.name,
+                                userProfile.realName,
                                 userProfile.job,
                                 userProfile.workYear,
                                 userProfile.mainMajor
                         )
                 )
                 .from(userProfile)
-                .join(userProfile.user, user)
-                .on(user.id.eq(mentorId))
-                .where(userProfile.isMentor.eq(true))
+                .where(userProfile.id.eq(mentorId), userProfile.isMentor.eq(true))
                 .fetchOne();
     }
 
@@ -64,6 +60,7 @@ public class UserProfileRepositoryImpl implements UserProfileRepositoryCustom {
                 .select(
                         Projections.constructor(UserProfileResponse.class,
                                 userProfile.id,
+                                userProfile.realName,
                                 userProfile.mainMajor,
                                 userProfile.doubleMajor,
                                 userProfile.minor,
@@ -120,6 +117,7 @@ public class UserProfileRepositoryImpl implements UserProfileRepositoryCustom {
                 .select(
                         Projections.constructor(UserProfileResponse.class,
                                 userProfile.id,
+                                userProfile.realName,
                                 userProfile.mainMajor,
                                 userProfile.doubleMajor,
                                 userProfile.minor,

@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.project.sooktoring.enumerate.MentoringState.*;
+
 @Service
 @RequiredArgsConstructor
 public class MentoringService {
@@ -54,7 +56,9 @@ public class MentoringService {
     public void save(MtrRequest mtrRequest, Long menteeId) {
         //같은 멘토링 신청내역 존재하는 경우
         Optional<Mentoring> mentoringOptional = mentoringRepository.findByMentorIdAndCat(mtrRequest.getMentorId(), mtrRequest.getCat());
-        if (mentoringOptional.isPresent()) {
+        if (mentoringOptional.isPresent() &&
+                (mentoringOptional.get().getState() != REJECT &&
+                mentoringOptional.get().getState() != END)) {
             throw new MtrDuplicateException("같은 신청내역이 이미 존재합니다.", mtrRequest);
         }
 
@@ -81,18 +85,32 @@ public class MentoringService {
     }
 
     @Transactional
-    public void update(MtrUpdateRequest mtrUpdateRequest, Long mtrId) {
+    public boolean update(MtrUpdateRequest mtrUpdateRequest, Long mtrId) {
         Optional<Mentoring> mentoringOptional = mentoringRepository.findById(mtrId);
-        if (mentoringOptional.isPresent()) {
+        if (mentoringOptional.isPresent() &&
+                (mentoringOptional.get().getState() == APPLY ||
+                mentoringOptional.get().getState() == INVALID)) {
             Mentoring mentoring = mentoringOptional.get();
+            Long mentorId = mentoring.getMentorUserProfile().getId();
+
+            Optional<Mentoring> reMentoring = mentoringRepository.findByMentorIdAndCat(mentorId, mtrUpdateRequest.getCat());
+            if (reMentoring.isPresent() &&
+                    (reMentoring.get().getState() != REJECT &&
+                    reMentoring.get().getState() != END)) {
+                return false;
+            }
             mentoring.update(mtrUpdateRequest.getCat(), mtrUpdateRequest.getReason(), mtrUpdateRequest.getTalk());
+            return true;
         }
+        return false;
     }
 
     @Transactional
     public boolean cancel(Long mtrId) {
         Optional<Mentoring> mentoringOptional = mentoringRepository.findById(mtrId);
-        if (mentoringOptional.isEmpty() || mentoringOptional.get().getIsAccept()) {
+        if (mentoringOptional.isEmpty() ||
+                mentoringOptional.get().getState() == ACCEPT ||
+                mentoringOptional.get().getState() == END) {
             return false;
         }
         mentoringRepository.deleteById(mtrId);
@@ -100,25 +118,41 @@ public class MentoringService {
     }
 
     @Transactional
-    public void accept(Long mtrId) {
+    public boolean accept(Long mtrId) {
         Optional<Mentoring> mentoringOptional = mentoringRepository.findById(mtrId);
-        if (mentoringOptional.isPresent()) {
-            Mentoring mentoring = mentoringOptional.get();
-            mentoring.accept();
-
+        if (mentoringOptional.isEmpty() ||
+                mentoringOptional.get().getState() != APPLY) {
             //ChatRoom chatRoom = ChatRoom.create(mentoring);
             //chatRoomRepository.save(chatRoom);
+            return false;
         }
+        Mentoring mentoring = mentoringOptional.get();
+        mentoring.accept();
+        return true;
     }
 
     @Transactional
-    public void reject(Long mtrId) {
+    public boolean reject(Long mtrId) {
         Optional<Mentoring> mentoringOptional = mentoringRepository.findById(mtrId);
-        if (mentoringOptional.isPresent()) {
-            Mentoring mentoring = mentoringOptional.get();
-            mentoring.reject();
-
+        if (mentoringOptional.isEmpty() ||
+                mentoringOptional.get().getState() != APPLY) {
             //chatRoomRepository.deleteById(mtrId); //일단 삭제! 나중에 삭제 여부 필드 추가
+            return false;
         }
+        Mentoring mentoring = mentoringOptional.get();
+        mentoring.reject();
+        return true;
+    }
+
+    @Transactional
+    public boolean end(Long mtrId) {
+        Optional<Mentoring> mentoringOptional = mentoringRepository.findById(mtrId);
+        if (mentoringOptional.isEmpty() ||
+                mentoringOptional.get().getState() != ACCEPT) {
+            return false;
+        }
+        Mentoring mentoring = mentoringOptional.get();
+        mentoring.end();
+        return true;
     }
 }

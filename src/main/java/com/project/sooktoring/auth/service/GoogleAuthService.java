@@ -8,6 +8,8 @@ import com.project.sooktoring.auth.jwt.AuthTokenProvider;
 import com.project.sooktoring.auth.jwt.RefreshToken;
 import com.project.sooktoring.auth.jwt.RefreshTokenRepository;
 import com.project.sooktoring.auth.domain.User;
+import com.project.sooktoring.domain.UserProfile;
+import com.project.sooktoring.repository.UserProfileRepository;
 import com.project.sooktoring.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ public class GoogleAuthService {
 
     private final GoogleUserInfo googleUserInfo;
     private final UserRepository userRepository;
+    private final UserProfileRepository userProfileRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AuthTokenProvider authTokenProvider;
 
@@ -40,6 +43,7 @@ public class GoogleAuthService {
 
         Optional<User> userOptional = userRepository.findByProviderId(providerId);
         User loginUser;
+        RefreshToken dbRefreshToken = null;
         boolean isNewUser;
 
         //기존 사용자
@@ -48,21 +52,31 @@ public class GoogleAuthService {
             loginUser = userOptional.get();
             loginUser.updateUser(user);
             isNewUser = false;
+
+            dbRefreshToken = refreshTokenRepository.findByKey(loginUser.getId()).orElse(null);
         }
         //새로운 사용자
         else {
             loginUser = userRepository.save(user);
             isNewUser = true;
+
+            //기본 유저 프로필 생성
+            UserProfile userProfile = UserProfile.initByUser(loginUser);
+            userProfileRepository.save(userProfile);
         }
 
         AuthToken accessToken = authTokenProvider.createAccessToken(providerId, loginUser.getId());
         AuthToken refreshToken = authTokenProvider.createRefreshToken();
 
-        //refreshToken DB에 저장
-        refreshTokenRepository.save(RefreshToken.builder()
-                .loginUser(loginUser)
-                .value(refreshToken.getToken())
-                .build());
+        //refreshToken update or insert
+        if (!isNewUser && dbRefreshToken != null) {
+            dbRefreshToken.updateToken(refreshToken.getToken());
+        } else {
+            refreshTokenRepository.save(RefreshToken.builder()
+                    .loginUser(loginUser)
+                    .value(refreshToken.getToken())
+                    .build());
+        }
 
         return AuthResponse.builder()
                 .accessToken(accessToken.getToken())

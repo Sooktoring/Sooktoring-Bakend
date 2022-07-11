@@ -6,8 +6,6 @@ import com.project.sooktoring.domain.DoubleMajor;
 import com.project.sooktoring.domain.MainMajor;
 import com.project.sooktoring.domain.Minor;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,15 +15,16 @@ import java.util.List;
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 
 @Getter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 @Schema(description = "유저 프로필 조회 시 반환하는 DTO")
 public class UserProfileResponse {
 
-    @Schema(description = "현재 이용자 id", example = "1")
+    @Schema(description = "이용자 id", example = "1")
     @JsonProperty("userId")
     private Long id;
+
+    @Schema(required = true, description = "이용자 실명")
+    private String realName;
 
     @Schema(description = "주전공")
     private MainMajor mainMajor;
@@ -61,9 +60,10 @@ public class UserProfileResponse {
     @JsonProperty("careers")
     private List<CareerResponse> careerResponses;
 
-    public UserProfileResponse(Long id, MainMajor mainMajor, DoubleMajor doubleMajor, Minor minor,
+    public UserProfileResponse(Long id, String realName, MainMajor mainMajor, DoubleMajor doubleMajor, Minor minor,
                                YearMonth entranceDate, YearMonth gradDate, String job, Long workYear, Boolean isMentor) {
         this.id = id;
+        this.realName = realName;
         this.mainMajor = mainMajor;
         this.doubleMajor = doubleMajor;
         this.minor = minor;

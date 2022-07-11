@@ -2,6 +2,7 @@ package com.project.sooktoring.dto.response;
 
 import com.project.sooktoring.domain.MainMajor;
 import com.project.sooktoring.enumerate.MentoringCat;
+import com.project.sooktoring.enumerate.MentoringState;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,8 +22,8 @@ public class MtrFromResponse {
     @Schema(description = "신청한 멘토 id", example = "1")
     private Long mentorId;
 
-    @Schema(description = "신청한 멘토 이름", example = "김영희")
-    private String mentorName;
+    @Schema(description = "신청한 멘토 실명", example = "김영희")
+    private String mentorRealName;
 
     @Schema(description = "신청한 멘토 주전공")
     private MainMajor mentorMainMajor;
@@ -39,6 +40,6 @@ public class MtrFromResponse {
     @Schema(description = "멘토에게 전하는 말 한마디", example = "감사합니다~")
     protected String talk;
 
-    @Schema(description = "멘토링 수락 여부", example = "true")
-    protected Boolean isAccept;
+    @Schema(description = "멘토링 상태", example = "APPLY, ACCEPT, REJECT, END, INVALID, WITHDRAW")
+    protected MentoringState state;
 }

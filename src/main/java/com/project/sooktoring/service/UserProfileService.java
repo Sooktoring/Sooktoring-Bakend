@@ -4,10 +4,7 @@ import com.project.sooktoring.auth.domain.User;
 import com.project.sooktoring.domain.*;
 import com.project.sooktoring.dto.request.*;
 import com.project.sooktoring.dto.response.UserProfileResponse;
-import com.project.sooktoring.repository.ActivityRepository;
-import com.project.sooktoring.repository.CareerRepository;
-import com.project.sooktoring.repository.UserProfileRepository;
-import com.project.sooktoring.repository.UserRepository;
+import com.project.sooktoring.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static com.project.sooktoring.enumerate.MentoringState.*;
+import static com.project.sooktoring.enumerate.Role.*;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +25,7 @@ public class UserProfileService {
     private final UserProfileRepository userProfileRepository;
     private final ActivityRepository activityRepository;
     private final CareerRepository careerRepository;
+    private final MentoringRepository mentoringRepository;
 
     public List<UserProfileResponse> getUserProfiles() {
         return userProfileRepository.findAllDto();
@@ -38,42 +39,6 @@ public class UserProfileService {
         return null;
     }
 
-    @Transactional
-    public void save(UserProfileRequest userProfileRequest, Long userId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            user.changeRole(userProfileRequest.getIsMentor()); //User ROLE 업데이트
-
-            UserProfile userProfile = UserProfile.create(userProfileRequest, user);
-            userProfileRepository.save(userProfile);
-
-            for (ActivityRequest activityRequest : userProfileRequest.getActivityRequests()) {
-                activityRepository.save(
-                        Activity.create(
-                                activityRequest.getTitle(),
-                                activityRequest.getDetails(),
-                                activityRequest.getStartDate(),
-                                activityRequest.getEndDate(),
-                                userProfile
-                        )
-                );
-            }
-            for (CareerRequest careerRequest : userProfileRequest.getCareerRequests()) {
-                careerRepository.save(
-                        Career.create(
-                                careerRequest.getJob(),
-                                careerRequest.getCompany(),
-                                careerRequest.getStartDate(),
-                                careerRequest.getEndDate(),
-                                userProfile
-                        )
-                );
-            }
-        }
-    }
-
     //Activity, Career 추가, 수정, 삭제 한번에 수행
     @Transactional
     public void update(UserProfileRequest userProfileRequest, Long userId) {
@@ -82,6 +47,28 @@ public class UserProfileService {
 
         if(userOptional.isPresent()) {
             User user = userOptional.get();
+            //멘토 -> 멘티 : APPLY -> INVALID, ACCEPT -> END
+            if (user.getRole() == ROLE_MENTOR && !userProfileRequest.getIsMentor()) {
+                //나에게 온 멘토링 신청내역 APPLY -> INVALID, ACCEPT -> END 로 변경
+                List<Mentoring> applyMentoringListToMe = mentoringRepository.findByMentorIdAndState(userId, APPLY);
+                for (Mentoring mentoring : applyMentoringListToMe) {
+                    mentoring.invalid();
+                }
+                List<Mentoring> acceptMentoringListToMe = mentoringRepository.findByMentorIdAndState(userId, ACCEPT);
+                for (Mentoring mentoring : acceptMentoringListToMe) {
+                    mentoring.end();
+                }
+            }
+
+            //멘티 -> 멘토 : INVALID -> APPLY
+            if (user.getRole() == ROLE_MENTEE && userProfileRequest.getIsMentor()) {
+                //이전에 멘토 -> 멘티 -> 멘토로 변경하는 경우 INVALID 상태의 나에게 온 멘토링 신청내역 APPLY 로 변경
+                List<Mentoring> invalidMentoringListToMe = mentoringRepository.findByMentorIdAndState(userId, INVALID);
+                for (Mentoring mentoring : invalidMentoringListToMe) {
+                    mentoring.apply();
+                }
+            }
+
             user.changeRole(userProfileRequest.getIsMentor()); //User ROLE 업데이트
         }
 
