@@ -4,9 +4,7 @@ import com.project.sooktoring.auth.user.CurrentUser;
 import com.project.sooktoring.auth.user.UserPrincipal;
 import com.project.sooktoring.dto.request.MtrRequest;
 import com.project.sooktoring.dto.request.MtrUpdateRequest;
-import com.project.sooktoring.dto.response.MentorResponse;
-import com.project.sooktoring.dto.response.MtrFromResponse;
-import com.project.sooktoring.dto.response.MtrToResponse;
+import com.project.sooktoring.dto.response.*;
 import com.project.sooktoring.service.MentoringService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,15 +36,13 @@ public class MentoringController {
 
     @Operation(summary = "나의 멘토링 신청내역 리스트 조회", description = "나의 멘토링 신청내역 리스트 조회 - 멘토 정보 포함")
     @GetMapping("/from")
-    public List<MtrFromResponse> getMyMentoringList(@CurrentUser UserPrincipal currentUser) {
-        //멘토, 카테고리, 이유, 한마디, 수락 여부
+    public List<MtrFromListResponse> getMyMentoringList(@CurrentUser UserPrincipal currentUser) {
         return mentoringService.getMyMentoringList(currentUser.getUserId());
     }
 
     @Operation(summary = "나의 멘토링 신청내역 상세조회", description = "나의 멘토링 신청내역 상세조회 - 멘토 정보 포함")
     @GetMapping("/from/{mtrId}")
     public MtrFromResponse getMyMentoring(@Parameter(description = "멘토링 id") @PathVariable Long mtrId) {
-        //멘토, 카테고리, 이유, 한마디, 수락 여부
         return mentoringService.getMyMentoring(mtrId);
     }
 
@@ -75,15 +71,13 @@ public class MentoringController {
     //현재 이용자가 멘토인 경우에 한해서만
     @Operation(summary = "나에게 요청된 멘토링 신청내역 리스트 조회", description = "현재 이용자가 멘토인 경우 나에게 요청된 멘토링 신청내역 리스트 조회 - 멘티 정보 포함")
     @GetMapping("/to")
-    public List<MtrToResponse> getMentoringListToMe(@CurrentUser UserPrincipal currentUser) {
-        //멘티, 카테고리, 이유, 한마디, 수락 여부
+    public List<MtrToListResponse> getMentoringListToMe(@CurrentUser UserPrincipal currentUser) {
         return mentoringService.getMentoringListToMe(currentUser.getUserId());
     }
 
     @Operation(summary = "나에게 요청된 멘토링 신청내역 상세조회", description = "현재 이용자가 멘토인 경우 나에게 요청된 멘토링 신청내역 상세조회 - 멘티 정보 포함")
     @GetMapping("/to/{mtrId}")
     public MtrToResponse getMentoringToMe(@Parameter(description = "멘토링 id") @PathVariable Long mtrId) {
-        //멘티, 카테고리, 이유, 한마디, 수락 여부
         return mentoringService.getMentoringToMe(mtrId);
     }
 

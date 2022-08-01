@@ -1,7 +1,9 @@
 package com.project.sooktoring.repository.custom;
 
 import com.project.sooktoring.domain.QUserProfile;
+import com.project.sooktoring.dto.response.MtrFromListResponse;
 import com.project.sooktoring.dto.response.MtrFromResponse;
+import com.project.sooktoring.dto.response.MtrToListResponse;
 import com.project.sooktoring.dto.response.MtrToResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -27,6 +29,7 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                                 mentor.realName,
                                 mentor.mainMajor,
                                 mentor.job,
+                                mentor.imageUrl,
                                 mentoring.cat,
                                 mentoring.reason,
                                 mentoring.talk,
@@ -40,25 +43,24 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
     }
 
     @Override
-    public List<MtrFromResponse> findAllFromDto(Long menteeId) {
+    public List<MtrFromListResponse> findAllFromDto(Long menteeId) {
         QUserProfile mentor = new QUserProfile("mentor");
         return queryFactory
                 .select(
-                        Projections.constructor(MtrFromResponse.class,
+                        Projections.constructor(MtrFromListResponse.class,
                                 mentoring.id,
                                 mentor.id,
                                 mentor.realName,
-                                mentor.mainMajor,
-                                mentor.job,
+                                mentor.imageUrl,
                                 mentoring.cat,
-                                mentoring.reason,
-                                mentoring.talk,
-                                mentoring.state
+                                mentoring.state,
+                                mentoring.createdDate
                         )
                 )
                 .from(mentoring)
                 .leftJoin(mentoring.mentorUserProfile, mentor)
                 .where(mentoring.menteeUserProfile.id.eq(menteeId))
+                .orderBy(mentoring.createdDate.desc())
                 .fetch();
     }
 
@@ -72,6 +74,7 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                                 mentee.id,
                                 mentee.realName,
                                 mentee.mainMajor,
+                                mentee.imageUrl,
                                 mentoring.cat,
                                 mentoring.reason,
                                 mentoring.talk,
@@ -85,24 +88,24 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
     }
 
     @Override
-    public List<MtrToResponse> findAllToDto(Long mentorId) {
+    public List<MtrToListResponse> findAllToDto(Long mentorId) {
         QUserProfile mentee = new QUserProfile("mentee");
         return queryFactory
                 .select(
-                        Projections.constructor(MtrToResponse.class,
+                        Projections.constructor(MtrToListResponse.class,
                                 mentoring.id,
                                 mentee.id,
                                 mentee.realName,
-                                mentee.mainMajor,
+                                mentee.imageUrl,
                                 mentoring.cat,
-                                mentoring.reason,
-                                mentoring.talk,
-                                mentoring.state
+                                mentoring.state,
+                                mentoring.createdDate
                         )
                 )
                 .from(mentoring)
                 .leftJoin(mentoring.menteeUserProfile, mentee)
                 .where(mentoring.mentorUserProfile.id.eq(mentorId))
+                .orderBy(mentoring.createdDate.desc())
                 .fetch();
     }
 }
