@@ -26,4 +26,7 @@ public class MentorResponse {
 
     @Schema(description = "주전공")
     private MainMajor mainMajor;
+
+    @Schema(description = "프로필 이미지 url")
+    private String imageUrl;
 }

@@ -54,6 +54,9 @@ public class UserProfileRequest {
     @NotNull
     private Boolean isMentor;
 
+    @Schema(description = "프로필 이미지 url")
+    private String imageUrl;
+
     @Schema(description = "대외활동 내역 리스트")
     @JsonProperty("activities")
     private List<ActivityRequest> activityRequests;
@@ -61,4 +64,8 @@ public class UserProfileRequest {
     @Schema(description = "직무경력 내역 리스트")
     @JsonProperty("careers")
     private List<CareerRequest> careerRequests;
+
+    public void changeImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }

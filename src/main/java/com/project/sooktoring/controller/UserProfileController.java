@@ -10,8 +10,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+
+import static org.springframework.http.MediaType.*;
 
 @RestController
 @RequestMapping("/user")
@@ -30,10 +33,11 @@ public class UserProfileController {
     //프로필 등록 API 사용X -> 회원가입 시 자동으로 기본값으로 초기화 -> 이후 계속 수정만 가능
 
     @Operation(summary = "나의 프로필 수정", description = "나의 프로필 수정")
-    @PutMapping("/profile")
-    public String updateMyUserProfile(@RequestBody @Validated UserProfileRequest userProfileRequest,
-                                  @CurrentUser UserPrincipal currentUser) {
-        userProfileService.update(userProfileRequest, currentUser.getUserId());
+    @PutMapping(value = "/profile", consumes = {APPLICATION_JSON_VALUE, MULTIPART_FORM_DATA_VALUE})
+    public String updateMyUserProfile(@RequestPart @Validated UserProfileRequest userProfileRequest,
+                                      @RequestPart MultipartFile file,
+                                      @CurrentUser UserPrincipal currentUser) {
+        userProfileService.update(userProfileRequest, file, currentUser.getUserId());
         return "프로필 수정이 완료되었습니다."; //나중에 DTO로 변경
     }
 

@@ -52,6 +52,9 @@ public class UserProfileResponse {
     @Schema(description = "멘토 여부", example = "true")
     private Boolean isMentor;
 
+    @Schema(description = "프로필 이미지 url")
+    private String imageUrl;
+
     @Schema(description = "대외활동 내역 리스트")
     @JsonProperty("activities")
     private List<ActivityResponse> activityResponses;
@@ -61,7 +64,7 @@ public class UserProfileResponse {
     private List<CareerResponse> careerResponses;
 
     public UserProfileResponse(Long id, String realName, MainMajor mainMajor, DoubleMajor doubleMajor, Minor minor,
-                               YearMonth entranceDate, YearMonth gradDate, String job, Long workYear, Boolean isMentor) {
+                               YearMonth entranceDate, YearMonth gradDate, String job, Long workYear, Boolean isMentor, String imageUrl) {
         this.id = id;
         this.realName = realName;
         this.mainMajor = mainMajor;
@@ -72,6 +75,7 @@ public class UserProfileResponse {
         this.job = job;
         this.workYear = workYear;
         this.isMentor = isMentor;
+        this.imageUrl = imageUrl;
     }
 
     public UserProfileResponse changeList(List<ActivityResponse> activityResponses, List<CareerResponse> careerResponses) {

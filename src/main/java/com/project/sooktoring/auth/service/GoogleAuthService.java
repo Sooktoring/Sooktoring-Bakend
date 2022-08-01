@@ -12,6 +12,7 @@ import com.project.sooktoring.domain.UserProfile;
 import com.project.sooktoring.repository.UserProfileRepository;
 import com.project.sooktoring.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,9 @@ public class GoogleAuthService {
     private final UserProfileRepository userProfileRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AuthTokenProvider authTokenProvider;
+
+    @Value("${cloud.aws.s3.default.image}")
+    private String defaultImageUrl;
 
     @Transactional
     public AuthResponse login(AuthRequest authRequest, HttpServletRequest request) {
@@ -61,7 +65,7 @@ public class GoogleAuthService {
             isNewUser = true;
 
             //기본 유저 프로필 생성
-            UserProfile userProfile = UserProfile.initByUser(loginUser);
+            UserProfile userProfile = UserProfile.initByUser(loginUser, defaultImageUrl);
             userProfileRepository.save(userProfile);
         }
 

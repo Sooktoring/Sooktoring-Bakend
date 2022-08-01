@@ -6,8 +6,11 @@ import com.project.sooktoring.dto.request.*;
 import com.project.sooktoring.dto.response.UserProfileResponse;
 import com.project.sooktoring.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +24,15 @@ import static com.project.sooktoring.enumerate.Role.*;
 @Transactional(readOnly = true)
 public class UserProfileService {
 
+    private final AwsS3Service awsS3Service;
     private final UserRepository userRepository;
     private final UserProfileRepository userProfileRepository;
     private final ActivityRepository activityRepository;
     private final CareerRepository careerRepository;
     private final MentoringRepository mentoringRepository;
+
+    @Value("${cloud.aws.s3.default.image}")
+    private String defaultImageUrl;
 
     public List<UserProfileResponse> getUserProfiles() {
         return userProfileRepository.findAllDto();
@@ -41,7 +48,7 @@ public class UserProfileService {
 
     //Activity, Career 추가, 수정, 삭제 한번에 수행
     @Transactional
-    public void update(UserProfileRequest userProfileRequest, Long userId) {
+    public void update(UserProfileRequest userProfileRequest, MultipartFile file, Long userId) {
         Optional<User> userOptional = userRepository.findById(userId);
         Optional<UserProfile> userProfileOptional = userProfileRepository.findById(userId);
 
@@ -73,11 +80,19 @@ public class UserProfileService {
         }
 
         if(userProfileOptional.isPresent()) {
+            UserProfile userProfile = userProfileOptional.get();
+            String originImageUrl = userProfile.getImageUrl();
+            if (!file.isEmpty()) {
+                if (StringUtils.hasText(originImageUrl) && !originImageUrl.equals(defaultImageUrl)) {
+                    awsS3Service.deleteImg(originImageUrl); //기존 이미지 삭제
+                }
+                String imageUrl = awsS3Service.uploadImg(file, "test"); //새로운 이미지 등록
+                userProfileRequest.changeImageUrl(imageUrl);
+            }
+            userProfile.update(userProfileRequest); //updated by dirty checking
+
             List<ActivityRequest> activities = userProfileRequest.getActivityRequests();
             List<CareerRequest> careers = userProfileRequest.getCareerRequests();
-
-            UserProfile userProfile = userProfileOptional.get();
-            userProfile.update(userProfileRequest); //updated by dirty checking
 
             //Activity 추가, 수정, 삭제
             List<Long> activityIds = new ArrayList<>();

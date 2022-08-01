@@ -28,7 +28,8 @@ public class UserProfileRepositoryImpl implements UserProfileRepositoryCustom {
                                 userProfile.realName,
                                 userProfile.job,
                                 userProfile.workYear,
-                                userProfile.mainMajor
+                                userProfile.mainMajor,
+                                userProfile.imageUrl
                         )
                 )
                 .from(userProfile)
@@ -45,7 +46,8 @@ public class UserProfileRepositoryImpl implements UserProfileRepositoryCustom {
                                 userProfile.realName,
                                 userProfile.job,
                                 userProfile.workYear,
-                                userProfile.mainMajor
+                                userProfile.mainMajor,
+                                userProfile.imageUrl
                         )
                 )
                 .from(userProfile)
@@ -68,7 +70,8 @@ public class UserProfileRepositoryImpl implements UserProfileRepositoryCustom {
                                 userProfile.gradDate,
                                 userProfile.job,
                                 userProfile.workYear,
-                                userProfile.isMentor
+                                userProfile.isMentor,
+                                userProfile.imageUrl
                         )
                 )
                 .from(userProfile)
@@ -125,7 +128,8 @@ public class UserProfileRepositoryImpl implements UserProfileRepositoryCustom {
                                 userProfile.gradDate,
                                 userProfile.job,
                                 userProfile.workYear,
-                                userProfile.isMentor
+                                userProfile.isMentor,
+                                userProfile.imageUrl
                         )
                 )
                 .from(userProfile)

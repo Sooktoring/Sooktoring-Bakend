@@ -71,7 +71,9 @@ public class UserProfile extends BaseTimeEntity {
     @Column(nullable = false)
     private Boolean isMentor = false;
 
-    public static UserProfile initByUser(User user) {
+    private String imageUrl;
+
+    public static UserProfile initByUser(User user, String defaultImageUrl) {
         return UserProfile.builder()
                 .user(user)
                 .realName(user.getName())
@@ -82,6 +84,7 @@ public class UserProfile extends BaseTimeEntity {
                 .gradDate(YearMonth.now())
                 .job("")
                 .workYear(0L)
+                .imageUrl(defaultImageUrl)
                 .build();
     }
 
@@ -95,5 +98,6 @@ public class UserProfile extends BaseTimeEntity {
         this.job = userProfileRequest.getJob();
         this.workYear = userProfileRequest.getWorkYear();
         this.isMentor = userProfileRequest.getIsMentor();
+        this.imageUrl = userProfileRequest.getImageUrl();
     }
 }
