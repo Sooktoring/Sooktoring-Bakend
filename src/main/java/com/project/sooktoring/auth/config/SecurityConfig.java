@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers("/v3/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**", "/auth/**", "/", "/test").permitAll()
+                .antMatchers("/**").permitAll() //테스트 위한
                 .antMatchers("/img/*").permitAll() //이미지 업로드 테스트
                 .antMatchers("/mentoring/to").hasRole("MENTOR")
 //                .antMatchers("/mentee").hasRole("MENTEE")
