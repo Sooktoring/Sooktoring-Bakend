@@ -1,6 +1,8 @@
 package com.project.sooktoring.repository.custom;
 
+import com.project.sooktoring.dto.response.MtrFromListResponse;
 import com.project.sooktoring.dto.response.MtrFromResponse;
+import com.project.sooktoring.dto.response.MtrToListResponse;
 import com.project.sooktoring.dto.response.MtrToResponse;
 
 import java.util.List;
@@ -8,7 +10,7 @@ import java.util.List;
 public interface MentoringRepositoryCustom {
 
     MtrFromResponse findFromDtoById(Long mtrId);
-    List<MtrFromResponse> findAllFromDto(Long menteeId);
+    List<MtrFromListResponse> findAllFromDto(Long menteeId);
     MtrToResponse findToDtoById(Long mtrId);
-    List<MtrToResponse> findAllToDto(Long mentorId);
+    List<MtrToListResponse> findAllToDto(Long mentorId);
 }

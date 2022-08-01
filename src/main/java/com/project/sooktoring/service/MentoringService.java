@@ -4,9 +4,7 @@ import com.project.sooktoring.domain.Mentoring;
 import com.project.sooktoring.domain.UserProfile;
 import com.project.sooktoring.dto.request.MtrRequest;
 import com.project.sooktoring.dto.request.MtrUpdateRequest;
-import com.project.sooktoring.dto.response.MentorResponse;
-import com.project.sooktoring.dto.response.MtrFromResponse;
-import com.project.sooktoring.dto.response.MtrToResponse;
+import com.project.sooktoring.dto.response.*;
 import com.project.sooktoring.exception.MtrDuplicateException;
 import com.project.sooktoring.exception.MtrTargetException;
 import com.project.sooktoring.repository.MentoringRepository;
@@ -36,7 +34,7 @@ public class MentoringService {
         return userProfileRepository.findMentor(mentorId);
     }
 
-    public List<MtrFromResponse> getMyMentoringList(Long menteeId) {
+    public List<MtrFromListResponse> getMyMentoringList(Long menteeId) {
         return mentoringRepository.findAllFromDto(menteeId);
     }
 
@@ -44,7 +42,7 @@ public class MentoringService {
         return mentoringRepository.findFromDtoById(mtrId);
     }
 
-    public List<MtrToResponse> getMentoringListToMe(Long mentorId) {
+    public List<MtrToListResponse> getMentoringListToMe(Long mentorId) {
         return mentoringRepository.findAllToDto(mentorId);
     }
 
