@@ -90,6 +90,11 @@ public class UserProfileRepositoryImpl implements UserProfileRepositoryCustom {
                 )
                 .from(activity)
                 .where(activity.userProfile.id.eq(userId))
+                .orderBy(
+                        activity.startDate.desc(),
+                        activity.endDate.desc().nullsFirst(),
+                        activity.createdDate.desc()
+                )
                 .fetch();
 
         List<CareerResponse> careerResponses = queryFactory
@@ -104,6 +109,11 @@ public class UserProfileRepositoryImpl implements UserProfileRepositoryCustom {
                 )
                 .from(career)
                 .where(career.userProfile.id.eq(userId))
+                .orderBy(
+                        career.startDate.desc(),
+                        career.endDate.desc().nullsFirst(),
+                        career.createdDate.desc()
+                )
                 .fetch();
 
         assert userProfileResponse != null;
@@ -149,6 +159,11 @@ public class UserProfileRepositoryImpl implements UserProfileRepositoryCustom {
                 )
                 .from(activity)
                 .where(activity.userProfile.id.in(userIds))
+                .orderBy(
+                        activity.startDate.desc(),
+                        activity.endDate.desc().nullsFirst(),
+                        activity.createdDate.desc()
+                )
                 .fetch();
         Map<Long, List<ActivityResponse>> activityResponsesMap = activityResult.stream().collect(
                 Collectors.groupingBy(
@@ -173,6 +188,11 @@ public class UserProfileRepositoryImpl implements UserProfileRepositoryCustom {
                 )
                 .from(career)
                 .where(career.userProfile.id.in(userIds))
+                .orderBy(
+                        career.startDate.desc(),
+                        career.endDate.desc().nullsFirst(),
+                        career.createdDate.desc()
+                )
                 .fetch();
         Map<Long, List<CareerResponse>> careerResponsesMap = careerResult.stream().collect(
                 Collectors.groupingBy(
