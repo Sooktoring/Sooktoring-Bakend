@@ -2,7 +2,7 @@ package com.project.sooktoring.user.profile.enumerate;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.project.sooktoring.common.exception.EnumConversionException;
+import com.project.sooktoring.exception.global.EnumConversionException;
 
 public enum Major {
     CULTURE_TOURISM_MAJOR("문화관광학전공"),

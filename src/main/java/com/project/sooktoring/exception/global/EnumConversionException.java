@@ -1,4 +1,4 @@
-package com.project.sooktoring.common.exception;
+package com.project.sooktoring.exception.global;
 
 import lombok.Getter;
 import org.springframework.core.convert.ConversionException;

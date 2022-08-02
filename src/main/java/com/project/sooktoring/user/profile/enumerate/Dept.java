@@ -2,7 +2,7 @@ package com.project.sooktoring.user.profile.enumerate;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.project.sooktoring.common.exception.EnumConversionException;
+import com.project.sooktoring.exception.global.EnumConversionException;
 
 public enum Dept {
     KOREA_LITERATURE_DEPT("한국어문학부"),

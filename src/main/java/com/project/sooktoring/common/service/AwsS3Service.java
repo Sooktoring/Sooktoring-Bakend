@@ -5,7 +5,6 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.project.sooktoring.common.exception.EmptyFileException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -28,10 +27,6 @@ public class AwsS3Service {
 
     //이미지 업로드
     public String uploadImg(MultipartFile file, String category) {
-        if (file.isEmpty()) {
-            throw new EmptyFileException("파일이 존재하지 않습니다.");
-        }
-
         String fileName = category + UUID.randomUUID();
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(file.getSize());

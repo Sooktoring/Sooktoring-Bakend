@@ -2,7 +2,7 @@ package com.project.sooktoring.mentoring.enumerate;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.project.sooktoring.common.exception.EnumConversionException;
+import com.project.sooktoring.exception.global.EnumConversionException;
 
 public enum MentoringCat {
 

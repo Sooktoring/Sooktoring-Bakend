@@ -1,6 +1,5 @@
-package com.project.sooktoring.common.exception.dto;
+package com.project.sooktoring.exception.handler.dto;
 
-import com.project.sooktoring.mentoring.dto.request.MtrRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,11 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MtrExResponse {
+public class EnumExResponse {
 
     private int status;
 
     private String message;
 
-    private MtrRequest request;
+    private String source;
 }

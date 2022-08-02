@@ -1,6 +1,6 @@
 package com.project.sooktoring.user.auth.jwt;
 
-import com.project.sooktoring.user.auth.exception.ExpiredAccessTokenException;
+import com.project.sooktoring.exception.domain.user.auth.ExpiredAccessTokenException;
 import com.project.sooktoring.user.auth.util.UserPrincipal;
 import com.project.sooktoring.user.auth.enumerate.Role;
 import com.project.sooktoring.user.auth.domain.User;

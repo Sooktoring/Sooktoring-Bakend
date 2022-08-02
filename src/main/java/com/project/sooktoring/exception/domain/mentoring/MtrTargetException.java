@@ -1,4 +1,4 @@
-package com.project.sooktoring.mentoring.exception;
+package com.project.sooktoring.exception.domain.mentoring;
 
 import com.project.sooktoring.mentoring.dto.request.MtrRequest;
 import lombok.Getter;

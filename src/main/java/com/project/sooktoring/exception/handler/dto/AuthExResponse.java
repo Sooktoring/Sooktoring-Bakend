@@ -1,4 +1,4 @@
-package com.project.sooktoring.common.exception.dto;
+package com.project.sooktoring.exception.handler.dto;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,6 +1,6 @@
 package com.project.sooktoring.user.auth.controller;
 
-import com.project.sooktoring.common.exception.dto.AuthExResponse;
+import com.project.sooktoring.exception.handler.dto.AuthExResponse;
 import com.project.sooktoring.user.auth.util.CurrentUser;
 import com.project.sooktoring.user.auth.util.UserPrincipal;
 import com.project.sooktoring.user.auth.domain.User;
