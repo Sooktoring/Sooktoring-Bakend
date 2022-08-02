@@ -36,8 +36,8 @@ public class SecurityConfig {
                 .antMatchers("/v3/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**", "/auth/**", "/", "/test").permitAll()
                 .antMatchers("/**").permitAll() //테스트 위한
                 .antMatchers("/img/*").permitAll() //이미지 업로드 테스트
-                .antMatchers("/mentoring/to").hasRole("MENTOR")
-//                .antMatchers("/mentee").hasRole("MENTEE")
+                .antMatchers("/mentoring/to/**").hasRole("MENTOR")
+                .antMatchers("/mentoring/card/to/**").hasRole("MENTOR")
                 .anyRequest().authenticated().and()
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(authExceptionHandlerFilter, JwtAuthenticationFilter.class);

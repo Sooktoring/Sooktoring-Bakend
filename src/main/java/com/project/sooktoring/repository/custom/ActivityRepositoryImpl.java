@@ -1,6 +1,5 @@
 package com.project.sooktoring.repository.custom;
 
-import com.project.sooktoring.domain.QActivity;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
