@@ -4,6 +4,7 @@ import com.project.sooktoring.common.service.AwsS3Service;
 import com.project.sooktoring.mentoring.domain.Mentoring;
 import com.project.sooktoring.mentoring.repository.MentoringRepository;
 import com.project.sooktoring.user.auth.domain.User;
+import com.project.sooktoring.user.profile.dto.response.MentorResponse;
 import com.project.sooktoring.user.profile.dto.response.UserProfileResponse;
 import com.project.sooktoring.user.auth.repository.UserRepository;
 import com.project.sooktoring.user.profile.domain.Activity;
@@ -54,6 +55,14 @@ public class UserProfileService {
             return userProfileRepository.findDtoById(userId);
         }
         return null;
+    }
+
+    public List<MentorResponse> getMentorList() {
+        return userProfileRepository.findMentors();
+    }
+
+    public MentorResponse getMentor(Long mentorId) {
+        return userProfileRepository.findMentor(mentorId);
     }
 
     //Activity, Career 추가, 수정, 삭제 한번에 수행

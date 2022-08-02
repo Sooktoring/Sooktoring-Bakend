@@ -9,7 +9,6 @@ import com.project.sooktoring.user.auth.util.UserPrincipal;
 import com.project.sooktoring.mentoring.dto.request.MtrRequest;
 import com.project.sooktoring.mentoring.dto.request.MtrUpdateRequest;
 import com.project.sooktoring.mentoring.service.MentoringService;
-import com.project.sooktoring.user.profile.dto.response.MentorResponse;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,18 +24,6 @@ import java.util.List;
 public class MentoringController {
 
     private final MentoringService mentoringService;
-
-    @Operation(summary = "멘토들의 프로필 조회", description = "멘토 아이디, 이름, 직업, 연차, 주전공")
-    @GetMapping("/mentors")
-    public List<MentorResponse> getMentorList() {
-        return mentoringService.getMentorList();
-    }
-
-    @Operation(summary = "특정 멘토의 프로필 조회", description = "멘토 아이디, 이름, 직업, 연차, 주전공")
-    @GetMapping("/mentors/{mentorId}")
-    public MentorResponse getMentor(@PathVariable Long mentorId) {
-        return mentoringService.getMentor(mentorId);
-    }
 
     @Operation(summary = "나의 멘토링 신청내역 리스트 조회", description = "나의 멘토링 신청내역 리스트 조회 - 멘토 정보 포함")
     @GetMapping("/from")

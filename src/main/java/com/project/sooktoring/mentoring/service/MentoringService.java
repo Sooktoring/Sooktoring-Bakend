@@ -11,7 +11,6 @@ import com.project.sooktoring.mentoring.dto.request.MtrUpdateRequest;
 import com.project.sooktoring.mentoring.exception.MtrDuplicateException;
 import com.project.sooktoring.mentoring.exception.MtrTargetException;
 import com.project.sooktoring.mentoring.repository.MentoringRepository;
-import com.project.sooktoring.user.profile.dto.response.MentorResponse;
 import com.project.sooktoring.user.profile.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,14 +28,6 @@ public class MentoringService {
     private final UserProfileRepository userProfileRepository;
     private final MentoringRepository mentoringRepository;
     //private final ChatRoomRepository chatRoomRepository;
-
-    public List<MentorResponse> getMentorList() {
-        return userProfileRepository.findMentors();
-    }
-
-    public MentorResponse getMentor(Long mentorId) {
-        return userProfileRepository.findMentor(mentorId);
-    }
 
     public List<MtrFromListResponse> getMyMentoringList(Long menteeId) {
         return mentoringRepository.findAllFromDto(menteeId);

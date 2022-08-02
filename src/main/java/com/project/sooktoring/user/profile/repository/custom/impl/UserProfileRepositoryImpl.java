@@ -37,7 +37,7 @@ public class UserProfileRepositoryImpl implements UserProfileRepositoryCustom {
                         )
                 )
                 .from(userProfile)
-                .where(userProfile.isMentor.eq(true))
+                .where(userProfile.isMentor.isTrue())
                 .fetch();
     }
 
@@ -55,7 +55,7 @@ public class UserProfileRepositoryImpl implements UserProfileRepositoryCustom {
                         )
                 )
                 .from(userProfile)
-                .where(userProfile.id.eq(mentorId), userProfile.isMentor.eq(true))
+                .where(userProfile.id.eq(mentorId), userProfile.isMentor.isTrue())
                 .fetchOne();
     }
 
