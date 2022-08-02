@@ -1,8 +1,8 @@
 package com.project.sooktoring.user.auth.info;
 
 import com.project.sooktoring.user.auth.dto.response.GoogleUserResponse;
-import com.project.sooktoring.user.auth.exception.GoogleResourceServerAccessException;
-import com.project.sooktoring.user.auth.exception.InvalidGoogleIdTokenException;
+import com.project.sooktoring.exception.domain.user.auth.GoogleResourceServerAccessException;
+import com.project.sooktoring.exception.domain.user.auth.InvalidGoogleIdTokenException;
 import com.project.sooktoring.user.auth.domain.User;
 import com.project.sooktoring.user.auth.enumerate.AuthProvider;
 import lombok.RequiredArgsConstructor;

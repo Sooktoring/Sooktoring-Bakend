@@ -1,7 +1,7 @@
 package com.project.sooktoring.user.auth.jwt;
 
-import com.project.sooktoring.user.auth.exception.ExpiredAccessTokenException;
-import com.project.sooktoring.user.auth.exception.ExpiredRefreshTokenException;
+import com.project.sooktoring.exception.domain.user.auth.ExpiredAccessTokenException;
+import com.project.sooktoring.exception.domain.user.auth.ExpiredRefreshTokenException;
 import io.jsonwebtoken.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package com.project.sooktoring.common.config;
 
 import com.fasterxml.classmate.TypeResolver;
-import com.project.sooktoring.common.exception.dto.AuthExResponse;
+import com.project.sooktoring.exception.handler.dto.AuthExResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;

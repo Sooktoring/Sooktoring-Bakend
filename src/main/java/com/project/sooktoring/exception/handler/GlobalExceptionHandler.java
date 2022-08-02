@@ -1,10 +1,15 @@
-package com.project.sooktoring.common.exception;
+package com.project.sooktoring.exception.handler;
 
-import com.project.sooktoring.common.exception.dto.AuthExResponse;
-import com.project.sooktoring.user.auth.exception.ExpiredAccessTokenException;
-import com.project.sooktoring.user.auth.exception.ExpiredRefreshTokenException;
-import com.project.sooktoring.user.auth.exception.GoogleResourceServerAccessException;
-import com.project.sooktoring.user.auth.exception.InvalidGoogleIdTokenException;
+import com.project.sooktoring.exception.global.EnumConversionException;
+import com.project.sooktoring.exception.handler.dto.AuthExResponse;
+import com.project.sooktoring.exception.handler.dto.EnumExResponse;
+import com.project.sooktoring.exception.handler.dto.MtrExResponse;
+import com.project.sooktoring.exception.domain.mentoring.MtrDuplicateException;
+import com.project.sooktoring.exception.domain.mentoring.MtrTargetException;
+import com.project.sooktoring.exception.domain.user.auth.ExpiredAccessTokenException;
+import com.project.sooktoring.exception.domain.user.auth.ExpiredRefreshTokenException;
+import com.project.sooktoring.exception.domain.user.auth.GoogleResourceServerAccessException;
+import com.project.sooktoring.exception.domain.user.auth.InvalidGoogleIdTokenException;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -13,8 +18,19 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
-@RestControllerAdvice(basePackages = "com.project.sooktoring.auth")
-public class AuthControllerAdvice {
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public EnumExResponse enumConversionExceptionHandler(EnumConversionException e) {
+        log.error(e.getMessage());
+        return EnumExResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(e.getMessage())
+                .source(e.getSource())
+                .build();
+    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -68,6 +84,28 @@ public class AuthControllerAdvice {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .message(e.getMessage())
                 .redirectPath("/auth/login")
+                .build();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public MtrExResponse mtrDuplicateExceptionHandler(MtrDuplicateException e) {
+        log.error(e.getMessage());
+        return MtrExResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(e.getMessage())
+                .request(e.getRequest())
+                .build();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public MtrExResponse mtrTargetExceptionHandler(MtrTargetException e) {
+        log.error(e.getMessage());
+        return MtrExResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(e.getMessage())
+                .request(e.getRequest())
                 .build();
     }
 }

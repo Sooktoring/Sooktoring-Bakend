@@ -1,10 +1,10 @@
 package com.project.sooktoring.user.auth.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.sooktoring.common.exception.dto.AuthExResponse;
+import com.project.sooktoring.exception.handler.dto.AuthExResponse;
 import com.project.sooktoring.user.auth.dto.response.TokenResponse;
-import com.project.sooktoring.user.auth.exception.ExpiredAccessTokenException;
-import com.project.sooktoring.user.auth.exception.ExpiredRefreshTokenException;
+import com.project.sooktoring.exception.domain.user.auth.ExpiredAccessTokenException;
+import com.project.sooktoring.exception.domain.user.auth.ExpiredRefreshTokenException;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

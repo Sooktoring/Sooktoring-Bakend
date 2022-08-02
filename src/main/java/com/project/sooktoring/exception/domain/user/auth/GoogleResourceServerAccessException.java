@@ -1,4 +1,4 @@
-package com.project.sooktoring.user.auth.exception;
+package com.project.sooktoring.exception.domain.user.auth;
 
 public class GoogleResourceServerAccessException extends RuntimeException {
 

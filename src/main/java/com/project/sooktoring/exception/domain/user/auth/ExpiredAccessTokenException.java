@@ -1,4 +1,4 @@
-package com.project.sooktoring.user.auth.exception;
+package com.project.sooktoring.exception.domain.user.auth;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

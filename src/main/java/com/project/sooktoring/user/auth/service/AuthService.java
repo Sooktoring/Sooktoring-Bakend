@@ -2,7 +2,7 @@ package com.project.sooktoring.user.auth.service;
 
 import com.project.sooktoring.user.auth.dto.request.TokenRequest;
 import com.project.sooktoring.user.auth.dto.response.TokenResponse;
-import com.project.sooktoring.user.auth.exception.ExpiredRefreshTokenException;
+import com.project.sooktoring.exception.domain.user.auth.ExpiredRefreshTokenException;
 import com.project.sooktoring.user.auth.jwt.AuthToken;
 import com.project.sooktoring.user.auth.jwt.AuthTokenProvider;
 import com.project.sooktoring.user.auth.domain.RefreshToken;
