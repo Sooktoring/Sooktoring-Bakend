@@ -1,5 +1,6 @@
 package com.project.sooktoring.mentoring.service;
 
+import com.project.sooktoring.common.exception.CustomException;
 import com.project.sooktoring.mentoring.domain.Mentoring;
 import com.project.sooktoring.mentoring.domain.MentoringCard;
 import com.project.sooktoring.mentoring.dto.request.MtrCardRequest;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.project.sooktoring.common.exception.ErrorCode.*;
+
 @RequiredArgsConstructor
 @Service
 public class MentoringCardService {
@@ -28,18 +31,14 @@ public class MentoringCardService {
     }
 
     public MtrCardFromResponse getMentoringCardFromMe(Long menteeId, Long mtrCardId) {
-        Optional<Mentoring> mentoringOptional = mentoringRepository.findById(mtrCardId);
-        if (mentoringOptional.isPresent() &&
-                Objects.equals(mentoringOptional.get().getMenteeUserProfile().getId(), menteeId)) {
-
-            Optional<MentoringCard> mentoringCardOptional = mentoringCardRepository.findById(mtrCardId);
-            if (mentoringCardOptional.isPresent()) {
-                return mentoringCardRepository.findFromDtoById(mtrCardId);
-            }
-            //나중에 예외처리
+        Mentoring mentoring = mentoringRepository.findById(mtrCardId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING));
+        if (Objects.equals(mentoring.getMenteeUserProfile().getId(), menteeId)) {
+            mentoringCardRepository.findById(mtrCardId)
+                    .orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING_CARD));
+            return mentoringCardRepository.findFromDtoById(mtrCardId);
         }
-        //나중에 예외처리
-        return null;
+        throw new CustomException(UNAUTHORIZED_MENTORING_ACCESS);
     }
 
     public List<MtrCardToResponse> getMentoringCardListToMe(Long mentorId) {
@@ -48,56 +47,48 @@ public class MentoringCardService {
 
     @Transactional
     public void save(Long menteeId, Long mtrId, MtrCardRequest mtrCardRequest) {
-        Optional<Mentoring> mentoringOptional = mentoringRepository.findById(mtrId);
-        if (mentoringOptional.isPresent() &&
-                Objects.equals(mentoringOptional.get().getMenteeUserProfile().getId(), menteeId) &&
-                mentoringOptional.get().getState().equals(MentoringState.END)) {
+        Mentoring mentoring = mentoringRepository.findById(mtrId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING));
+        if (Objects.equals(mentoring.getMenteeUserProfile().getId(), menteeId)) {
+            if (mentoring.getState().equals(MentoringState.END)) {
+                Optional<MentoringCard> mentoringCardOptional = mentoringCardRepository.findById(mtrId);
+                if (mentoringCardOptional.isEmpty()) {
+                    MentoringCard mentoringCard = MentoringCard.builder()
+                            .mentoring(mentoring)
+                            .title(mtrCardRequest.getTitle())
+                            .content(mtrCardRequest.getContent())
+                            .build();
 
-            Optional<MentoringCard> mentoringCardOptional = mentoringCardRepository.findById(mtrId);
-            if (mentoringCardOptional.isEmpty()) {
-                Mentoring mentoring = mentoringOptional.get();
-                MentoringCard mentoringCard = MentoringCard.builder()
-                        .mentoring(mentoring)
-                        .title(mtrCardRequest.getTitle())
-                        .content(mtrCardRequest.getContent())
-                        .build();
-
-                mentoringCardRepository.save(mentoringCard);
+                    mentoringCardRepository.save(mentoringCard);
+                }
+                throw new CustomException(ALREADY_MENTORING_CARD_EXISTS);
             }
-            //나중에 예외처리
+            throw new CustomException(FORBIDDEN_MENTORING_CARD_WRITE);
         }
-        //나중에 예외처리
+        throw new CustomException(UNAUTHORIZED_MENTORING_ACCESS);
     }
 
     @Transactional
     public void update(Long menteeId, Long mtrCardId, MtrCardRequest mtrCardRequest) {
-        Optional<Mentoring> mentoringOptional = mentoringRepository.findById(mtrCardId);
-        if (mentoringOptional.isPresent() &&
-                Objects.equals(mentoringOptional.get().getMenteeUserProfile().getId(), menteeId)) {
-
-            Optional<MentoringCard> mentoringCardOptional = mentoringCardRepository.findById(mtrCardId);
-            if (mentoringCardOptional.isPresent()) {
-                MentoringCard mentoringCard = mentoringCardOptional.get();
+        Mentoring mentoring = mentoringRepository.findById(mtrCardId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING));
+        if (Objects.equals(mentoring.getMenteeUserProfile().getId(), menteeId)) {
+            MentoringCard mentoringCard = mentoringCardRepository.findById(mtrCardId)
+                    .orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING_CARD));
                 mentoringCard.updateCard(mtrCardRequest.getTitle(), mtrCardRequest.getContent());
-            }
-            //나중에 예외처리
         }
-        //나중에 예외처리
+        throw new CustomException(UNAUTHORIZED_MENTORING_ACCESS);
     }
 
     @Transactional
     public void delete(Long menteeId, Long mtrCardId) {
-        Optional<Mentoring> mentoringOptional = mentoringRepository.findById(mtrCardId);
-        if (mentoringOptional.isPresent() &&
-                Objects.equals(mentoringOptional.get().getMenteeUserProfile().getId(), menteeId)) {
-
-            Optional<MentoringCard> mentoringCardOptional = mentoringCardRepository.findById(mtrCardId);
-            if (mentoringCardOptional.isPresent()) {
-                MentoringCard mentoringCard = mentoringCardOptional.get();
-                mentoringCardRepository.delete(mentoringCard);
-            }
-            //나중에 예외처리
+        Mentoring mentoring = mentoringRepository.findById(mtrCardId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING));
+        if (Objects.equals(mentoring.getMenteeUserProfile().getId(), menteeId)) {
+            MentoringCard mentoringCard = mentoringCardRepository.findById(mtrCardId)
+                    .orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING_CARD));
+            mentoringCardRepository.delete(mentoringCard);
         }
-        //나중에 예외처리
+        throw new CustomException(UNAUTHORIZED_MENTORING_ACCESS);
     }
 }

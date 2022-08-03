@@ -1,7 +1,6 @@
 package com.project.sooktoring.user.auth.jwt;
 
-import com.project.sooktoring.exception.domain.user.auth.ExpiredAccessTokenException;
-import com.project.sooktoring.exception.domain.user.auth.ExpiredRefreshTokenException;
+import com.project.sooktoring.common.exception.CustomException;
 import io.jsonwebtoken.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.security.Key;
 import java.util.Date;
+
+import static com.project.sooktoring.common.exception.ErrorCode.*;
 
 @Getter
 @Slf4j
@@ -46,9 +47,9 @@ public class AuthToken {
                     .getBody();
         } catch (ExpiredJwtException e) {
             if (e.getClaims().getSubject() != null) {
-                throw new ExpiredAccessTokenException(e.getHeader(), e.getClaims(), "Expired Access Token");
+                throw new CustomException(INVALID_ACCESS_TOKEN);
             } else {
-                throw new ExpiredRefreshTokenException(e.getHeader(), e.getClaims(), "Expired Refresh Token");
+                throw new CustomException(INVALID_REFRESH_TOKEN);
             }
         }
         return true;

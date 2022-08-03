@@ -1,8 +1,8 @@
 package com.project.sooktoring.user.auth.service;
 
+import com.project.sooktoring.common.exception.CustomException;
 import com.project.sooktoring.user.auth.dto.request.TokenRequest;
 import com.project.sooktoring.user.auth.dto.response.TokenResponse;
-import com.project.sooktoring.exception.domain.user.auth.ExpiredRefreshTokenException;
 import com.project.sooktoring.user.auth.jwt.AuthToken;
 import com.project.sooktoring.user.auth.jwt.AuthTokenProvider;
 import com.project.sooktoring.user.auth.domain.RefreshToken;
@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import static com.project.sooktoring.common.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -32,12 +34,12 @@ public class AuthService {
             String providerId = accessToken.getTokenClaims().getSubject();
             Long userId = accessToken.getTokenClaims().get("userId", Long.class);
 
-            //DB에서 providerId 기반으로 Refresh Token 값 get
+            //DB에서 userId 기반으로 Refresh Token 값 get
             RefreshToken dbRefreshToken = refreshTokenRepository.findByKey(userId)
-                    .orElseThrow(() -> new ExpiredRefreshTokenException("Expired Refresh Token"));
+                    .orElseThrow(() -> new CustomException(INVALID_REFRESH_TOKEN));
             //Refresh Token 일치 검사
             if (!dbRefreshToken.getValue().equals(refreshToken.getToken())) {
-                throw new ExpiredRefreshTokenException("Invalid Refresh Token");
+                throw new CustomException(INVALID_REFRESH_TOKEN);
             }
 
             //새로운 토큰 생성

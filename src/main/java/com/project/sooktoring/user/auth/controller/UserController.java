@@ -1,6 +1,6 @@
 package com.project.sooktoring.user.auth.controller;
 
-import com.project.sooktoring.exception.handler.dto.AuthExResponse;
+import com.project.sooktoring.common.exception.ErrorResponse;
 import com.project.sooktoring.user.auth.util.CurrentUser;
 import com.project.sooktoring.user.auth.util.UserPrincipal;
 import com.project.sooktoring.user.auth.domain.User;
@@ -34,7 +34,7 @@ public class UserController {
                     description = "만료된 엑세스 토큰이 전달된 경우",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = AuthExResponse.class)
+                            schema = @Schema(implementation = ErrorResponse.class)
                     )
             ),
             @ApiResponse(
@@ -42,7 +42,7 @@ public class UserController {
                     description = "유효하지 않은 JWT 토큰 전달된 경우",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = AuthExResponse.class)
+                            schema = @Schema(implementation = ErrorResponse.class)
                     )
             )
     })

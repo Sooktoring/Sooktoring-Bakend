@@ -35,10 +35,10 @@ public class UserProfileController {
 
     @Operation(summary = "나의 프로필 수정", description = "나의 프로필 수정")
     @PutMapping(value = "/me", consumes = {APPLICATION_JSON_VALUE, MULTIPART_FORM_DATA_VALUE})
-    public String updateMyUserProfile(@RequestPart @Validated UserProfileRequest userProfileRequest,
-                                      @RequestPart MultipartFile file,
-                                      @CurrentUser UserPrincipal currentUser) {
-        userProfileService.update(userProfileRequest, file, currentUser.getUserId());
+    public String updateMyUserProfile(@CurrentUser UserPrincipal currentUser,
+                                      @RequestPart @Validated UserProfileRequest userProfileRequest,
+                                      @RequestPart MultipartFile file) {
+        userProfileService.update(currentUser.getUserId(), userProfileRequest, file);
         return "프로필 수정이 완료되었습니다."; //나중에 DTO로 변경
     }
 

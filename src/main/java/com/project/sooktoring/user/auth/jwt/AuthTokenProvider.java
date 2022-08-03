@@ -1,6 +1,6 @@
 package com.project.sooktoring.user.auth.jwt;
 
-import com.project.sooktoring.exception.domain.user.auth.ExpiredAccessTokenException;
+import com.project.sooktoring.common.exception.CustomException;
 import com.project.sooktoring.user.auth.util.UserPrincipal;
 import com.project.sooktoring.user.auth.enumerate.Role;
 import com.project.sooktoring.user.auth.domain.User;
@@ -19,7 +19,8 @@ import java.security.Key;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Optional;
+
+import static com.project.sooktoring.common.exception.ErrorCode.*;
 
 @Slf4j
 @Component
@@ -61,14 +62,11 @@ public class AuthTokenProvider {
    public Authentication getAuthentication(AuthToken authToken) {
        Claims claims = authToken.getTokenClaims();
        Long userId = claims.get("userId", Long.class);
-       Optional<User> userOptional = userRepository.findById(userId);
-       if (userOptional.isEmpty()) {
-          throw new ExpiredAccessTokenException(null, claims, "탈퇴한 이용자입니다.");
-       }
+       User user = userRepository.findById(userId)
+               .orElseThrow(() -> new CustomException(INVALID_ACCESS_TOKEN));
+       Role role = user.getRole();
 
-       Role role = userOptional.get().getRole();
        Collection<? extends GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role.name()));
-
        UserPrincipal principal = UserPrincipal.create(userId, claims.getSubject(), authorities);
        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
    }
