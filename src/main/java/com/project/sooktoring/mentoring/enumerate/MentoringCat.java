@@ -2,7 +2,9 @@ package com.project.sooktoring.mentoring.enumerate;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.project.sooktoring.exception.global.EnumConversionException;
+import com.project.sooktoring.common.exception.CustomException;
+
+import static com.project.sooktoring.common.exception.ErrorCode.*;
 
 public enum MentoringCat {
 
@@ -22,7 +24,7 @@ public enum MentoringCat {
                 return cat;
             }
         }
-        throw new EnumConversionException("일치하는 MentoringCat 타입 enum 값이 없습니다.", value);
+        throw new CustomException(NOT_FOUND_MENTORING_CAT);
     }
 
     //직렬화

@@ -1,8 +1,8 @@
 package com.project.sooktoring.user.auth.controller;
 
+import com.project.sooktoring.common.exception.ErrorResponse;
 import com.project.sooktoring.user.auth.dto.request.AuthRequest;
 import com.project.sooktoring.user.auth.dto.request.TokenRequest;
-import com.project.sooktoring.exception.handler.dto.AuthExResponse;
 import com.project.sooktoring.user.auth.dto.response.AuthResponse;
 import com.project.sooktoring.user.auth.dto.response.TokenResponse;
 import com.project.sooktoring.user.auth.service.AuthService;
@@ -39,7 +39,7 @@ public class AuthController {
                     description = "유효하지 않은 구글 아이디 토큰",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = AuthExResponse.class)
+                            schema = @Schema(implementation = ErrorResponse.class)
                     )
             ),
             @ApiResponse(
@@ -47,7 +47,7 @@ public class AuthController {
                     description = "구글 리소스 서버 접근 거부",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = AuthExResponse.class)
+                            schema = @Schema(implementation = ErrorResponse.class)
                     )
             )
     })
@@ -68,7 +68,7 @@ public class AuthController {
                     description = "만료된 리프레시 토큰",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = AuthExResponse.class)
+                            schema = @Schema(implementation = ErrorResponse.class)
                     )
             ),
             @ApiResponse(
@@ -76,7 +76,7 @@ public class AuthController {
                     description = "유효하지 않은 JWT 토큰",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = AuthExResponse.class)
+                            schema = @Schema(implementation = ErrorResponse.class)
                     )
             )
     })

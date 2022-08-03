@@ -5,17 +5,20 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.project.sooktoring.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
+import static com.project.sooktoring.common.exception.ErrorCode.FAILED_FILE_UPLOAD;
+
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class AwsS3Service {
@@ -36,7 +39,7 @@ public class AwsS3Service {
             amazonS3.putObject(new PutObjectRequest(bucketName, fileName, inputStream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch(IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
+            throw new CustomException(FAILED_FILE_UPLOAD);
         }
 
         return amazonS3.getUrl(bucketName, fileName).toString();
@@ -49,7 +52,7 @@ public class AwsS3Service {
         try {
             amazonS3.deleteObject(bucketName, originImgUrl.split("/")[3]);
         } catch (AmazonServiceException e) {
-            e.printStackTrace();
+            log.info("error = ", e);
         }
     }
 

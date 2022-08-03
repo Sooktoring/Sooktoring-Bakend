@@ -1,7 +1,7 @@
 package com.project.sooktoring.common.config;
 
 import com.fasterxml.classmate.TypeResolver;
-import com.project.sooktoring.exception.handler.dto.AuthExResponse;
+import com.project.sooktoring.common.exception.ErrorResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -22,7 +22,7 @@ public class SwaggerConfig {
     public Docket api(TypeResolver typeResolver) {
         return new Docket(DocumentationType.OAS_30)
                 .additionalModels(
-                        typeResolver.resolve(AuthExResponse.class)
+                        typeResolver.resolve(ErrorResponse.class)
                 )
                 .useDefaultResponseMessages(false)
                 .select()
