@@ -1,12 +1,14 @@
 package com.project.sooktoring.common.controller;
 
 import com.project.sooktoring.common.service.AwsS3Service;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
+@Api(tags = "AWS S3 테스트 API")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/img")

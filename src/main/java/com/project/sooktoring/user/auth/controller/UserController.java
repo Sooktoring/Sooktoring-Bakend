@@ -30,16 +30,8 @@ public class UserController {
 
     @Operation(summary = "유저 정보 조회", description = "로그인 상태의 유저 정보 조회", responses = {
             @ApiResponse(
-                    responseCode = "400",
-                    description = "만료된 엑세스 토큰이 전달된 경우",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "유효하지 않은 JWT 토큰 전달된 경우",
+                    responseCode = "403",
+                    description = "유효하지 않은 엑세스 토큰이 전달된 경우",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class)
@@ -52,6 +44,7 @@ public class UserController {
         return userOptional.orElse(null);
     }
 
+    @Operation(summary = "유저 탈퇴")
     @DeleteMapping("/me")
     public String withdraw(@CurrentUser UserPrincipal currentUser) {
         userService.withdrawById(currentUser.getUserId());

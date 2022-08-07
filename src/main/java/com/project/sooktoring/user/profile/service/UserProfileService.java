@@ -100,7 +100,7 @@ public class UserProfileService {
         user.changeRole(userProfileRequest.getIsMentor()); //User ROLE 업데이트
 
         String originImageUrl = userProfile.getImageUrl();
-        if (!file.isEmpty()) {
+        if (file != null && !file.isEmpty()) {
             if (StringUtils.hasText(originImageUrl) && !originImageUrl.equals(defaultImageUrl)) {
                 awsS3Service.deleteImg(originImageUrl); //기존 이미지 삭제
             }
