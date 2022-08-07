@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-@Api(tags = "인증 API")
+@Api(tags = "유저 인증 API")
 public class AuthController {
 
     private final GoogleAuthService googleAuthService;
@@ -33,18 +33,10 @@ public class AuthController {
     /**
      * GOOGLE 소셜 로그인 기능
      */
-    @Operation(summary = "구글 로그인", description = "구글 아이디 토큰을 이용하여 사용자 정보 받아 저장하고 엑세스 토큰 반환", responses = {
+    @Operation(summary = "구글 로그인", description = "구글 아이디 토큰을 이용하여 사용자 정보받아 저장하고 JWT 반환", responses = {
             @ApiResponse(
-                    responseCode = "400",
-                    description = "유효하지 않은 구글 아이디 토큰",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "구글 리소스 서버 접근 거부",
+                    responseCode = "403",
+                    description = "유효하지 않은 구글 아이디 토큰 or 구글 리소스 서버 접근 거부",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class)
@@ -62,18 +54,10 @@ public class AuthController {
     /**
      * accessToken 갱신
      */
-    @Operation(summary = "엑세스, 리프레시 토큰 갱신", description = "엑세스 토큰 만료에 따른 엑세스, 리프레시 토큰 갱신", responses = {
+    @Operation(summary = "JWT 갱신", description = "엑세스 토큰 만료에 따른 엑세스, 리프레시 토큰 갱신", responses = {
             @ApiResponse(
-                    responseCode = "400",
+                    responseCode = "403",
                     description = "만료된 리프레시 토큰",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "유효하지 않은 JWT 토큰",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class)

@@ -43,6 +43,6 @@ public class MtrFromResponse {
     @Schema(description = "멘토에게 전하는 말 한마디", example = "감사합니다~")
     protected String talk;
 
-    @Schema(description = "멘토링 상태", example = "APPLY, ACCEPT, REJECT, END, INVALID, WITHDRAW")
+    @Schema(description = "멘토링 상태", example = "ACCEPT")
     protected MentoringState state;
 }

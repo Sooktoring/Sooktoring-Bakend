@@ -16,6 +16,6 @@ public class TokenRequest {
     @Schema(description = "만료된 엑세스 토큰")
     private String accessToken;
 
-    @Schema(description = "엑세스 토큰 재발급받기 위한 리프레시 토큰")
+    @Schema(description = "엑세스 토큰 재발급 받기 위한 리프레시 토큰")
     private String refreshToken;
 }

@@ -35,7 +35,7 @@ public class MtrFromListResponse {
     @Schema(description = "멘토링 카테고리", example = "자소서")
     protected MentoringCat cat;
 
-    @Schema(description = "멘토링 상태", example = "APPLY, ACCEPT, REJECT, END, INVALID, WITHDRAW")
+    @Schema(description = "멘토링 상태", example = "APPLY")
     protected MentoringState state;
 
     @Schema(description = "멘토링 신청날짜", example = "2022/08/01")
