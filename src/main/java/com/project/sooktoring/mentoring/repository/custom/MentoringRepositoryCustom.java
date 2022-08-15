@@ -1,9 +1,6 @@
 package com.project.sooktoring.mentoring.repository.custom;
 
-import com.project.sooktoring.mentoring.dto.response.MtrFromListResponse;
-import com.project.sooktoring.mentoring.dto.response.MtrFromResponse;
-import com.project.sooktoring.mentoring.dto.response.MtrToListResponse;
-import com.project.sooktoring.mentoring.dto.response.MtrToResponse;
+import com.project.sooktoring.mentoring.dto.response.*;
 
 import java.util.List;
 

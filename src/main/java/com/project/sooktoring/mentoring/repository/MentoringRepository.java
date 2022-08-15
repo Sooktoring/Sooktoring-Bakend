@@ -27,9 +27,13 @@ public interface MentoringRepository extends JpaRepository<Mentoring, Long>, Men
     @Query("select mtr from Mentoring mtr where mtr.mentorUserProfile.id = :mentorId and mtr.state = :state")
     List<Mentoring> findByMentorIdAndState(Long mentorId, MentoringState state);
 
+    @Query("select mtr from Mentoring mtr where mtr.menteeUserProfile.id = :menteeId and mtr.state = :state")
+    List<Mentoring> findByMenteeIdAndState(Long menteeId, MentoringState state);
+
     @Query("select mtr from Mentoring mtr where mtr.mentorUserProfile.id = :mentorId")
     List<Mentoring> findByMentorId(Long mentorId);
 
     @Query("select mtr from Mentoring mtr where mtr.menteeUserProfile.id = :menteeId")
     List<Mentoring> findByMenteeId(Long menteeId);
+
 }

@@ -1,5 +1,6 @@
 package com.project.sooktoring.mentoring.controller;
 
+import com.project.sooktoring.mentoring.domain.Mentoring;
 import com.project.sooktoring.mentoring.dto.response.MtrFromListResponse;
 import com.project.sooktoring.mentoring.dto.response.MtrFromResponse;
 import com.project.sooktoring.mentoring.dto.response.MtrToListResponse;
@@ -100,5 +101,11 @@ public class MentoringController {
                                    @Parameter(description = "멘토링 id") @PathVariable Long mtrId) {
         mentoringService.end(currentUser.getUserId(), mtrId);
         return "멘토링 진행을 종료합니다.";
+    }
+
+    @Operation(summary = "채팅방 목록 조회")
+    @PostMapping("/chat/list")
+    public List<Mentoring> getMyChatRoomList(@CurrentUser UserPrincipal currentUser) {
+        return mentoringService.getMyChatRoomList(currentUser.getUserId());
     }
 }

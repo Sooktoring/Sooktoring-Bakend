@@ -2,14 +2,11 @@ package com.project.sooktoring.mentoring.service;
 
 import com.project.sooktoring.common.exception.CustomException;
 import com.project.sooktoring.mentoring.domain.Mentoring;
-import com.project.sooktoring.mentoring.dto.response.MtrFromListResponse;
-import com.project.sooktoring.mentoring.dto.response.MtrFromResponse;
-import com.project.sooktoring.mentoring.dto.response.MtrToListResponse;
-import com.project.sooktoring.mentoring.dto.response.MtrToResponse;
-import com.project.sooktoring.user.profile.domain.UserProfile;
 import com.project.sooktoring.mentoring.dto.request.MtrRequest;
 import com.project.sooktoring.mentoring.dto.request.MtrUpdateRequest;
+import com.project.sooktoring.mentoring.dto.response.*;
 import com.project.sooktoring.mentoring.repository.MentoringRepository;
+import com.project.sooktoring.user.profile.domain.UserProfile;
 import com.project.sooktoring.user.profile.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -119,8 +116,6 @@ public class MentoringService {
         Mentoring mentoring = mentoringRepository.findById(mtrId).orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING));
         if (Objects.equals(mentoring.getMentorUserProfile().getId(), mentorId)) {
             if (mentoring.getState() == APPLY) {
-                //ChatRoom chatRoom = ChatRoom.create(mentoring);
-                //chatRoomRepository.save(chatRoom);
                 mentoring.accept();
             }
             throw new CustomException(FORBIDDEN_MENTORING_ACCEPT);
@@ -152,4 +147,11 @@ public class MentoringService {
         }
         throw new CustomException(UNAUTHORIZED_MENTORING_ACCESS);
     }
+
+    public List<Mentoring> getMyChatRoomList(Long userId) {
+        UserProfile user = userProfileRepository.getById(userId);
+        if(user.getIsMentor()) return mentoringRepository.findByMentorIdAndState(user.getId(), APPLY);
+        else return mentoringRepository.findByMenteeIdAndState(user.getId(), APPLY);
+    }
+
 }
