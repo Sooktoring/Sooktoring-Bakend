@@ -12,6 +12,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.firewall.HttpFirewall;
+import org.springframework.security.web.firewall.StrictHttpFirewall;
 
 @RequiredArgsConstructor
 @Configuration
@@ -21,6 +23,15 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthExceptionHandlerFilter authExceptionHandlerFilter;
+
+    // org.springframework.security.web.firewall.RequestRejectedException: The request was rejected because the URL contained a potentially malicious String ";" 관련 오류
+    @Bean
+    public HttpFirewall allowUrlEncodedSlashHttpFirewall() {
+        StrictHttpFirewall firewall = new StrictHttpFirewall();
+        firewall.setAllowUrlEncodedSlash(true);
+        firewall.setAllowSemicolon(true);
+        return firewall;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
