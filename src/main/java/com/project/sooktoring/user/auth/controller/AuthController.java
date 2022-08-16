@@ -64,7 +64,7 @@ public class AuthController {
                     )
             )
     })
-    @GetMapping("/refresh")
+    @PostMapping("/refresh")
     public ResponseEntity<TokenResponse> refreshToken (@RequestBody TokenRequest tokenRequest,
                                                        HttpServletRequest request) {
         return ResponseEntity
