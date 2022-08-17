@@ -18,18 +18,4 @@ public class TokenResponse {
 
     @Schema(description = "재발급된 리프레시 토큰")
     private String refreshToken;
-
-    @Schema(description = "만료된 엑세스 토큰으로 요청한 method")
-    private String requestMethod;
-
-    @Schema(description = "만료된 엑세스 토큰으로 요청한 uri")
-    private String requestURI;
-
-    @Schema(description = "만료된 엑세스 토큰으로 요청한 body")
-    private Object requestBody;
-
-    public void setToken(String accessToken, String refreshToken) {
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
-    }
 }
