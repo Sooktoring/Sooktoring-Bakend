@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.FetchType.*;
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Getter
@@ -21,14 +22,13 @@ import static javax.persistence.FetchType.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Profile extends BaseTimeEntity {
 
-    @Id
-    @Column(name = "user_id")
+    @Id @GeneratedValue(strategy = IDENTITY)
+    @Column(name = "profile_id")
     private Long id;
 
-    @MapsId
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")
-    private User user; //FK이면서 PK
+    private User user;
 
     @Builder.Default //없으면 null로 들어감
     @OneToMany(mappedBy = "profile")
@@ -63,7 +63,7 @@ public class Profile extends BaseTimeEntity {
     @Column(nullable = false)
     private YearMonth entranceDate; //년월만 다룸
 
-    private YearMonth gradDate;
+    private YearMonth graduationDate; //졸업예정 년월?
 
     private String job;
 
@@ -83,7 +83,7 @@ public class Profile extends BaseTimeEntity {
                 .doubleMajor(new DoubleMajor())
                 .minor(new Minor())
                 .entranceDate(YearMonth.now())
-                .gradDate(YearMonth.now())
+                .graduationDate(YearMonth.now())
                 .job("")
                 .workYear(0L)
                 .imageUrl(defaultImageUrl)
@@ -96,7 +96,7 @@ public class Profile extends BaseTimeEntity {
         this.doubleMajor = userProfileRequest.getDoubleMajor();
         this.minor = userProfileRequest.getMinor();
         this.entranceDate = userProfileRequest.getEntranceDate();
-        this.gradDate = userProfileRequest.getGradDate();
+        this.graduationDate = userProfileRequest.getGraduationDate();
         this.job = userProfileRequest.getJob();
         this.workYear = userProfileRequest.getWorkYear();
         this.isMentor = userProfileRequest.getIsMentor();

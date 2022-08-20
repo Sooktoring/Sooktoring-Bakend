@@ -26,7 +26,7 @@ public class Activity extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "profile_id", nullable = false)
     private Profile profile;
 
     @Column(nullable = false)

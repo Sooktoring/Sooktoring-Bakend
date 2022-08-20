@@ -42,7 +42,7 @@ public class ProfileRequest {
 
     @Schema(description = "졸업년월", example = "2023/02")
     @JsonFormat(pattern = "yyyy/MM", shape = STRING)
-    private YearMonth gradDate;
+    private YearMonth graduationDate;
 
     @Schema(description = "현재 직업", example = "백엔드 개발자")
     private String job;

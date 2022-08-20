@@ -41,7 +41,7 @@ public class ProfileResponse {
 
     @Schema(description = "졸업년월", example = "2023/02")
     @JsonFormat(pattern = "yyyy/MM", shape = STRING)
-    private YearMonth gradDate;
+    private YearMonth graduationDate;
 
     @Schema(description = "현재 직업", example = "백엔드 개발자")
     private String job;
@@ -64,14 +64,14 @@ public class ProfileResponse {
     private List<CareerResponse> careerResponses;
 
     public ProfileResponse(Long id, String realName, MainMajor mainMajor, DoubleMajor doubleMajor, Minor minor,
-                           YearMonth entranceDate, YearMonth gradDate, String job, Long workYear, Boolean isMentor, String imageUrl) {
+                           YearMonth entranceDate, YearMonth graduationDate, String job, Long workYear, Boolean isMentor, String imageUrl) {
         this.id = id;
         this.realName = realName;
         this.mainMajor = mainMajor;
         this.doubleMajor = doubleMajor;
         this.minor = minor;
         this.entranceDate = entranceDate;
-        this.gradDate = gradDate;
+        this.graduationDate = graduationDate;
         this.job = job;
         this.workYear = workYear;
         this.isMentor = isMentor;
