@@ -1,10 +1,10 @@
 package com.project.sooktoring.mentoring.controller;
 
-import com.project.sooktoring.user.auth.util.CurrentUser;
-import com.project.sooktoring.user.auth.util.UserPrincipal;
-import com.project.sooktoring.mentoring.dto.request.MtrCardRequest;
-import com.project.sooktoring.mentoring.dto.response.MtrCardFromResponse;
-import com.project.sooktoring.mentoring.dto.response.MtrCardToResponse;
+import com.project.sooktoring.user.util.CurrentUser;
+import com.project.sooktoring.user.util.UserPrincipal;
+import com.project.sooktoring.mentoring.dto.request.MentoringCardRequest;
+import com.project.sooktoring.mentoring.dto.response.MentoringCardFromResponse;
+import com.project.sooktoring.mentoring.dto.response.MentoringCardToResponse;
 import com.project.sooktoring.mentoring.service.MentoringCardService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,14 +24,14 @@ public class MentoringCardController {
 
     @Operation(summary = "내가 쓴 감사카드 리스트 조회")
     @GetMapping("/from")
-    public List<MtrCardFromResponse> getMentoringCardListFromMe(@CurrentUser UserPrincipal currentUser) {
+    public List<MentoringCardFromResponse> getMentoringCardListFromMe(@CurrentUser UserPrincipal currentUser) {
         return mentoringCardService.getMentoringCardListFromMe(currentUser.getUserId());
     }
 
     @Operation(summary = "내가 쓴 감사카드 상세 조회")
     @GetMapping("/from/{mtrCardId}")
-    public MtrCardFromResponse getMentoringCardFromMe(@CurrentUser UserPrincipal currentUser,
-                                                      @PathVariable Long mtrCardId) {
+    public MentoringCardFromResponse getMentoringCardFromMe(@CurrentUser UserPrincipal currentUser,
+                                                            @PathVariable Long mtrCardId) {
         return mentoringCardService.getMentoringCardFromMe(currentUser.getUserId(), mtrCardId);
     }
 
@@ -39,7 +39,7 @@ public class MentoringCardController {
     @PostMapping("/from/{mtrId}")
     public String saveMtrCard(@CurrentUser UserPrincipal userPrincipal,
                               @PathVariable Long mtrId,
-                              @RequestBody @Validated MtrCardRequest mtrCardRequest) {
+                              @RequestBody @Validated MentoringCardRequest mtrCardRequest) {
         mentoringCardService.save(userPrincipal.getUserId(), mtrId, mtrCardRequest);
         return "감사카드 작성이 완료되었습니다.";
     }
@@ -48,7 +48,7 @@ public class MentoringCardController {
     @PutMapping("/from/{mtrCardId}")
     public String updateMtrCard(@CurrentUser UserPrincipal userPrincipal,
                                 @PathVariable Long mtrCardId,
-                                @RequestBody @Validated MtrCardRequest mtrCardRequest) {
+                                @RequestBody @Validated MentoringCardRequest mtrCardRequest) {
         mentoringCardService.update(userPrincipal.getUserId(), mtrCardId, mtrCardRequest);
         return "감사카드 수정이 완료되었습니다.";
     }
@@ -63,7 +63,7 @@ public class MentoringCardController {
 
     @Operation(summary = "나에게 온 감사카드 리스트 조회", description = "only 멘토")
     @GetMapping("/to")
-    public List<MtrCardToResponse> getMentoringCardListToMe(@CurrentUser UserPrincipal currentUser) {
+    public List<MentoringCardToResponse> getMentoringCardListToMe(@CurrentUser UserPrincipal currentUser) {
         return mentoringCardService.getMentoringCardListToMe(currentUser.getUserId());
     }
 }

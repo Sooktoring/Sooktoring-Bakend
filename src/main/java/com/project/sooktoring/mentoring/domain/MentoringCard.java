@@ -19,18 +19,18 @@ import static lombok.AccessLevel.PROTECTED;
 public class MentoringCard extends BaseTimeEntity {
 
     @Id
-    @Column(name = "mtr_card_id")
+    @Column(name = "mentoring_card_id")
     private Long id;
 
     @MapsId
     @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "mtr_card_id")
+    @JoinColumn(name = "mentoring_card_id")
     private Mentoring mentoring; //FK이면서 PK
 
-    @Column(name = "mtr_card_title", nullable = false, length = 100)
+    @Column(name = "mentoring_card_title", nullable = false, length = 100)
     private String title;
 
-    @Column(name = "mtr_card_content", nullable = false, length = 500)
+    @Column(name = "mentoring_card_content", nullable = false, length = 500)
     private String content;
 
     public void updateCard(String title, String content) {

@@ -1,14 +1,14 @@
 package com.project.sooktoring.mentoring.controller;
 
 import com.project.sooktoring.mentoring.domain.Mentoring;
-import com.project.sooktoring.mentoring.dto.response.MtrFromListResponse;
-import com.project.sooktoring.mentoring.dto.response.MtrFromResponse;
-import com.project.sooktoring.mentoring.dto.response.MtrToListResponse;
-import com.project.sooktoring.mentoring.dto.response.MtrToResponse;
-import com.project.sooktoring.user.auth.util.CurrentUser;
-import com.project.sooktoring.user.auth.util.UserPrincipal;
-import com.project.sooktoring.mentoring.dto.request.MtrRequest;
-import com.project.sooktoring.mentoring.dto.request.MtrUpdateRequest;
+import com.project.sooktoring.mentoring.dto.response.MentoringFromListResponse;
+import com.project.sooktoring.mentoring.dto.response.MentoringFromResponse;
+import com.project.sooktoring.mentoring.dto.response.MentoringToListResponse;
+import com.project.sooktoring.mentoring.dto.response.MentoringToResponse;
+import com.project.sooktoring.user.util.CurrentUser;
+import com.project.sooktoring.user.util.UserPrincipal;
+import com.project.sooktoring.mentoring.dto.request.MentoringRequest;
+import com.project.sooktoring.mentoring.dto.request.MentoringUpdateRequest;
 import com.project.sooktoring.mentoring.service.MentoringService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,21 +28,21 @@ public class MentoringController {
 
     @Operation(summary = "나의 멘토링 신청내역 리스트 조회")
     @GetMapping("/from")
-    public List<MtrFromListResponse> getMyMentoringList(@CurrentUser UserPrincipal currentUser) {
+    public List<MentoringFromListResponse> getMyMentoringList(@CurrentUser UserPrincipal currentUser) {
         return mentoringService.getMyMentoringList(currentUser.getUserId());
     }
 
     @Operation(summary = "나의 멘토링 신청내역 상세 조회")
     @GetMapping("/from/{mtrId}")
-    public MtrFromResponse getMyMentoring(@CurrentUser UserPrincipal currentUser,
-                                          @Parameter(description = "멘토링 id") @PathVariable Long mtrId) {
+    public MentoringFromResponse getMyMentoring(@CurrentUser UserPrincipal currentUser,
+                                                @Parameter(description = "멘토링 id") @PathVariable Long mtrId) {
         return mentoringService.getMyMentoring(currentUser.getUserId(), mtrId);
     }
 
     @Operation(summary = "멘토링 신청내역 등록", description = "상태 기본값 APPLY")
     @PostMapping("/from")
     public String saveMentoring(@CurrentUser UserPrincipal currentUser,
-                                @RequestBody MtrRequest mtrRequest) {
+                                @RequestBody MentoringRequest mtrRequest) {
         mentoringService.save(currentUser.getUserId(), mtrRequest);
         return "멘토링 신청이 완료되었습니다.";
     }
@@ -51,7 +51,7 @@ public class MentoringController {
     @PutMapping("/from/{mtrId}")
     public String updateMentoring(@CurrentUser UserPrincipal currentUser,
                                   @Parameter(description = "멘토링 id") @PathVariable Long mtrId,
-                                  @RequestBody MtrUpdateRequest mtrUpdateRequest) {
+                                  @RequestBody MentoringUpdateRequest mtrUpdateRequest) {
         //카테고리, 이유, 한마디
         mentoringService.update(currentUser.getUserId(), mtrId, mtrUpdateRequest);
         return "멘토링 수정이 완료되었습니다.";
@@ -68,14 +68,14 @@ public class MentoringController {
     //현재 이용자가 멘토인 경우에 한해서만
     @Operation(summary = "나에게 요청된 멘토링 신청내역 리스트 조회")
     @GetMapping("/to")
-    public List<MtrToListResponse> getMentoringListToMe(@CurrentUser UserPrincipal currentUser) {
+    public List<MentoringToListResponse> getMentoringListToMe(@CurrentUser UserPrincipal currentUser) {
         return mentoringService.getMentoringListToMe(currentUser.getUserId());
     }
 
     @Operation(summary = "나에게 요청된 멘토링 신청내역 상세 조회")
     @GetMapping("/to/{mtrId}")
-    public MtrToResponse getMentoringToMe(@CurrentUser UserPrincipal currentUser,
-                                          @Parameter(description = "멘토링 id") @PathVariable Long mtrId) {
+    public MentoringToResponse getMentoringToMe(@CurrentUser UserPrincipal currentUser,
+                                                @Parameter(description = "멘토링 id") @PathVariable Long mtrId) {
         return mentoringService.getMentoringToMe(currentUser.getUserId(), mtrId);
     }
 

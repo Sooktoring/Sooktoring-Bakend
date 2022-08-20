@@ -1,9 +1,9 @@
 package com.project.sooktoring.mentoring.domain;
 
 import com.project.sooktoring.common.domain.BaseTimeEntity;
+import com.project.sooktoring.profile.domain.Profile;
 import com.project.sooktoring.mentoring.enumerate.MentoringCat;
 import com.project.sooktoring.mentoring.enumerate.MentoringState;
-import com.project.sooktoring.user.profile.domain.UserProfile;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,30 +25,30 @@ import static lombok.AccessLevel.PROTECTED;
 public class Mentoring extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "mtr_id")
+    @Column(name = "mentoring_id")
     private Long id;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "mentor_id")
-    private UserProfile mentorUserProfile;
+    private Profile mentorProfile;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "mentee_id")
-    private UserProfile menteeUserProfile;
+    private Profile menteeProfile;
 
     @Enumerated(value = STRING)
-    @Column(name = "mtr_cat", nullable = false)
+    @Column(name = "mentoring_cat", nullable = false)
     private MentoringCat cat;
 
-    @Column(name = "mtr_reason", nullable = false)
+    @Column(name = "mentoring_reason", nullable = false)
     private String reason;
 
-    @Column(name = "mtr_talk", nullable = false)
+    @Column(name = "mentoring_talk", nullable = false)
     private String talk;
 
     @Builder.Default
     @Enumerated(value = STRING)
-    @Column(name = "mtr_state", nullable = false)
+    @Column(name = "mentoring_state", nullable = false)
     private MentoringState state = APPLY;
 
     public static Mentoring create(MentoringCat cat, String reason, String talk) {
@@ -90,10 +90,10 @@ public class Mentoring extends BaseTimeEntity {
     }
 
     //연관관계 편의 메소드
-    public void setMentorMentee(UserProfile mentorUserProfile, UserProfile menteeUserProfile) {
-        this.mentorUserProfile = mentorUserProfile;
-        this.menteeUserProfile = menteeUserProfile;
-        menteeUserProfile.getMentoringListFromMe().add(this);
-        mentorUserProfile.getMentoringListToMe().add(this);
+    public void setMentorMentee(Profile mentorProfile, Profile menteeProfile) {
+        this.mentorProfile = mentorProfile;
+        this.menteeProfile = menteeProfile;
+        mentorProfile.getMentoringListToMe().add(this);
+        menteeProfile.getMentoringListFromMe().add(this);
     }
 }
