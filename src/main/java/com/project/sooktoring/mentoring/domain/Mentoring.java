@@ -29,11 +29,11 @@ public class Mentoring extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "mentor_id")
+    @JoinColumn(name = "mentor_profile_id")
     private Profile mentorProfile;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "mentee_id")
+    @JoinColumn(name = "mentee_profile_id")
     private Profile menteeProfile;
 
     @Enumerated(value = STRING)
@@ -90,7 +90,7 @@ public class Mentoring extends BaseTimeEntity {
     }
 
     //연관관계 편의 메소드
-    public void setMentorMentee(Profile mentorProfile, Profile menteeProfile) {
+    public void setMentorAndMentee(Profile mentorProfile, Profile menteeProfile) {
         this.mentorProfile = mentorProfile;
         this.menteeProfile = menteeProfile;
         mentorProfile.getMentoringListToMe().add(this);

@@ -16,10 +16,10 @@ import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
 
-@RestController
-@RequestMapping("/profiles")
-@RequiredArgsConstructor
 @Api(tags = "프로필 API")
+@RequiredArgsConstructor
+@RequestMapping("/profiles")
+@RestController
 public class ProfileController {
 
     private final ProfileService profileService;

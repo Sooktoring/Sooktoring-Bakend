@@ -29,13 +29,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.project.sooktoring.common.exception.ErrorCode.*;
 
-@Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Service
 public class ProfileService {
 
     private final UserUtil userUtil;
@@ -80,13 +78,6 @@ public class ProfileService {
         throw new CustomException(NOT_FOUND_MENTOR);
     }
 
-    @Transactional
-    public void withdraw(Long profileId) {
-        activityRepository.deleteByProfileId(profileId);
-        careerRepository.deleteByProfileId(profileId);
-        profileRepository.deleteById(profileId);
-    }
-
     //Activity, Career 추가, 수정, 삭제 한번에 수행
     @Transactional
     public ProfileResponse update(ProfileRequest profileRequest, MultipartFile file) {
@@ -103,6 +94,13 @@ public class ProfileService {
         _changeCareer(profileRequest, profile); //Career 추가, 수정, 삭제
 
         return _getProfileResponse(profile.getId());
+    }
+
+    @Transactional
+    public void withdraw(Long profileId) {
+        activityRepository.deleteByProfileId(profileId);
+        careerRepository.deleteByProfileId(profileId);
+        profileRepository.deleteById(profileId);
     }
 
     //=== private 메소드 ===

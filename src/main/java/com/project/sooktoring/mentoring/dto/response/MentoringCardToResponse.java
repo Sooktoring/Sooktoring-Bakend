@@ -10,10 +10,10 @@ import lombok.Getter;
 public class MentoringCardToResponse {
 
     @Schema(description = "멘토링 감사카드 id", example = "1")
-    protected Long mtrCardId;
+    protected Long mentoringCardId;
 
-    @Schema(description = "멘티 id", example = "2")
-    private Long menteeId;
+    @Schema(description = "멘티 프로필 id", example = "2")
+    private Long menteeProfileId;
 
     @Schema(description = "멘티 프로필 이미지 url")
     private String menteeImageUrl;

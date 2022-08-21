@@ -16,9 +16,9 @@ import javax.validation.constraints.NotNull;
 @Schema(description = "멘토링 신청서 등록 시 정보 전달하는 DTO")
 public class MentoringRequest {
 
-    @Schema(description = "신청한 멘토 id", example = "1")
+    @Schema(description = "신청한 멘토 프로필 id", example = "1")
     @NotNull
-    private Long mentorId;
+    private Long mentorProfileId;
 
     @Schema(description = "멘토링 카테고리", example = "자소서")
     @NotNull

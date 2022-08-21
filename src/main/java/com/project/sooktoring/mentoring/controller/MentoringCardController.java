@@ -7,10 +7,13 @@ import com.project.sooktoring.mentoring.service.MentoringCardService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.*;
 
 @Api(tags = "멘토링 감사카드 API")
 @RequiredArgsConstructor
@@ -32,32 +35,32 @@ public class MentoringCardController {
         return mentoringCardService.getMentoringCardFromMe(mentoringCardId);
     }
 
-    @Operation(summary = "감사카드 작성", description = "해당 멘토링 종료 상태일 때에만 작성 가능")
-    @PostMapping("/from/{mentoringId}")
-    public String saveMtrCard(@PathVariable Long mentoringId,
-                              @RequestBody @Validated MentoringCardRequest mtrCardRequest) {
-        mentoringCardService.save(mentoringId, mtrCardRequest);
-        return "감사카드 작성이 완료되었습니다.";
-    }
-
-    @Operation(summary = "감사카드 수정")
-    @PutMapping("/from/{mentoringCardId}")
-    public String updateMtrCard(@PathVariable Long mentoringCardId,
-                                @RequestBody @Validated MentoringCardRequest mtrCardRequest) {
-        mentoringCardService.update(mentoringCardId, mtrCardRequest);
-        return "감사카드 수정이 완료되었습니다.";
-    }
-
-    @Operation(summary = "감사카드 삭제")
-    @DeleteMapping("/from/{mentoringCardId}")
-    public String deleteMtrCard(@PathVariable Long mentoringCardId) {
-        mentoringCardService.delete(mentoringCardId);
-        return "감사카드 삭제가 완료되었습니다.";
-    }
-
     @Operation(summary = "나에게 온 감사카드 리스트 조회", description = "only 멘토")
     @GetMapping("/to")
     public List<MentoringCardToResponse> getMentoringCardListToMe() {
         return mentoringCardService.getMentoringCardListToMe();
+    }
+
+    @Operation(summary = "감사카드 작성", description = "해당 멘토링 종료 상태일 때에만 작성 가능")
+    @PostMapping("/from/{mentoringId}")
+    public ResponseEntity<Void> saveMentoringCard(@PathVariable Long mentoringId,
+                                                  @RequestBody @Validated MentoringCardRequest mentoringCardRequest) {
+        mentoringCardService.save(mentoringId, mentoringCardRequest);
+        return ResponseEntity.status(CREATED).build();
+    }
+
+    @Operation(summary = "감사카드 수정")
+    @PutMapping("/from/{mentoringCardId}")
+    public ResponseEntity<Void> updateMentoringCard(@PathVariable Long mentoringCardId,
+                                                    @RequestBody @Validated MentoringCardRequest mentoringCardRequest) {
+        mentoringCardService.update(mentoringCardId, mentoringCardRequest);
+        return ResponseEntity.status(OK).build();
+    }
+
+    @Operation(summary = "감사카드 삭제")
+    @DeleteMapping("/from/{mentoringCardId}")
+    public ResponseEntity<Void> deleteMentoringCard(@PathVariable Long mentoringCardId) {
+        mentoringCardService.delete(mentoringCardId);
+        return ResponseEntity.status(NO_CONTENT).build();
     }
 }

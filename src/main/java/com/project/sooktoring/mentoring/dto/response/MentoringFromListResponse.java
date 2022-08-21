@@ -21,10 +21,10 @@ import static com.fasterxml.jackson.annotation.JsonFormat.Shape.*;
 public class MentoringFromListResponse {
 
     @Schema(description = "멘토링 id", example = "1")
-    protected Long mtrId;
+    protected Long mentoringId;
 
-    @Schema(description = "신청한 멘토 id", example = "1")
-    private Long mentorId;
+    @Schema(description = "신청한 멘토 프로필 id", example = "1")
+    private Long mentorProfileId;
 
     @Schema(description = "신청한 멘토 실명", example = "김영희")
     private String mentorRealName;

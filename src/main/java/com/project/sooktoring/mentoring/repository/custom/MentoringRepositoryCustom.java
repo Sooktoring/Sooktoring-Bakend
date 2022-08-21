@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface MentoringRepositoryCustom {
 
-    MentoringFromResponse findFromDtoById(Long mtrId);
-    List<MentoringFromListResponse> findAllFromDto(Long menteeId);
-    MentoringToResponse findToDtoById(Long mtrId);
-    List<MentoringToListResponse> findAllToDto(Long mentorId);
+    MentoringFromResponse findFromDtoById(Long mentoringId);
+    List<MentoringFromListResponse> findAllFromDto(Long menteeProfileId);
+    MentoringToResponse findToDtoById(Long mentoringId);
+    List<MentoringToListResponse> findAllToDto(Long mentorProfileId);
 }

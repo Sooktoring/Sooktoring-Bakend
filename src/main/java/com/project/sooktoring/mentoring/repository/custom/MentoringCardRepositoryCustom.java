@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface MentoringCardRepositoryCustom {
 
-    List<MentoringCardFromResponse> findAllFromDto(Long menteeId);
-    MentoringCardFromResponse findFromDtoById(Long mtrCardId);
-    List<MentoringCardToResponse> findAllToDto(Long mentorId);
+    List<MentoringCardFromResponse> findAllFromDto(Long menteeProfileId);
+    MentoringCardFromResponse findFromDtoById(Long mentoringCardId);
+    List<MentoringCardToResponse> findAllToDto(Long mentorProfileId);
 }

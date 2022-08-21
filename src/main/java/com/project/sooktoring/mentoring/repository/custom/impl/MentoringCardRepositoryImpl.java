@@ -19,63 +19,63 @@ public class MentoringCardRepositoryImpl implements MentoringCardRepositoryCusto
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<MentoringCardFromResponse> findAllFromDto(Long menteeId) {
-        QProfile mentor = new QProfile("mentor");
+    public List<MentoringCardFromResponse> findAllFromDto(Long menteeProfileId) {
+        QProfile mentorProfile = new QProfile("mentorProfile");
         return queryFactory
                 .select(
                         Projections.constructor(MentoringCardFromResponse.class,
                                 mentoringCard.id,
                                 mentoring.mentorProfile.id,
-                                mentor.imageUrl,
+                                mentorProfile.imageUrl,
                                 mentoringCard.title,
                                 mentoringCard.content
                         )
                 )
                 .from(mentoringCard)
                 .join(mentoringCard.mentoring, mentoring)
-                .on(mentoring.menteeProfile.id.eq(menteeId))
-                .leftJoin(mentoring.mentorProfile, mentor)
+                .on(mentoring.menteeProfile.id.eq(menteeProfileId))
+                .leftJoin(mentoring.mentorProfile, mentorProfile)
                 .orderBy(mentoringCard.createdDate.desc())
                 .fetch();
     }
 
     @Override
-    public MentoringCardFromResponse findFromDtoById(Long mtrCardId) {
-        QProfile mentor = new QProfile("mentor");
+    public MentoringCardFromResponse findFromDtoById(Long mentoringCardId) {
+        QProfile mentorProfile = new QProfile("mentorProfile");
         return queryFactory
                 .select(
                         Projections.constructor(MentoringCardFromResponse.class,
                                 mentoringCard.id,
                                 mentoring.mentorProfile.id,
-                                mentor.imageUrl,
+                                mentorProfile.imageUrl,
                                 mentoringCard.title,
                                 mentoringCard.content
                         )
                 )
                 .from(mentoringCard)
                 .join(mentoringCard.mentoring, mentoring)
-                .on(mentoring.id.eq(mtrCardId))
-                .leftJoin(mentoring.mentorProfile, mentor)
+                .on(mentoring.id.eq(mentoringCardId))
+                .leftJoin(mentoring.mentorProfile, mentorProfile)
                 .fetchOne();
     }
 
     @Override
-    public List<MentoringCardToResponse> findAllToDto(Long mentorId) {
-        QProfile mentee = new QProfile("mentee");
+    public List<MentoringCardToResponse> findAllToDto(Long mentorProfileId) {
+        QProfile menteeProfile = new QProfile("menteeProfile");
         return queryFactory
                 .select(
                         Projections.constructor(MentoringCardToResponse.class,
                                 mentoringCard.id,
                                 mentoring.menteeProfile.id,
-                                mentee.imageUrl,
+                                menteeProfile.imageUrl,
                                 mentoringCard.title,
                                 mentoringCard.content
                         )
                 )
                 .from(mentoringCard)
                 .join(mentoringCard.mentoring, mentoring)
-                .on(mentoring.mentorProfile.id.eq(mentorId))
-                .leftJoin(mentoring.menteeProfile, mentee)
+                .on(mentoring.mentorProfile.id.eq(mentorProfileId))
+                .leftJoin(mentoring.menteeProfile, menteeProfile)
                 .orderBy(mentoringCard.createdDate.desc())
                 .fetch();
     }
