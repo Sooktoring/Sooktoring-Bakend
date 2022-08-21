@@ -19,8 +19,8 @@ import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 @Schema(description = "유저 프로필 조회 시 반환하는 DTO")
 public class ProfileResponse {
 
-    @Schema(description = "이용자 id", example = "1")
-    @JsonProperty("userId")
+    @Schema(description = "프로필 id", example = "1")
+    @JsonProperty("profileId")
     private Long id;
 
     @Schema(required = true, description = "이용자 실명")
@@ -78,9 +78,8 @@ public class ProfileResponse {
         this.imageUrl = imageUrl;
     }
 
-    public ProfileResponse changeList(List<ActivityResponse> activityResponses, List<CareerResponse> careerResponses) {
+    public void changeList(List<ActivityResponse> activityResponses, List<CareerResponse> careerResponses) {
         this.activityResponses = activityResponses;
         this.careerResponses = careerResponses;
-        return this;
     }
 }

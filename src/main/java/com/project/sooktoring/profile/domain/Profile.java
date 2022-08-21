@@ -90,16 +90,16 @@ public class Profile extends BaseTimeEntity {
                 .build();
     }
 
-    public void update(ProfileRequest userProfileRequest) {
-        this.realName = userProfileRequest.getRealName();
-        this.mainMajor = userProfileRequest.getMainMajor();
-        this.doubleMajor = userProfileRequest.getDoubleMajor();
-        this.minor = userProfileRequest.getMinor();
-        this.entranceDate = userProfileRequest.getEntranceDate();
-        this.graduationDate = userProfileRequest.getGraduationDate();
-        this.job = userProfileRequest.getJob();
-        this.workYear = userProfileRequest.getWorkYear();
-        this.isMentor = userProfileRequest.getIsMentor();
-        this.imageUrl = userProfileRequest.getImageUrl();
+    public void update(ProfileRequest profileRequest) {
+        this.realName = profileRequest.getRealName();
+        this.mainMajor = profileRequest.getMainMajor();
+        this.doubleMajor = profileRequest.getDoubleMajor();
+        this.minor = profileRequest.getMinor();
+        this.entranceDate = profileRequest.getEntranceDate();
+        this.graduationDate = profileRequest.getGraduationDate();
+        this.job = profileRequest.getJob();
+        this.workYear = profileRequest.getWorkYear();
+        this.isMentor = profileRequest.getIsMentor();
+        this.imageUrl = profileRequest.getImageUrl();
     }
 }

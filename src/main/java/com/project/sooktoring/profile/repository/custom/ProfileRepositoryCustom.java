@@ -8,7 +8,7 @@ import java.util.List;
 public interface ProfileRepositoryCustom {
 
     List<MentorProfileResponse> findMentors();
-    MentorProfileResponse findMentor(Long mentorId);
-    ProfileResponse findDtoById(Long id);
+    MentorProfileResponse findMentor(Long profileId);
+    ProfileResponse findDtoById(Long profileId);
     List<ProfileResponse> findAllDto();
 }

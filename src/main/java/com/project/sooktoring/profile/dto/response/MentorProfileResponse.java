@@ -11,8 +11,8 @@ import lombok.Getter;
 @Schema(description = "멘토링에서 멘토 프로필 조회 시 반환하는 DTO")
 public class MentorProfileResponse {
 
-    @Schema(description = "멘토 id", example = "1")
-    @JsonProperty("mentorId")
+    @Schema(description = "멘토 프로필 id", example = "1")
+    @JsonProperty("profileId")
     private Long id;
 
     @Schema(description = "멘토 실명", example = "김멘토")

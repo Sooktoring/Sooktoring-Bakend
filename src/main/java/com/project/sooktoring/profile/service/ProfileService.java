@@ -4,9 +4,10 @@ import com.project.sooktoring.common.exception.CustomException;
 import com.project.sooktoring.common.service.AwsS3Service;
 import com.project.sooktoring.common.utils.ProfileUtil;
 import com.project.sooktoring.common.utils.UserUtil;
+import com.project.sooktoring.mentoring.service.MentoringService;
 import com.project.sooktoring.profile.domain.Profile;
-import com.project.sooktoring.mentoring.domain.Mentoring;
-import com.project.sooktoring.mentoring.repository.MentoringRepository;
+import com.project.sooktoring.profile.dto.response.ActivityResponse;
+import com.project.sooktoring.profile.dto.response.CareerResponse;
 import com.project.sooktoring.user.domain.User;
 import com.project.sooktoring.profile.dto.response.MentorProfileResponse;
 import com.project.sooktoring.profile.dto.response.ProfileResponse;
@@ -27,10 +28,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.project.sooktoring.common.exception.ErrorCode.*;
-import static com.project.sooktoring.mentoring.enumerate.MentoringState.*;
-import static com.project.sooktoring.user.enumerate.Role.*;
 
 @Service
 @RequiredArgsConstructor
@@ -42,31 +43,36 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
     private final ActivityRepository activityRepository;
     private final CareerRepository careerRepository;
-    private final MentoringRepository mentoringRepository; //**
+    private final MentoringService mentoringService;
     private final AwsS3Service awsS3Service;
 
     @Value("${cloud.aws.s3.default.image}")
     private String defaultImageUrl;
 
-    public List<ProfileResponse> getProfiles() {
-        return profileRepository.findAllDto();
+    public List<ProfileResponse> getProfileDtoList() {
+        List<ProfileResponse> profileResponseList = profileRepository.findAllDto();
+        Map<Long, List<ActivityResponse>> activityResponseListMap = activityRepository.findAllMap();
+        Map<Long, List<CareerResponse>> careerResponseListMap = careerRepository.findAllMap();
+        _setActivityAndCareer(profileResponseList, activityResponseListMap, careerResponseListMap);
+
+        return profileResponseList;
     }
 
     public ProfileResponse getProfileDto() {
-        Profile profile = profileUtil.getCurrentProfile();
-        return profileRepository.findDtoById(profile.getId());
+        Long profileId = profileUtil.getCurrentProfile().getId();
+        return _getProfileResponse(profileId);
     }
 
     public ProfileResponse getProfileDto(Long profileId) {
         profileUtil.getProfile(profileId);
-        return profileRepository.findDtoById(profileId);
+        return _getProfileResponse(profileId);
     }
 
-    public List<MentorProfileResponse> getMentorList() {
+    public List<MentorProfileResponse> getMentorProfileDtoList() {
         return profileRepository.findMentors();
     }
 
-    public MentorProfileResponse getMentor(Long profileId) {
+    public MentorProfileResponse getMentorProfileDto(Long profileId) {
         Profile profile = profileUtil.getProfile(profileId);
         if (profile.getIsMentor()) {
             return profileRepository.findMentor(profileId);
@@ -74,50 +80,67 @@ public class ProfileService {
         throw new CustomException(NOT_FOUND_MENTOR);
     }
 
+    @Transactional
+    public void withdraw(Long profileId) {
+        activityRepository.deleteByProfileId(profileId);
+        careerRepository.deleteByProfileId(profileId);
+        profileRepository.deleteById(profileId);
+    }
+
     //Activity, Career 추가, 수정, 삭제 한번에 수행
     @Transactional
-    public void update(ProfileRequest userProfileRequest, MultipartFile file) {
+    public ProfileResponse update(ProfileRequest profileRequest, MultipartFile file) {
         User user = userUtil.getCurrentUser();
-        Long userId = user.getId();
         Profile profile = profileUtil.getCurrentProfile();
 
-        //멘토 -> 멘티 : APPLY -> INVALID, ACCEPT -> END
-        if (user.getRole() == ROLE_MENTOR && !userProfileRequest.getIsMentor()) {
-            //나에게 온 멘토링 신청내역 APPLY -> INVALID, ACCEPT -> END 로 변경
-            List<Mentoring> applyMentoringListToMe = mentoringRepository.findByMentorProfileIdAndState(userId, APPLY);
-            for (Mentoring mentoring : applyMentoringListToMe) {
-                mentoring.invalid();
-            }
-            List<Mentoring> acceptMentoringListToMe = mentoringRepository.findByMentorProfileIdAndState(userId, ACCEPT);
-            for (Mentoring mentoring : acceptMentoringListToMe) {
-                mentoring.end();
-            }
-        }
-        //멘티 -> 멘토 : INVALID -> APPLY
-        if (user.getRole() == ROLE_MENTEE && userProfileRequest.getIsMentor()) {
-            //이전에 멘토 -> 멘티 -> 멘토로 변경하는 경우 INVALID 상태의 나에게 온 멘토링 신청내역 APPLY 로 변경
-            List<Mentoring> invalidMentoringListToMe = mentoringRepository.findByMentorProfileIdAndState(userId, INVALID);
-            for (Mentoring mentoring : invalidMentoringListToMe) {
-                mentoring.apply();
-            }
-        }
-        user.changeRole(userProfileRequest.getIsMentor()); //User ROLE 업데이트
+        mentoringService.changeStateByRole(profileRequest.getIsMentor(), profile); //Role 변경에 따른 멘토링 상태 변경
+        user.changeRole(profileRequest.getIsMentor()); //User ROLE 업데이트
 
-        String originImageUrl = profile.getImageUrl();
+        profileRequest.changeImageUrl(_getImageUrl(file, profile.getImageUrl())); //file 저장 후 이미지 url 반환
+        profile.update(profileRequest); //updated by dirty checking
+
+        _changeActivity(profileRequest, profile); //Activity 추가, 수정, 삭제
+        _changeCareer(profileRequest, profile); //Career 추가, 수정, 삭제
+
+        return _getProfileResponse(profile.getId());
+    }
+
+    //=== private 메소드 ===
+
+    private ProfileResponse _getProfileResponse(Long profileId) {
+        ProfileResponse profileResponse = profileRepository.findDtoById(profileId);
+        profileResponse.changeList(
+                activityRepository.findAllDto(profileId),
+                careerRepository.findAllDto(profileId)
+        );
+        return profileResponse;
+    }
+
+    private void _setActivityAndCareer(List<ProfileResponse> profileResponseList,
+                                       Map<Long, List<ActivityResponse>> activityResponseListMap, Map<Long, List<CareerResponse>> careerResponseListMap) {
+        for (ProfileResponse profileResponse : profileResponseList) {
+            Long profileId = profileResponse.getId();
+            profileResponse.changeList(
+                    activityResponseListMap.get(profileId),
+                    careerResponseListMap.get(profileId)
+            );
+        }
+    }
+
+    private String _getImageUrl(MultipartFile file, String originImageUrl) {
         if (file != null && !file.isEmpty()) {
             if (StringUtils.hasText(originImageUrl) && !originImageUrl.equals(defaultImageUrl)) {
                 awsS3Service.deleteImg(originImageUrl); //기존 이미지 삭제
             }
-            String imageUrl = awsS3Service.uploadImg(file, "test"); //새로운 이미지 등록
-            userProfileRequest.changeImageUrl(imageUrl);
+            return awsS3Service.uploadImg(file, "test"); //새로운 이미지 등록 & 해당 이미지 url 반환
         }
-        profile.update(userProfileRequest); //updated by dirty checking
+        return originImageUrl;
+    }
 
-        List<ActivityRequest> activities = userProfileRequest.getActivityRequests();
-        List<CareerRequest> careers = userProfileRequest.getCareerRequests();
-
-        //Activity 추가, 수정, 삭제
+    private void _changeActivity(ProfileRequest profileRequest, Profile profile) {
+        List<ActivityRequest> activities = profileRequest.getActivityRequests();
         List<Long> activityIds = new ArrayList<>();
+
         for (ActivityRequest activityRequest : activities) {
             if(activityRequest.getId() == null || activityRepository.findById(activityRequest.getId()).isEmpty()) {
                 Activity activity = activityRepository.save(
@@ -137,10 +160,13 @@ public class ProfileService {
             }
         }
         //DTO에 포함되지 않은 activity 삭제
-        activityRepository.deleteByIdNotInBatch(userId, activityIds);
+        activityRepository.deleteByIdsNotInBatch(profile.getId(), activityIds);
+    }
 
-        //Career 추가, 수정, 삭제
+    private void _changeCareer(ProfileRequest profileRequest, Profile profile) {
+        List<CareerRequest> careers = profileRequest.getCareerRequests();
         List<Long> careerIds = new ArrayList<>();
+
         for (CareerRequest careerRequest : careers) {
             if (careerRequest.getId() == null || careerRepository.findById(careerRequest.getId()).isEmpty()) {
                 Career career = careerRepository.save(
@@ -160,13 +186,6 @@ public class ProfileService {
             }
         }
         //DTO에 포함되지 않은 career 삭제
-        careerRepository.deleteByIdNotInBatch(userId, careerIds);
-    }
-
-    @Transactional
-    public void withdraw(Long profileId) {
-        activityRepository.deleteByProfileId(profileId);
-        careerRepository.deleteByProfileId(profileId);
-        profileRepository.deleteById(profileId);
+        careerRepository.deleteByIdsNotInBatch(profile.getId(), careerIds);
     }
 }

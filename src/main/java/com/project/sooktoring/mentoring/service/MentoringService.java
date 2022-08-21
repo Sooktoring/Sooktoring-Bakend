@@ -167,4 +167,30 @@ public class MentoringService {
         if(profile.getIsMentor()) return mentoringRepository.findByMentorProfileIdAndState(profile.getId(), APPLY);
         else return mentoringRepository.findByMenteeProfileIdAndState(profile.getId(), APPLY);
     }
+
+    @Transactional
+    public void changeStateByRole(Boolean requestedIsMentor, Profile profile) {
+        Long profileId = profile.getId();
+
+        //멘토 -> 멘티 : APPLY -> INVALID, ACCEPT -> END
+        if (profile.getIsMentor() && !requestedIsMentor) {
+            //나에게 온 멘토링 신청내역 APPLY -> INVALID, ACCEPT -> END 로 변경
+            List<Mentoring> appliedMentoringListToMe = mentoringRepository.findByMentorProfileIdAndState(profileId, APPLY);
+            for (Mentoring mentoring : appliedMentoringListToMe) {
+                mentoring.invalid();
+            }
+            List<Mentoring> acceptedMentoringListToMe = mentoringRepository.findByMentorProfileIdAndState(profileId, ACCEPT);
+            for (Mentoring mentoring : acceptedMentoringListToMe) {
+                mentoring.end();
+            }
+        }
+        //멘티 -> 멘토 : INVALID -> APPLY
+        if (!profile.getIsMentor() && requestedIsMentor) {
+            //이전에 멘토 -> 멘티 -> 멘토로 변경하는 경우 INVALID 상태의 나에게 온 멘토링 신청내역 APPLY 로 변경
+            List<Mentoring> invalidMentoringListToMe = mentoringRepository.findByMentorProfileIdAndState(profileId, INVALID);
+            for (Mentoring mentoring : invalidMentoringListToMe) {
+                mentoring.apply();
+            }
+        }
+    }
 }
