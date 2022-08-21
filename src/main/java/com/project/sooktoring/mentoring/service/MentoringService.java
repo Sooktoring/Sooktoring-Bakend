@@ -54,7 +54,7 @@ public class MentoringService {
     @Transactional
     public void save(Long menteeId, MentoringRequest mtrRequest) {
         //같은 멘토링 신청내역 존재하는 경우
-        Optional<Mentoring> mentoringOptional = mentoringRepository.findByMentorIdAndCat(mtrRequest.getMentorId(), mtrRequest.getCat());
+        Optional<Mentoring> mentoringOptional = mentoringRepository.findByMentorProfileIdAndCat(mtrRequest.getMentorId(), mtrRequest.getCat());
         if (mentoringOptional.isPresent() &&
                 (mentoringOptional.get().getState() != REJECT &&
                  mentoringOptional.get().getState() != END)) {
@@ -85,7 +85,7 @@ public class MentoringService {
         if (Objects.equals(mentoring.getMenteeProfile().getId(), menteeId)) {
             if (mentoring.getState() == APPLY || mentoring.getState() == INVALID) {
                 Long mentorId = mentoring.getMentorProfile().getId();
-                Optional<Mentoring> mentoringOptional = mentoringRepository.findByMentorIdAndCat(mentorId, mtrUpdateRequest.getCat());
+                Optional<Mentoring> mentoringOptional = mentoringRepository.findByMentorProfileIdAndCat(mentorId, mtrUpdateRequest.getCat());
                 if (mentoringOptional.isPresent() &&
                         (mentoringOptional.get().getState() != REJECT &&
                          mentoringOptional.get().getState() != END)) {
@@ -150,8 +150,23 @@ public class MentoringService {
 
     public List<Mentoring> getMyChatRoomList(Long userId) {
         Profile user = userProfileRepository.getById(userId);
-        if(user.getIsMentor()) return mentoringRepository.findByMentorIdAndState(user.getId(), APPLY);
-        else return mentoringRepository.findByMenteeIdAndState(user.getId(), APPLY);
+        if(user.getIsMentor()) return mentoringRepository.findByMentorProfileIdAndState(user.getId(), APPLY);
+        else return mentoringRepository.findByMenteeProfileIdAndState(user.getId(), APPLY);
     }
 
+    @Transactional
+    public void withdraw(Long profileId) {
+        //모든 멘토링 내역(내가 멘토인, 내가 멘티인) WITHDRAW 상태로 변경
+        List<Mentoring> mentoringListToMe = mentoringRepository.findByMentorProfileId(profileId);
+        List<Mentoring> mentoringListFromMe = mentoringRepository.findByMenteeProfileId(profileId);
+        for (Mentoring mentoring : mentoringListToMe) {
+            mentoring.withdraw();
+        }
+        for (Mentoring mentoring : mentoringListFromMe) {
+            mentoring.withdraw();
+        }
+        //탈퇴하는 이용자의 멘토링 FK set null
+        mentoringRepository.updateMentorByProfileId(profileId);
+        mentoringRepository.updateMenteeByProfileId(profileId);
+    }
 }

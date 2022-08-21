@@ -12,22 +12,24 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
+import static org.springframework.http.HttpStatus.*;
 
-@RestController
+@Api(tags = "유저 API")
 @RequiredArgsConstructor
 @RequestMapping("/user")
-@Api(tags = "유저 API")
+@RestController
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserRepository userRepository; //나중에 지울 예정
     private final UserService userService;
 
+    //나중에 지울 예정
     @Operation(summary = "유저 정보 조회", description = "로그인 상태의 유저 정보 조회", responses = {
             @ApiResponse(
                     responseCode = "403",
@@ -40,14 +42,13 @@ public class UserController {
     })
     @GetMapping("/me")
     public User getUser(@CurrentUser UserPrincipal currentUser) {
-        Optional<User> userOptional = userRepository.findById(currentUser.getUserId());
-        return userOptional.orElse(null);
+        return userRepository.findById(currentUser.getUserId()).orElse(null);
     }
 
     @Operation(summary = "유저 탈퇴")
     @DeleteMapping("/me")
-    public String withdraw(@CurrentUser UserPrincipal currentUser) {
-        userService.withdrawById(currentUser.getUserId());
-        return "회원 탈퇴가 완료되었습니다.";
+    public ResponseEntity<Void> withdraw(@CurrentUser UserPrincipal currentUser) {
+        userService.withdraw(currentUser.getUserId());
+        return ResponseEntity.status(NO_CONTENT).build();
     }
 }

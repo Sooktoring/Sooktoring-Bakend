@@ -11,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
-
 import static com.project.sooktoring.common.exception.ErrorCode.*;
 
 @Service
@@ -23,7 +21,7 @@ public class AuthService {
     private final AuthTokenProvider authTokenProvider;
 
     @Transactional
-    public TokenResponse refresh(TokenRequest tokenRequest, HttpServletRequest request) {
+    public TokenResponse refresh(TokenRequest tokenRequest) {
         AuthToken accessToken = authTokenProvider.convertAuthToken(tokenRequest.getAccessToken());
         AuthToken refreshToken = authTokenProvider.convertAuthToken(tokenRequest.getRefreshToken());
 
@@ -53,6 +51,6 @@ public class AuthService {
                     .build();
         }
 
-        return null;
+        return null; //401 상태코드 넘겨주기
     }
 }

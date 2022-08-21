@@ -14,25 +14,18 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-
-@Slf4j
-@RestController
-@RequestMapping("/auth")
-@RequiredArgsConstructor
 @Api(tags = "유저 인증 API")
+@Slf4j
+@RequiredArgsConstructor
+@RequestMapping("/auth")
+@RestController
 public class AuthController {
 
     private final GoogleAuthService googleAuthService;
     private final AuthService authService;
 
-    /**
-     * GOOGLE 소셜 로그인 기능
-     */
     @Operation(summary = "구글 로그인", description = "구글 아이디 토큰을 이용하여 사용자 정보받아 저장하고 JWT 반환", responses = {
             @ApiResponse(
                     responseCode = "403",
@@ -44,16 +37,10 @@ public class AuthController {
             )
     })
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> googleAuthRequest(@RequestBody AuthRequest authRequest,
-                                                          HttpServletRequest request) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(googleAuthService.login(authRequest, request));
+    public AuthResponse issue(@RequestBody AuthRequest authRequest) {
+        return googleAuthService.login(authRequest);
     }
 
-    /**
-     * accessToken 갱신
-     */
     @Operation(summary = "JWT 갱신", description = "엑세스 토큰 만료에 따른 엑세스, 리프레시 토큰 갱신", responses = {
             @ApiResponse(
                     responseCode = "403",
@@ -65,10 +52,7 @@ public class AuthController {
             )
     })
     @PostMapping("/refresh")
-    public ResponseEntity<TokenResponse> refreshToken (@RequestBody TokenRequest tokenRequest,
-                                                       HttpServletRequest request) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(authService.refresh(tokenRequest, request));
+    public TokenResponse reissue(@RequestBody TokenRequest tokenRequest) {
+        return authService.refresh(tokenRequest);
     }
 }

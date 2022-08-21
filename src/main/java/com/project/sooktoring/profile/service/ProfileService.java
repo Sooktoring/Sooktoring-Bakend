@@ -38,7 +38,7 @@ public class ProfileService {
 
     private final AwsS3Service awsS3Service;
     private final UserRepository userRepository;
-    private final ProfileRepository userProfileRepository;
+    private final ProfileRepository profileRepository;
     private final ActivityRepository activityRepository;
     private final CareerRepository careerRepository;
     private final MentoringRepository mentoringRepository;
@@ -47,24 +47,24 @@ public class ProfileService {
     private String defaultImageUrl;
 
     public List<ProfileResponse> getUserProfiles() {
-        return userProfileRepository.findAllDto();
+        return profileRepository.findAllDto();
     }
 
     public ProfileResponse getUserProfile(Long userId) {
-        userProfileRepository.findById(userId)
+        profileRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
-        return userProfileRepository.findDtoById(userId);
+        return profileRepository.findDtoById(userId);
     }
 
     public List<MentorProfileResponse> getMentorList() {
-        return userProfileRepository.findMentors();
+        return profileRepository.findMentors();
     }
 
     public MentorProfileResponse getMentor(Long mentorId) {
-        Profile userProfile = userProfileRepository.findById(mentorId)
+        Profile userProfile = profileRepository.findById(mentorId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
         if (userProfile.getIsMentor()) {
-            return userProfileRepository.findMentor(mentorId);
+            return profileRepository.findMentor(mentorId);
         }
         throw new CustomException(NOT_FOUND_MENTOR);
     }
@@ -74,17 +74,17 @@ public class ProfileService {
     public void update(Long userId, ProfileRequest userProfileRequest, MultipartFile file) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
-        Profile userProfile = userProfileRepository.findById(userId)
+        Profile userProfile = profileRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
         //멘토 -> 멘티 : APPLY -> INVALID, ACCEPT -> END
         if (user.getRole() == ROLE_MENTOR && !userProfileRequest.getIsMentor()) {
             //나에게 온 멘토링 신청내역 APPLY -> INVALID, ACCEPT -> END 로 변경
-            List<Mentoring> applyMentoringListToMe = mentoringRepository.findByMentorIdAndState(userId, APPLY);
+            List<Mentoring> applyMentoringListToMe = mentoringRepository.findByMentorProfileIdAndState(userId, APPLY);
             for (Mentoring mentoring : applyMentoringListToMe) {
                 mentoring.invalid();
             }
-            List<Mentoring> acceptMentoringListToMe = mentoringRepository.findByMentorIdAndState(userId, ACCEPT);
+            List<Mentoring> acceptMentoringListToMe = mentoringRepository.findByMentorProfileIdAndState(userId, ACCEPT);
             for (Mentoring mentoring : acceptMentoringListToMe) {
                 mentoring.end();
             }
@@ -92,7 +92,7 @@ public class ProfileService {
         //멘티 -> 멘토 : INVALID -> APPLY
         if (user.getRole() == ROLE_MENTEE && userProfileRequest.getIsMentor()) {
             //이전에 멘토 -> 멘티 -> 멘토로 변경하는 경우 INVALID 상태의 나에게 온 멘토링 신청내역 APPLY 로 변경
-            List<Mentoring> invalidMentoringListToMe = mentoringRepository.findByMentorIdAndState(userId, INVALID);
+            List<Mentoring> invalidMentoringListToMe = mentoringRepository.findByMentorProfileIdAndState(userId, INVALID);
             for (Mentoring mentoring : invalidMentoringListToMe) {
                 mentoring.apply();
             }
@@ -157,5 +157,18 @@ public class ProfileService {
         }
         //DTO에 포함되지 않은 career 삭제
         careerRepository.deleteByIdNotInBatch(userId, careerIds);
+    }
+
+    @Transactional
+    public void withdraw(Long profileId) {
+        activityRepository.deleteByProfileId(profileId);
+        careerRepository.deleteByProfileId(profileId);
+        profileRepository.deleteById(profileId);
+    }
+
+    public Long getProfileId(Long userId) {
+        return profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_PROFILE))
+                .getId();
     }
 }

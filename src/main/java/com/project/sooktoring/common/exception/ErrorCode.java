@@ -13,6 +13,7 @@ public enum ErrorCode {
     INVALID_GOOGLE_ID_TOKEN(HttpStatus.FORBIDDEN, "유효하지 않은 구글 id 토큰입니다."),
 
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "해당 이용자를 찾을 수 없습니다."),
+    NOT_FOUND_PROFILE(HttpStatus.NOT_FOUND, "해당 프로필을 찾을 수 없습니다."),
     NOT_FOUND_MENTOR(HttpStatus.NOT_FOUND, "해당 멘토를 찾을 수 없습니다."),
     NOT_FOUND_MAJOR_CAT(HttpStatus.NOT_FOUND, "해당 전공명을 찾을 수 없습니다."),
     FAILED_FILE_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "프로필 이미지 파일 업로드에 실패하였습니다."),

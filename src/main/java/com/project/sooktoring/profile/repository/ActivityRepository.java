@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface ActivityRepository extends JpaRepository<Activity, Long>, ActivityRepositoryCustom {
 
     @Modifying
-    @Query("delete from Activity a where a.profile.id = :userId")
-    void deleteByUserId(Long userId);
+    @Query("delete from Activity a where a.profile.id = :profileId")
+    void deleteByProfileId(Long profileId);
 }

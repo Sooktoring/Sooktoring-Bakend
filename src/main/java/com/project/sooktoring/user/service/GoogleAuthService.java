@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @Service
@@ -24,16 +23,16 @@ import java.util.Optional;
 public class GoogleAuthService {
 
     private final GoogleUserInfo googleUserInfo;
-    private final UserRepository userRepository;
-    private final ProfileRepository userProfileRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final AuthTokenProvider authTokenProvider;
+    private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final ProfileRepository profileRepository;
 
     @Value("${cloud.aws.s3.default.image}")
     private String defaultImageUrl;
 
     @Transactional
-    public AuthResponse login(AuthRequest authRequest, HttpServletRequest request) {
+    public AuthResponse login(AuthRequest authRequest) {
         User user = googleUserInfo.getUser(authRequest.getIdToken()); //구글에서 받아온 이용자 정보
         String providerId = user.getProviderId();
 
@@ -57,8 +56,8 @@ public class GoogleAuthService {
             isNewUser = true;
 
             //기본 유저 프로필 생성
-            Profile userProfile = Profile.initByUser(loginUser, defaultImageUrl);
-            userProfileRepository.save(userProfile);
+            Profile profile = Profile.initByUser(loginUser, defaultImageUrl);
+            profileRepository.save(profile);
         }
 
         AuthToken accessToken = authTokenProvider.createAccessToken(providerId, loginUser.getId());

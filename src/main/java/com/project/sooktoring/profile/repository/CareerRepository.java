@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface CareerRepository extends JpaRepository<Career, Long>, CareerRepositoryCustom {
 
     @Modifying
-    @Query("delete from Career c where c.profile.id = :userId")
-    void deleteByUserId(Long userId);
+    @Query("delete from Career c where c.profile.id = :profileId")
+    void deleteByProfileId(Long profileId);
 }
