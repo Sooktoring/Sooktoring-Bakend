@@ -17,8 +17,8 @@ import static com.project.sooktoring.common.exception.ErrorCode.*;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final RefreshTokenRepository refreshTokenRepository;
     private final AuthTokenProvider authTokenProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
     public TokenResponse refresh(TokenRequest tokenRequest) {

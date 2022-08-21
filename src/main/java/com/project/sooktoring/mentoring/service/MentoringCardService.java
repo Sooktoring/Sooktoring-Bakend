@@ -1,6 +1,7 @@
 package com.project.sooktoring.mentoring.service;
 
 import com.project.sooktoring.common.exception.CustomException;
+import com.project.sooktoring.common.utils.SecurityUtil;
 import com.project.sooktoring.mentoring.domain.Mentoring;
 import com.project.sooktoring.mentoring.domain.MentoringCard;
 import com.project.sooktoring.mentoring.dto.request.MentoringCardRequest;
@@ -26,32 +27,32 @@ public class MentoringCardService {
     private final MentoringRepository mentoringRepository;
     private final MentoringCardRepository mentoringCardRepository;
 
-    public List<MentoringCardFromResponse> getMentoringCardListFromMe(Long menteeId) {
-        return mentoringCardRepository.findAllFromDto(menteeId);
+    public List<MentoringCardFromResponse> getMentoringCardListFromMe() {
+        return mentoringCardRepository.findAllFromDto(SecurityUtil.getCurrentUserId());
     }
 
-    public MentoringCardFromResponse getMentoringCardFromMe(Long menteeId, Long mtrCardId) {
-        Mentoring mentoring = mentoringRepository.findById(mtrCardId)
+    public MentoringCardFromResponse getMentoringCardFromMe(Long mentoringCardId) {
+        Mentoring mentoring = mentoringRepository.findById(mentoringCardId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING));
-        if (Objects.equals(mentoring.getMenteeProfile().getId(), menteeId)) {
-            mentoringCardRepository.findById(mtrCardId)
+        if (Objects.equals(mentoring.getMenteeProfile().getId(), SecurityUtil.getCurrentUserId())) {
+            mentoringCardRepository.findById(mentoringCardId)
                     .orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING_CARD));
-            return mentoringCardRepository.findFromDtoById(mtrCardId);
+            return mentoringCardRepository.findFromDtoById(mentoringCardId);
         }
         throw new CustomException(UNAUTHORIZED_MENTORING_ACCESS);
     }
 
-    public List<MentoringCardToResponse> getMentoringCardListToMe(Long mentorId) {
-        return mentoringCardRepository.findAllToDto(mentorId);
+    public List<MentoringCardToResponse> getMentoringCardListToMe() {
+        return mentoringCardRepository.findAllToDto(SecurityUtil.getCurrentUserId());
     }
 
     @Transactional
-    public void save(Long menteeId, Long mtrId, MentoringCardRequest mtrCardRequest) {
-        Mentoring mentoring = mentoringRepository.findById(mtrId)
+    public void save(Long mentoringId, MentoringCardRequest mtrCardRequest) {
+        Mentoring mentoring = mentoringRepository.findById(mentoringId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING));
-        if (Objects.equals(mentoring.getMenteeProfile().getId(), menteeId)) {
+        if (Objects.equals(mentoring.getMenteeProfile().getId(), SecurityUtil.getCurrentUserId())) {
             if (mentoring.getState().equals(MentoringState.END)) {
-                Optional<MentoringCard> mentoringCardOptional = mentoringCardRepository.findById(mtrId);
+                Optional<MentoringCard> mentoringCardOptional = mentoringCardRepository.findById(mentoringId);
                 if (mentoringCardOptional.isEmpty()) {
                     MentoringCard mentoringCard = MentoringCard.builder()
                             .mentoring(mentoring)
@@ -69,11 +70,11 @@ public class MentoringCardService {
     }
 
     @Transactional
-    public void update(Long menteeId, Long mtrCardId, MentoringCardRequest mtrCardRequest) {
-        Mentoring mentoring = mentoringRepository.findById(mtrCardId)
+    public void update(Long mentoringCardId, MentoringCardRequest mtrCardRequest) {
+        Mentoring mentoring = mentoringRepository.findById(mentoringCardId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING));
-        if (Objects.equals(mentoring.getMenteeProfile().getId(), menteeId)) {
-            MentoringCard mentoringCard = mentoringCardRepository.findById(mtrCardId)
+        if (Objects.equals(mentoring.getMenteeProfile().getId(), SecurityUtil.getCurrentUserId())) {
+            MentoringCard mentoringCard = mentoringCardRepository.findById(mentoringCardId)
                     .orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING_CARD));
                 mentoringCard.updateCard(mtrCardRequest.getTitle(), mtrCardRequest.getContent());
         }
@@ -81,11 +82,11 @@ public class MentoringCardService {
     }
 
     @Transactional
-    public void delete(Long menteeId, Long mtrCardId) {
-        Mentoring mentoring = mentoringRepository.findById(mtrCardId)
+    public void delete(Long mentoringCardId) {
+        Mentoring mentoring = mentoringRepository.findById(mentoringCardId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING));
-        if (Objects.equals(mentoring.getMenteeProfile().getId(), menteeId)) {
-            MentoringCard mentoringCard = mentoringCardRepository.findById(mtrCardId)
+        if (Objects.equals(mentoring.getMenteeProfile().getId(), SecurityUtil.getCurrentUserId())) {
+            MentoringCard mentoringCard = mentoringCardRepository.findById(mentoringCardId)
                     .orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING_CARD));
             mentoringCardRepository.delete(mentoringCard);
         }

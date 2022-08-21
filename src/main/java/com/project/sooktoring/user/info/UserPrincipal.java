@@ -1,4 +1,4 @@
-package com.project.sooktoring.user.util;
+package com.project.sooktoring.user.info;
 
 import lombok.Builder;
 import lombok.Getter;

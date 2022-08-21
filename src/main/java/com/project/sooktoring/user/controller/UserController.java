@@ -1,10 +1,8 @@
 package com.project.sooktoring.user.controller;
 
 import com.project.sooktoring.common.exception.ErrorResponse;
-import com.project.sooktoring.user.util.CurrentUser;
-import com.project.sooktoring.user.util.UserPrincipal;
+import com.project.sooktoring.common.utils.UserUtil;
 import com.project.sooktoring.user.domain.User;
-import com.project.sooktoring.user.repository.UserRepository;
 import com.project.sooktoring.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,7 +24,7 @@ import static org.springframework.http.HttpStatus.*;
 @RestController
 public class UserController {
 
-    private final UserRepository userRepository; //나중에 지울 예정
+    private final UserUtil userUtil;
     private final UserService userService;
 
     //나중에 지울 예정
@@ -41,14 +39,14 @@ public class UserController {
             )
     })
     @GetMapping("/me")
-    public User getUser(@CurrentUser UserPrincipal currentUser) {
-        return userRepository.findById(currentUser.getUserId()).orElse(null);
+    public User getUser() {
+        return userUtil.getCurrentUser();
     }
 
     @Operation(summary = "유저 탈퇴")
     @DeleteMapping("/me")
-    public ResponseEntity<Void> withdraw(@CurrentUser UserPrincipal currentUser) {
-        userService.withdraw(currentUser.getUserId());
+    public ResponseEntity<Void> withdraw() {
+        userService.withdraw();
         return ResponseEntity.status(NO_CONTENT).build();
     }
 }

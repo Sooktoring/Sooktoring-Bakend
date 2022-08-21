@@ -1,7 +1,7 @@
 package com.project.sooktoring.user.jwt;
 
 import com.project.sooktoring.common.exception.CustomException;
-import com.project.sooktoring.user.util.UserPrincipal;
+import com.project.sooktoring.user.info.UserPrincipal;
 import com.project.sooktoring.user.enumerate.Role;
 import com.project.sooktoring.user.domain.User;
 import com.project.sooktoring.user.repository.UserRepository;

@@ -2,13 +2,14 @@ package com.project.sooktoring.profile.service;
 
 import com.project.sooktoring.common.exception.CustomException;
 import com.project.sooktoring.common.service.AwsS3Service;
+import com.project.sooktoring.common.utils.ProfileUtil;
+import com.project.sooktoring.common.utils.UserUtil;
 import com.project.sooktoring.profile.domain.Profile;
 import com.project.sooktoring.mentoring.domain.Mentoring;
 import com.project.sooktoring.mentoring.repository.MentoringRepository;
 import com.project.sooktoring.user.domain.User;
 import com.project.sooktoring.profile.dto.response.MentorProfileResponse;
 import com.project.sooktoring.profile.dto.response.ProfileResponse;
-import com.project.sooktoring.user.repository.UserRepository;
 import com.project.sooktoring.profile.domain.Activity;
 import com.project.sooktoring.profile.domain.Career;
 import com.project.sooktoring.profile.dto.request.ActivityRequest;
@@ -36,46 +37,49 @@ import static com.project.sooktoring.user.enumerate.Role.*;
 @Transactional(readOnly = true)
 public class ProfileService {
 
-    private final AwsS3Service awsS3Service;
-    private final UserRepository userRepository;
+    private final UserUtil userUtil;
+    private final ProfileUtil profileUtil;
     private final ProfileRepository profileRepository;
     private final ActivityRepository activityRepository;
     private final CareerRepository careerRepository;
-    private final MentoringRepository mentoringRepository;
+    private final MentoringRepository mentoringRepository; //**
+    private final AwsS3Service awsS3Service;
 
     @Value("${cloud.aws.s3.default.image}")
     private String defaultImageUrl;
 
-    public List<ProfileResponse> getUserProfiles() {
+    public List<ProfileResponse> getProfiles() {
         return profileRepository.findAllDto();
     }
 
-    public ProfileResponse getUserProfile(Long userId) {
-        profileRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
-        return profileRepository.findDtoById(userId);
+    public ProfileResponse getProfileDto() {
+        Profile profile = profileUtil.getCurrentProfile();
+        return profileRepository.findDtoById(profile.getId());
+    }
+
+    public ProfileResponse getProfileDto(Long profileId) {
+        profileUtil.getProfile(profileId);
+        return profileRepository.findDtoById(profileId);
     }
 
     public List<MentorProfileResponse> getMentorList() {
         return profileRepository.findMentors();
     }
 
-    public MentorProfileResponse getMentor(Long mentorId) {
-        Profile userProfile = profileRepository.findById(mentorId)
-                .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
-        if (userProfile.getIsMentor()) {
-            return profileRepository.findMentor(mentorId);
+    public MentorProfileResponse getMentor(Long profileId) {
+        Profile profile = profileUtil.getProfile(profileId);
+        if (profile.getIsMentor()) {
+            return profileRepository.findMentor(profileId);
         }
         throw new CustomException(NOT_FOUND_MENTOR);
     }
 
     //Activity, Career 추가, 수정, 삭제 한번에 수행
     @Transactional
-    public void update(Long userId, ProfileRequest userProfileRequest, MultipartFile file) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
-        Profile userProfile = profileRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
+    public void update(ProfileRequest userProfileRequest, MultipartFile file) {
+        User user = userUtil.getCurrentUser();
+        Long userId = user.getId();
+        Profile profile = profileUtil.getCurrentProfile();
 
         //멘토 -> 멘티 : APPLY -> INVALID, ACCEPT -> END
         if (user.getRole() == ROLE_MENTOR && !userProfileRequest.getIsMentor()) {
@@ -99,7 +103,7 @@ public class ProfileService {
         }
         user.changeRole(userProfileRequest.getIsMentor()); //User ROLE 업데이트
 
-        String originImageUrl = userProfile.getImageUrl();
+        String originImageUrl = profile.getImageUrl();
         if (file != null && !file.isEmpty()) {
             if (StringUtils.hasText(originImageUrl) && !originImageUrl.equals(defaultImageUrl)) {
                 awsS3Service.deleteImg(originImageUrl); //기존 이미지 삭제
@@ -107,7 +111,7 @@ public class ProfileService {
             String imageUrl = awsS3Service.uploadImg(file, "test"); //새로운 이미지 등록
             userProfileRequest.changeImageUrl(imageUrl);
         }
-        userProfile.update(userProfileRequest); //updated by dirty checking
+        profile.update(userProfileRequest); //updated by dirty checking
 
         List<ActivityRequest> activities = userProfileRequest.getActivityRequests();
         List<CareerRequest> careers = userProfileRequest.getCareerRequests();
@@ -122,7 +126,7 @@ public class ProfileService {
                                 activityRequest.getDetails(),
                                 activityRequest.getStartDate(),
                                 activityRequest.getEndDate(),
-                                userProfile
+                                profile
                         )
                 );
                 activityIds.add(activity.getId());
@@ -145,7 +149,7 @@ public class ProfileService {
                                 careerRequest.getCompany(),
                                 careerRequest.getStartDate(),
                                 careerRequest.getEndDate(),
-                                userProfile
+                                profile
                         )
                 );
                 careerIds.add(career.getId());
@@ -164,11 +168,5 @@ public class ProfileService {
         activityRepository.deleteByProfileId(profileId);
         careerRepository.deleteByProfileId(profileId);
         profileRepository.deleteById(profileId);
-    }
-
-    public Long getProfileId(Long userId) {
-        return profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new CustomException(NOT_FOUND_PROFILE))
-                .getId();
     }
 }
