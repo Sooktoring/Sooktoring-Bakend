@@ -45,11 +45,11 @@ public class MentoringCardService {
 
     @Transactional
     public void save(Long mentoringId, MentoringCardRequest mentoringCardRequest) {
+        Mentoring mentoring = _getMentoring(mentoringId);
         if (mentoringCardRepository.findById(mentoringId).isPresent()) {
             throw new CustomException(ALREADY_MENTORING_CARD_EXISTS);
         }
 
-        Mentoring mentoring = _getMentoring(mentoringId);
         MentoringCard mentoringCard = MentoringCard.builder()
                 .mentoring(mentoring)
                 .title(mentoringCardRequest.getTitle())
@@ -77,7 +77,7 @@ public class MentoringCardService {
         Long profileId = profileUtil.getCurrentProfile().getId();
 
         if (!Objects.equals(mentoring.getMenteeProfile().getId(), profileId)) {
-            throw new CustomException(UNAUTHORIZED_MENTORING_ACCESS);
+            throw new CustomException(FORBIDDEN_MENTORING_ACCESS);
         }
         if (!mentoring.getState().equals(MentoringState.END)) {
             throw new CustomException(FORBIDDEN_MENTORING_CARD_WRITE);
@@ -91,7 +91,7 @@ public class MentoringCardService {
         Long profileId = profileUtil.getCurrentProfile().getId();
 
         if (!Objects.equals(mentoring.getMenteeProfile().getId(), profileId)) {
-            throw new CustomException(UNAUTHORIZED_MENTORING_ACCESS);
+            throw new CustomException(FORBIDDEN_MENTORING_ACCESS);
         }
 
         return mentoringCardRepository.findById(mentoringCardId).orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING_CARD));

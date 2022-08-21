@@ -184,6 +184,6 @@ public class MentoringService {
         } else {
             if (Objects.equals(mentoring.getMenteeProfile().getId(), profileId)) return mentoring;
         }
-        throw new CustomException(UNAUTHORIZED_MENTORING_ACCESS);
+        throw new CustomException(FORBIDDEN_MENTORING_ACCESS);
     }
 }
