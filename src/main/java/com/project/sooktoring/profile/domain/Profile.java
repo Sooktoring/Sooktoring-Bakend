@@ -14,12 +14,12 @@ import java.util.List;
 
 import static javax.persistence.FetchType.*;
 import static javax.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
 
-@Entity
-@Getter
-@Builder
+@Getter @Builder
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
+@Entity
 public class Profile extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = IDENTITY)

@@ -5,12 +5,12 @@ import lombok.*;
 import javax.persistence.*;
 
 import static javax.persistence.FetchType.*;
+import static lombok.AccessLevel.*;
 
-@Getter
-@Entity
-@Builder
-@NoArgsConstructor
+@Getter @Builder
 @AllArgsConstructor
+@NoArgsConstructor(access = PROTECTED)
+@Entity
 public class RefreshToken {
 
     @Id

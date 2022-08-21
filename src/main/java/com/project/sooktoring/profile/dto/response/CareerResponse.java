@@ -12,11 +12,10 @@ import java.time.YearMonth;
 
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Schema(description = "직무경력 조회 시 반환하는 DTO")
+@Getter @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CareerResponse {
 
     @Schema(description = "직무경력 id", example = "1")

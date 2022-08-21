@@ -12,8 +12,8 @@ import reactor.core.publisher.Mono;
 
 import static com.project.sooktoring.common.exception.ErrorCode.INVALID_GOOGLE_ID_TOKEN;
 
-@Component
 @RequiredArgsConstructor
+@Component
 public class GoogleUserInfo implements UserInfo {
 
     private final WebClient webClient;

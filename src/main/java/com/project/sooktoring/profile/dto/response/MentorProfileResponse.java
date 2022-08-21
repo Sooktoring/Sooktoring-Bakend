@@ -6,9 +6,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+@Schema(description = "멘토링에서 멘토 프로필 조회 시 반환하는 DTO")
 @Getter
 @AllArgsConstructor
-@Schema(description = "멘토링에서 멘토 프로필 조회 시 반환하는 DTO")
 public class MentorProfileResponse {
 
     @Schema(description = "멘토 프로필 id", example = "1")

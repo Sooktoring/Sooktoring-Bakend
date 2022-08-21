@@ -8,11 +8,10 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 
-@Getter
-@Builder
+@Schema(description = "멘토링 감사카드 등록, 수정 시 정보 전달하는 DTO")
+@Getter @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "멘토링 감사카드 등록, 수정 시 정보 전달하는 DTO")
 public class MentoringCardRequest {
 
     @Schema(description = "감사카드 제목", example = "감사합니다.")

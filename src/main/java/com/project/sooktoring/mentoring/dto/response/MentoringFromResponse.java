@@ -9,11 +9,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Schema(description = "나의 멘토링 신청내역 조회 시 반환하는 DTO")
+@Getter @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MentoringFromResponse {
 
     @Schema(description = "멘토링 id", example = "1")

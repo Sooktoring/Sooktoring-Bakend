@@ -6,11 +6,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Schema(description = "구글 아이디 토큰으로 이용자 정보 가져오는 DTO")
+@Getter @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class GoogleUserResponse {
 
     @Schema(description = "구글 DB 내 Seq 아이디")

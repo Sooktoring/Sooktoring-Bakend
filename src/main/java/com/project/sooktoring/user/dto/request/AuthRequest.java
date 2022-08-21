@@ -6,11 +6,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Schema(description = "인증된 구글 이용자 정보 저장하기 위해 아이디 토큰 전달하는 DTO")
+@Getter @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class AuthRequest {
 
     @Schema(description = "구글 아이디 토큰")

@@ -13,8 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static com.project.sooktoring.common.exception.ErrorCode.*;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class AuthService {
 
     private final AuthTokenProvider authTokenProvider;

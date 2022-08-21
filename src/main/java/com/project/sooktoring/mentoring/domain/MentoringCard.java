@@ -11,11 +11,10 @@ import javax.persistence.*;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.PROTECTED;
 
-@Entity
-@Getter
-@Builder
+@Getter @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
+@Entity
 public class MentoringCard extends BaseTimeEntity {
 
     @Id

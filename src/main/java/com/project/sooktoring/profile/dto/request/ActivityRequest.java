@@ -13,11 +13,10 @@ import java.time.YearMonth;
 
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Schema(description = "대외활동 등록, 수정 시 정보 전달하는 DTO")
+@Getter @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ActivityRequest {
 
     @Schema(description = "대외활동 id", example = "1") //수정 시에는 required = true

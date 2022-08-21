@@ -13,11 +13,10 @@ import java.time.LocalDateTime;
 
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 
-@Getter
-@Builder
+@Schema(description = "나에게 요청된 멘토링 신청내역 리스트 조회 시 반환하는 DTO")
+@Getter @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "나에게 요청된 멘토링 신청내역 리스트 조회 시 반환하는 DTO")
 public class MentoringToListResponse {
 
     @Schema(description = "멘토링 id", example = "1")

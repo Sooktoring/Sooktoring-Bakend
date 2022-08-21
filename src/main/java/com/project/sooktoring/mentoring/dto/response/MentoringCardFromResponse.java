@@ -4,9 +4,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+@Schema(description = "내가 쓴 멘토링 감사카드 조회 시 반환하는 DTO")
 @Getter
 @AllArgsConstructor
-@Schema(description = "내가 쓴 멘토링 감사카드 조회 시 반환하는 DTO")
 public class MentoringCardFromResponse {
 
     @Schema(description = "멘토링 감사카드 id", example = "1")

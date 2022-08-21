@@ -9,11 +9,10 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Schema(description = "멘토링 신청서 수정 시 정보 전달하는 DTO - 멘토링 id는 path variable로 전달")
+@Getter @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MentoringUpdateRequest {
 
     @Schema(description = "멘토링 카테고리", example = "자소서")

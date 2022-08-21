@@ -14,11 +14,10 @@ import java.time.YearMonth;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.PROTECTED;
 
-@Entity
-@Getter
-@Builder
+@Getter @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
+@Entity
 public class Activity extends BaseTimeEntity {
 
     @Id @GeneratedValue

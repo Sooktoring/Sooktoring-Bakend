@@ -12,11 +12,10 @@ import java.time.YearMonth;
 
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Schema(description = "대외활동 조회 시 반환하는 DTO")
+@Getter @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ActivityResponse {
 
     @Schema(description = "대외활동 id", example = "1")

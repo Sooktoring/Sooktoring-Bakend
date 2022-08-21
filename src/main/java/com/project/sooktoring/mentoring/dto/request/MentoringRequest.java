@@ -9,11 +9,10 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Schema(description = "멘토링 신청서 등록 시 정보 전달하는 DTO")
+@Getter @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MentoringRequest {
 
     @Schema(description = "신청한 멘토 프로필 id", example = "1")

@@ -6,11 +6,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Schema(description = "엑세스 토큰 만료시 엑세스, 리프레시 토큰 전달하는 DTO")
+@Getter @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class TokenRequest {
 
     @Schema(description = "만료된 엑세스 토큰")

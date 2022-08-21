@@ -14,11 +14,10 @@ import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.*;
 
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Schema(description = "유저 프로필 수정 시 정보 전달하는 DTO")
+@Getter @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProfileRequest {
 
     @Schema(required = true, description = "현재 이용자 실명")

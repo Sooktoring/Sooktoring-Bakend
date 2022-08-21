@@ -11,11 +11,10 @@ import javax.validation.constraints.Email;
 import static javax.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
 
-@Entity
-@Getter
-@Builder
+@Getter @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
+@Entity
 public class User extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = IDENTITY)

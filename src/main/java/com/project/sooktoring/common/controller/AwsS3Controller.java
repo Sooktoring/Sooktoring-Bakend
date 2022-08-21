@@ -10,8 +10,8 @@ import java.util.Map;
 
 @Api(tags = "AWS S3 테스트 API")
 @RequiredArgsConstructor
-@RestController
 @RequestMapping("/img")
+@RestController
 public class AwsS3Controller {
 
     private final AwsS3Service awsS3Service;

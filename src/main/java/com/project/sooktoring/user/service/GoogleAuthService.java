@@ -18,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class GoogleAuthService {
 
     private final GoogleUserInfo googleUserInfo;

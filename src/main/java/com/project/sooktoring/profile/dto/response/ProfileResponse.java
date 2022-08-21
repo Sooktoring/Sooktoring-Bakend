@@ -14,9 +14,9 @@ import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 
+@Schema(description = "유저 프로필 조회 시 반환하는 DTO")
 @Getter
 @NoArgsConstructor
-@Schema(description = "유저 프로필 조회 시 반환하는 DTO")
 public class ProfileResponse {
 
     @Schema(description = "프로필 id", example = "1")
