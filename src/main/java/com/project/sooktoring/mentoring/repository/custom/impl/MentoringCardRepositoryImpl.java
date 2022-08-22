@@ -79,4 +79,24 @@ public class MentoringCardRepositoryImpl implements MentoringCardRepositoryCusto
                 .orderBy(mentoringCard.createdDate.desc())
                 .fetch();
     }
+
+    @Override
+    public MentoringCardToResponse findToDtoById(Long mentoringCardId) {
+        QProfile menteeProfile = new QProfile("menteeProfile");
+        return queryFactory
+                .select(
+                        Projections.constructor(MentoringCardToResponse.class,
+                                mentoringCard.id,
+                                mentoring.menteeProfile.id,
+                                menteeProfile.imageUrl,
+                                mentoringCard.title,
+                                mentoringCard.content
+                        )
+                )
+                .from(mentoringCard)
+                .join(mentoringCard.mentoring, mentoring)
+                .on(mentoring.id.eq(mentoringCardId))
+                .leftJoin(mentoring.menteeProfile, menteeProfile)
+                .fetchOne();
+    }
 }

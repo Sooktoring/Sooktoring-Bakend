@@ -41,6 +41,12 @@ public class MentoringCardController {
         return mentoringCardService.getMentoringCardListToMe();
     }
 
+    @Operation(summary = "나에게 온 감사카드 상세 조회", description = "only 멘토")
+    @GetMapping("/to/{mentoringCardId}")
+    public MentoringCardToResponse getMentoringCardToMe(@PathVariable Long mentoringCardId) {
+        return mentoringCardService.getMentoringCardToMe(mentoringCardId);
+    }
+
     @Operation(summary = "감사카드 작성", description = "해당 멘토링 종료 상태일 때에만 작성 가능")
     @PostMapping("/from/{mentoringId}")
     public ResponseEntity<Void> saveMentoringCard(@PathVariable Long mentoringId,
