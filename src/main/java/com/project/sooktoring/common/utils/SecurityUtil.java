@@ -1,6 +1,6 @@
 package com.project.sooktoring.common.utils;
 
-import com.project.sooktoring.user.info.UserPrincipal;
+import com.project.sooktoring.auth.info.UserPrincipal;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 

@@ -1,8 +1,8 @@
 package com.project.sooktoring.common.utils;
 
 import com.project.sooktoring.common.exception.CustomException;
-import com.project.sooktoring.user.domain.User;
-import com.project.sooktoring.user.repository.UserRepository;
+import com.project.sooktoring.auth.domain.User;
+import com.project.sooktoring.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

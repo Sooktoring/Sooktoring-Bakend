@@ -1,7 +1,7 @@
 package com.project.sooktoring.profile.domain;
 
 import com.project.sooktoring.mentoring.domain.Mentoring;
-import com.project.sooktoring.user.domain.User;
+import com.project.sooktoring.auth.domain.User;
 import com.project.sooktoring.common.domain.BaseTimeEntity;
 import com.project.sooktoring.profile.dto.request.ProfileRequest;
 import lombok.*;

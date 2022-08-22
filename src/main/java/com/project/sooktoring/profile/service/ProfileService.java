@@ -8,7 +8,7 @@ import com.project.sooktoring.common.utils.UserUtil;
 import com.project.sooktoring.profile.domain.Profile;
 import com.project.sooktoring.profile.dto.response.ActivityResponse;
 import com.project.sooktoring.profile.dto.response.CareerResponse;
-import com.project.sooktoring.user.domain.User;
+import com.project.sooktoring.auth.domain.User;
 import com.project.sooktoring.profile.dto.response.MentorProfileResponse;
 import com.project.sooktoring.profile.dto.response.ProfileResponse;
 import com.project.sooktoring.profile.domain.Activity;
