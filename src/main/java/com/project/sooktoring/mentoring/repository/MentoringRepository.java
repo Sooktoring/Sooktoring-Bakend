@@ -14,26 +14,25 @@ import java.util.Optional;
 public interface MentoringRepository extends JpaRepository<Mentoring, Long>, MentoringRepositoryCustom {
 
     @Modifying
-    @Query("update Mentoring mtr set mtr.mentorUserProfile.id = null where mtr.mentorUserProfile.id = :userId")
-    void updateMentorByUserId(Long userId);
+    @Query("update Mentoring mtr set mtr.mentorProfile.id = null where mtr.mentorProfile.id = :profileId")
+    void updateMentorByProfileId(Long profileId);
 
     @Modifying
-    @Query("update Mentoring mtr set mtr.menteeUserProfile.id = null where mtr.menteeUserProfile.id = :userId")
-    void updateMenteeByUserId(Long userId);
+    @Query("update Mentoring mtr set mtr.menteeProfile.id = null where mtr.menteeProfile.id = :profileId")
+    void updateMenteeByProfileId(Long profileId);
 
-    @Query("select mtr from Mentoring mtr where mtr.mentorUserProfile.id = :mentorId and mtr.cat = :cat")
-    Optional<Mentoring> findByMentorIdAndCat(Long mentorId, MentoringCat cat);
+    @Query("select mtr from Mentoring mtr where mtr.mentorProfile.id = :mentorProfileId and mtr.cat = :cat")
+    Optional<Mentoring> findByMentorProfileIdAndCat(Long mentorProfileId, MentoringCat cat);
 
-    @Query("select mtr from Mentoring mtr where mtr.mentorUserProfile.id = :mentorId and mtr.state = :state")
-    List<Mentoring> findByMentorIdAndState(Long mentorId, MentoringState state);
+    @Query("select mtr from Mentoring mtr where mtr.mentorProfile.id = :mentorProfileId and mtr.state = :state")
+    List<Mentoring> findByMentorProfileIdAndState(Long mentorProfileId, MentoringState state);
 
-    @Query("select mtr from Mentoring mtr where mtr.menteeUserProfile.id = :menteeId and mtr.state = :state")
-    List<Mentoring> findByMenteeIdAndState(Long menteeId, MentoringState state);
+    @Query("select mtr from Mentoring mtr where mtr.menteeProfile.id = :menteeProfileId and mtr.state = :state")
+    List<Mentoring> findByMenteeProfileIdAndState(Long menteeProfileId, MentoringState state);
 
-    @Query("select mtr from Mentoring mtr where mtr.mentorUserProfile.id = :mentorId")
-    List<Mentoring> findByMentorId(Long mentorId);
+    @Query("select mtr from Mentoring mtr where mtr.mentorProfile.id = :mentorProfileId")
+    List<Mentoring> findByMentorProfileId(Long mentorProfileId);
 
-    @Query("select mtr from Mentoring mtr where mtr.menteeUserProfile.id = :menteeId")
-    List<Mentoring> findByMenteeId(Long menteeId);
-
+    @Query("select mtr from Mentoring mtr where mtr.menteeProfile.id = :menteeProfileId")
+    List<Mentoring> findByMenteeProfileId(Long menteeProfileId);
 }

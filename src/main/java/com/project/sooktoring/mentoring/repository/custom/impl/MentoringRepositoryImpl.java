@@ -1,11 +1,11 @@
 package com.project.sooktoring.mentoring.repository.custom.impl;
 
-import com.project.sooktoring.mentoring.dto.response.MtrFromListResponse;
-import com.project.sooktoring.mentoring.dto.response.MtrFromResponse;
-import com.project.sooktoring.mentoring.dto.response.MtrToListResponse;
-import com.project.sooktoring.mentoring.dto.response.MtrToResponse;
+import com.project.sooktoring.profile.domain.QProfile;
+import com.project.sooktoring.mentoring.dto.response.MentoringFromListResponse;
+import com.project.sooktoring.mentoring.dto.response.MentoringFromResponse;
+import com.project.sooktoring.mentoring.dto.response.MentoringToListResponse;
+import com.project.sooktoring.mentoring.dto.response.MentoringToResponse;
 import com.project.sooktoring.mentoring.repository.custom.MentoringRepositoryCustom;
-import com.project.sooktoring.user.profile.domain.QUserProfile;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -20,17 +20,17 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public MtrFromResponse findFromDtoById(Long mtrId) {
-        QUserProfile mentor = new QUserProfile("mentor");
+    public MentoringFromResponse findFromDtoById(Long mentoringId) {
+        QProfile mentorProfile = new QProfile("mentorProfile");
         return queryFactory
                 .select(
-                        Projections.constructor(MtrFromResponse.class,
+                        Projections.constructor(MentoringFromResponse.class,
                                 mentoring.id,
-                                mentor.id,
-                                mentor.realName,
-                                mentor.mainMajor,
-                                mentor.job,
-                                mentor.imageUrl,
+                                mentorProfile.id,
+                                mentorProfile.realName,
+                                mentorProfile.mainMajor,
+                                mentorProfile.job,
+                                mentorProfile.imageUrl,
                                 mentoring.cat,
                                 mentoring.reason,
                                 mentoring.talk,
@@ -38,44 +38,44 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                         )
                 )
                 .from(mentoring)
-                .leftJoin(mentoring.mentorUserProfile, mentor)
-                .where(mentoring.id.eq(mtrId))
+                .leftJoin(mentoring.mentorProfile, mentorProfile)
+                .where(mentoring.id.eq(mentoringId))
                 .fetchOne();
     }
 
     @Override
-    public List<MtrFromListResponse> findAllFromDto(Long menteeId) {
-        QUserProfile mentor = new QUserProfile("mentor");
+    public List<MentoringFromListResponse> findAllFromDto(Long menteeProfileId) {
+        QProfile mentorProfile = new QProfile("mentorProfile");
         return queryFactory
                 .select(
-                        Projections.constructor(MtrFromListResponse.class,
+                        Projections.constructor(MentoringFromListResponse.class,
                                 mentoring.id,
-                                mentor.id,
-                                mentor.realName,
-                                mentor.imageUrl,
+                                mentorProfile.id,
+                                mentorProfile.realName,
+                                mentorProfile.imageUrl,
                                 mentoring.cat,
                                 mentoring.state,
                                 mentoring.createdDate
                         )
                 )
                 .from(mentoring)
-                .leftJoin(mentoring.mentorUserProfile, mentor)
-                .where(mentoring.menteeUserProfile.id.eq(menteeId))
+                .leftJoin(mentoring.mentorProfile, mentorProfile)
+                .where(mentoring.menteeProfile.id.eq(menteeProfileId))
                 .orderBy(mentoring.createdDate.desc())
                 .fetch();
     }
 
     @Override
-    public MtrToResponse findToDtoById(Long mtrId) {
-        QUserProfile mentee = new QUserProfile("mentee");
+    public MentoringToResponse findToDtoById(Long mentoringId) {
+        QProfile menteeProfile = new QProfile("menteeProfile");
         return queryFactory
                 .select(
-                        Projections.constructor(MtrToResponse.class,
+                        Projections.constructor(MentoringToResponse.class,
                                 mentoring.id,
-                                mentee.id,
-                                mentee.realName,
-                                mentee.mainMajor,
-                                mentee.imageUrl,
+                                menteeProfile.id,
+                                menteeProfile.realName,
+                                menteeProfile.mainMajor,
+                                menteeProfile.imageUrl,
                                 mentoring.cat,
                                 mentoring.reason,
                                 mentoring.talk,
@@ -83,29 +83,29 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                         )
                 )
                 .from(mentoring)
-                .leftJoin(mentoring.menteeUserProfile, mentee)
-                .where(mentoring.id.eq(mtrId))
+                .leftJoin(mentoring.menteeProfile, menteeProfile)
+                .where(mentoring.id.eq(mentoringId))
                 .fetchOne();
     }
 
     @Override
-    public List<MtrToListResponse> findAllToDto(Long mentorId) {
-        QUserProfile mentee = new QUserProfile("mentee");
+    public List<MentoringToListResponse> findAllToDto(Long mentorProfileId) {
+        QProfile menteeProfile = new QProfile("menteeProfile");
         return queryFactory
                 .select(
-                        Projections.constructor(MtrToListResponse.class,
+                        Projections.constructor(MentoringToListResponse.class,
                                 mentoring.id,
-                                mentee.id,
-                                mentee.realName,
-                                mentee.imageUrl,
+                                menteeProfile.id,
+                                menteeProfile.realName,
+                                menteeProfile.imageUrl,
                                 mentoring.cat,
                                 mentoring.state,
                                 mentoring.createdDate
                         )
                 )
                 .from(mentoring)
-                .leftJoin(mentoring.menteeUserProfile, mentee)
-                .where(mentoring.mentorUserProfile.id.eq(mentorId))
+                .leftJoin(mentoring.menteeProfile, menteeProfile)
+                .where(mentoring.mentorProfile.id.eq(mentorProfileId))
                 .orderBy(mentoring.createdDate.desc())
                 .fetch();
     }

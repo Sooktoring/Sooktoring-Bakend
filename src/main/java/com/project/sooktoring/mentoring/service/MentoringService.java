@@ -1,13 +1,13 @@
 package com.project.sooktoring.mentoring.service;
 
 import com.project.sooktoring.common.exception.CustomException;
+import com.project.sooktoring.common.utils.ProfileUtil;
+import com.project.sooktoring.profile.domain.Profile;
 import com.project.sooktoring.mentoring.domain.Mentoring;
-import com.project.sooktoring.mentoring.dto.request.MtrRequest;
-import com.project.sooktoring.mentoring.dto.request.MtrUpdateRequest;
+import com.project.sooktoring.mentoring.dto.request.MentoringRequest;
+import com.project.sooktoring.mentoring.dto.request.MentoringUpdateRequest;
 import com.project.sooktoring.mentoring.dto.response.*;
 import com.project.sooktoring.mentoring.repository.MentoringRepository;
-import com.project.sooktoring.user.profile.domain.UserProfile;
-import com.project.sooktoring.user.profile.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,53 +19,36 @@ import java.util.Optional;
 import static com.project.sooktoring.common.exception.ErrorCode.*;
 import static com.project.sooktoring.mentoring.enumerate.MentoringState.*;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class MentoringService {
 
-    private final UserProfileRepository userProfileRepository;
+    private final ProfileUtil profileUtil;
     private final MentoringRepository mentoringRepository;
-    //private final ChatRoomRepository chatRoomRepository;
 
-    public List<MtrFromListResponse> getMyMentoringList(Long menteeId) {
-        return mentoringRepository.findAllFromDto(menteeId);
+    //From
+    public List<MentoringFromListResponse> getMyMentoringList() {
+        Long profileId = profileUtil.getCurrentProfile().getId();
+        return mentoringRepository.findAllFromDto(profileId);
     }
 
-    public MtrFromResponse getMyMentoring(Long menteeId, Long mtrId) {
-        Mentoring mentoring = mentoringRepository.findById(mtrId).orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING));
-        if (Objects.equals(mentoring.getMenteeUserProfile().getId(), menteeId)) {
-            return mentoringRepository.findFromDtoById(mtrId);
-        }
-        throw new CustomException(UNAUTHORIZED_MENTORING_ACCESS);
-    }
-
-    public List<MtrToListResponse> getMentoringListToMe(Long mentorId) {
-        return mentoringRepository.findAllToDto(mentorId);
-    }
-
-    public MtrToResponse getMentoringToMe(Long mentorId, Long mtrId) {
-        Mentoring mentoring = mentoringRepository.findById(mtrId).orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING));
-        if (Objects.equals(mentoring.getMentorUserProfile().getId(), mentorId)) {
-            return mentoringRepository.findToDtoById(mtrId);
-        }
-        throw new CustomException(UNAUTHORIZED_MENTORING_ACCESS);
+    public MentoringFromResponse getMyMentoring(Long mentoringId) {
+        _getMentoring(mentoringId, false);
+        return mentoringRepository.findFromDtoById(mentoringId);
     }
 
     @Transactional
-    public void save(Long menteeId, MtrRequest mtrRequest) {
+    public void save(MentoringRequest mentoringRequest) {
         //같은 멘토링 신청내역 존재하는 경우
-        Optional<Mentoring> mentoringOptional = mentoringRepository.findByMentorIdAndCat(mtrRequest.getMentorId(), mtrRequest.getCat());
+        Optional<Mentoring> mentoringOptional = mentoringRepository.findByMentorProfileIdAndCat(mentoringRequest.getMentorProfileId(), mentoringRequest.getCat());
         if (mentoringOptional.isPresent() &&
                 (mentoringOptional.get().getState() != REJECT &&
                  mentoringOptional.get().getState() != END)) {
             throw new CustomException(ALREADY_MENTORING_EXISTS);
         }
 
-        UserProfile mentor = userProfileRepository.findById(mtrRequest.getMentorId())
-                .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
-        UserProfile mentee = userProfileRepository.findById(menteeId)
-                .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
-
+        Profile mentor = profileUtil.getProfile(mentoringRequest.getMentorProfileId());
+        Profile mentee = profileUtil.getCurrentProfile();
         //멘토와 멘티가 같거나, 멘티에게 멘토링 신청한 경우
         if (mentor == mentee) {
             throw new CustomException(INVALID_MENTORING_TO_SELF);
@@ -74,84 +57,91 @@ public class MentoringService {
             throw new CustomException(INVALID_MENTORING_TO_MENTEE);
         }
 
-        Mentoring mentoring = Mentoring.create(mtrRequest.getCat(), mtrRequest.getReason(), mtrRequest.getTalk());
-        mentoring.setMentorMentee(mentor, mentee);
+        Mentoring mentoring = Mentoring.create(mentoringRequest.getCat(), mentoringRequest.getReason(), mentoringRequest.getTalk());
+        mentoring.setMentorAndMentee(mentor, mentee);
         mentoringRepository.save(mentoring);
     }
 
     @Transactional
-    public void update(Long menteeId, Long mtrId, MtrUpdateRequest mtrUpdateRequest) {
-        Mentoring mentoring = mentoringRepository.findById(mtrId).orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING));
-        if (Objects.equals(mentoring.getMenteeUserProfile().getId(), menteeId)) {
-            if (mentoring.getState() == APPLY || mentoring.getState() == INVALID) {
-                Long mentorId = mentoring.getMentorUserProfile().getId();
-                Optional<Mentoring> mentoringOptional = mentoringRepository.findByMentorIdAndCat(mentorId, mtrUpdateRequest.getCat());
-                if (mentoringOptional.isPresent() &&
-                        (mentoringOptional.get().getState() != REJECT &&
-                         mentoringOptional.get().getState() != END)) {
-                    throw new CustomException(ALREADY_MENTORING_EXISTS);
-                }
-
-                mentoring.update(mtrUpdateRequest.getCat(), mtrUpdateRequest.getReason(), mtrUpdateRequest.getTalk());
-            }
+    public void update(Long mentoringId, MentoringUpdateRequest mentoringUpdateRequest) {
+        Mentoring mentoring = _getMentoring(mentoringId, false);
+        if (mentoring.getState() != APPLY && mentoring.getState() != INVALID) {
             throw new CustomException(FORBIDDEN_MENTORING_UPDATE);
         }
-        throw new CustomException(UNAUTHORIZED_MENTORING_ACCESS);
-    }
 
-    @Transactional
-    public void cancel(Long menteeId, Long mtrId) {
-        Mentoring mentoring = mentoringRepository.findById(mtrId).orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING));
-        if (Objects.equals(mentoring.getMenteeUserProfile().getId(), menteeId)) {
-            if (mentoring.getState() == ACCEPT || mentoring.getState() == END) {
-                throw new CustomException(FORBIDDEN_MENTORING_CANCEL);
+        //멘토링 카테고리 수정할 경우, 같은 멘토 & 같은 카테고리 신청내역 존재 여부 확인
+        if (mentoring.getCat() != mentoringUpdateRequest.getCat()) {
+            Long mentorId = mentoring.getMentorProfile().getId();
+            Optional<Mentoring> mentoringOptional = mentoringRepository.findByMentorProfileIdAndCat(mentorId, mentoringUpdateRequest.getCat());
+            if (mentoringOptional.isPresent() &&
+                    (mentoringOptional.get().getState() != REJECT &&
+                     mentoringOptional.get().getState() != END)) {
+                throw new CustomException(ALREADY_MENTORING_EXISTS);
             }
-            mentoringRepository.deleteById(mtrId);
         }
-        throw new CustomException(UNAUTHORIZED_MENTORING_ACCESS);
+
+        mentoring.update(mentoringUpdateRequest.getCat(), mentoringUpdateRequest.getReason(), mentoringUpdateRequest.getTalk());
     }
 
     @Transactional
-    public void accept(Long mentorId, Long mtrId) {
-        Mentoring mentoring = mentoringRepository.findById(mtrId).orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING));
-        if (Objects.equals(mentoring.getMentorUserProfile().getId(), mentorId)) {
-            if (mentoring.getState() == APPLY) {
-                mentoring.accept();
-            }
+    public void cancel(Long mentoringId) {
+        Mentoring mentoring = _getMentoring(mentoringId, false);
+        if (mentoring.getState() == ACCEPT || mentoring.getState() == END) {
+            throw new CustomException(FORBIDDEN_MENTORING_CANCEL);
+        }
+        mentoringRepository.deleteById(mentoringId);
+    }
+
+    //To
+    public List<MentoringToListResponse> getMentoringListToMe() {
+        Long profileId = profileUtil.getCurrentProfile().getId();
+        return mentoringRepository.findAllToDto(profileId);
+    }
+
+    public MentoringToResponse getMentoringToMe(Long mentoringId) {
+        _getMentoring(mentoringId, true);
+        return mentoringRepository.findToDtoById(mentoringId);
+    }
+
+    @Transactional
+    public void accept(Long mentoringId) {
+        Mentoring mentoring = _getMentoring(mentoringId, true);
+        if (mentoring.getState() != APPLY) {
             throw new CustomException(FORBIDDEN_MENTORING_ACCEPT);
         }
-        throw new CustomException(UNAUTHORIZED_MENTORING_ACCESS);
+        mentoring.accept();
     }
 
     @Transactional
-    public void reject(Long mentorId, Long mtrId) {
-        Mentoring mentoring = mentoringRepository.findById(mtrId).orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING));
-        if (Objects.equals(mentoring.getMentorUserProfile().getId(), mentorId)) {
-            if (mentoring.getState() == APPLY) {
-                //chatRoomRepository.deleteById(mtrId); //일단 삭제! 나중에 삭제 여부 필드 추가
-                mentoring.reject();
-            }
+    public void reject(Long mentoringId) {
+        Mentoring mentoring = _getMentoring(mentoringId, true);
+        if (mentoring.getState() != APPLY) {
             throw new CustomException(FORBIDDEN_MENTORING_REJECT);
         }
-        throw new CustomException(UNAUTHORIZED_MENTORING_ACCESS);
+        mentoring.reject();
     }
 
     @Transactional
-    public void end(Long mentorId, Long mtrId) {
-        Mentoring mentoring = mentoringRepository.findById(mtrId).orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING));
-        if (Objects.equals(mentoring.getMentorUserProfile().getId(), mentorId)) {
-            if (mentoring.getState() == ACCEPT) {
-                mentoring.end();
-            }
+    public void end(Long mentoringId) {
+        Mentoring mentoring = _getMentoring(mentoringId, true);
+        if (mentoring.getState() != ACCEPT) {
             throw new CustomException(FORBIDDEN_MENTORING_END);
         }
-        throw new CustomException(UNAUTHORIZED_MENTORING_ACCESS);
+        mentoring.end();
     }
 
-    public List<Mentoring> getMyChatRoomList(Long userId) {
-        UserProfile user = userProfileRepository.getById(userId);
-        if(user.getIsMentor()) return mentoringRepository.findByMentorIdAndState(user.getId(), APPLY);
-        else return mentoringRepository.findByMenteeIdAndState(user.getId(), APPLY);
-    }
+    //=== private 메소드 ===
 
+    //해당 멘토링의 존재 여부 & 현재 인증된 이용자가 해당 멘토링의 멘토 or 멘티인지 여부
+    private Mentoring _getMentoring(Long mentoringId, Boolean isMentor) {//isMentor : 해당 멘토링에서 멘토인지 여부
+        Mentoring mentoring = mentoringRepository.findById(mentoringId).orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING));
+        Long profileId = profileUtil.getCurrentProfile().getId();
+
+        if (isMentor) {
+            if (Objects.equals(mentoring.getMentorProfile().getId(), profileId)) return mentoring;
+        } else {
+            if (Objects.equals(mentoring.getMenteeProfile().getId(), profileId)) return mentoring;
+        }
+        throw new CustomException(FORBIDDEN_MENTORING_ACCESS);
+    }
 }

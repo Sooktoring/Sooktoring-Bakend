@@ -1,9 +1,9 @@
 package com.project.sooktoring.mentoring.repository.custom.impl;
 
-import com.project.sooktoring.mentoring.dto.response.MtrCardFromResponse;
-import com.project.sooktoring.mentoring.dto.response.MtrCardToResponse;
+import com.project.sooktoring.profile.domain.QProfile;
+import com.project.sooktoring.mentoring.dto.response.MentoringCardFromResponse;
+import com.project.sooktoring.mentoring.dto.response.MentoringCardToResponse;
 import com.project.sooktoring.mentoring.repository.custom.MentoringCardRepositoryCustom;
-import com.project.sooktoring.user.profile.domain.QUserProfile;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -19,63 +19,63 @@ public class MentoringCardRepositoryImpl implements MentoringCardRepositoryCusto
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<MtrCardFromResponse> findAllFromDto(Long menteeId) {
-        QUserProfile mentor = new QUserProfile("mentor");
+    public List<MentoringCardFromResponse> findAllFromDto(Long menteeProfileId) {
+        QProfile mentorProfile = new QProfile("mentorProfile");
         return queryFactory
                 .select(
-                        Projections.constructor(MtrCardFromResponse.class,
+                        Projections.constructor(MentoringCardFromResponse.class,
                                 mentoringCard.id,
-                                mentoring.mentorUserProfile.id,
-                                mentor.imageUrl,
+                                mentoring.mentorProfile.id,
+                                mentorProfile.imageUrl,
                                 mentoringCard.title,
                                 mentoringCard.content
                         )
                 )
                 .from(mentoringCard)
                 .join(mentoringCard.mentoring, mentoring)
-                .on(mentoring.menteeUserProfile.id.eq(menteeId))
-                .leftJoin(mentoring.mentorUserProfile, mentor)
+                .on(mentoring.menteeProfile.id.eq(menteeProfileId))
+                .leftJoin(mentoring.mentorProfile, mentorProfile)
                 .orderBy(mentoringCard.createdDate.desc())
                 .fetch();
     }
 
     @Override
-    public MtrCardFromResponse findFromDtoById(Long mtrCardId) {
-        QUserProfile mentor = new QUserProfile("mentor");
+    public MentoringCardFromResponse findFromDtoById(Long mentoringCardId) {
+        QProfile mentorProfile = new QProfile("mentorProfile");
         return queryFactory
                 .select(
-                        Projections.constructor(MtrCardFromResponse.class,
+                        Projections.constructor(MentoringCardFromResponse.class,
                                 mentoringCard.id,
-                                mentoring.mentorUserProfile.id,
-                                mentor.imageUrl,
+                                mentoring.mentorProfile.id,
+                                mentorProfile.imageUrl,
                                 mentoringCard.title,
                                 mentoringCard.content
                         )
                 )
                 .from(mentoringCard)
                 .join(mentoringCard.mentoring, mentoring)
-                .on(mentoring.id.eq(mtrCardId))
-                .leftJoin(mentoring.mentorUserProfile, mentor)
+                .on(mentoring.id.eq(mentoringCardId))
+                .leftJoin(mentoring.mentorProfile, mentorProfile)
                 .fetchOne();
     }
 
     @Override
-    public List<MtrCardToResponse> findAllToDto(Long mentorId) {
-        QUserProfile mentee = new QUserProfile("mentee");
+    public List<MentoringCardToResponse> findAllToDto(Long mentorProfileId) {
+        QProfile menteeProfile = new QProfile("menteeProfile");
         return queryFactory
                 .select(
-                        Projections.constructor(MtrCardToResponse.class,
+                        Projections.constructor(MentoringCardToResponse.class,
                                 mentoringCard.id,
-                                mentoring.menteeUserProfile.id,
-                                mentee.imageUrl,
+                                mentoring.menteeProfile.id,
+                                menteeProfile.imageUrl,
                                 mentoringCard.title,
                                 mentoringCard.content
                         )
                 )
                 .from(mentoringCard)
                 .join(mentoringCard.mentoring, mentoring)
-                .on(mentoring.mentorUserProfile.id.eq(mentorId))
-                .leftJoin(mentoring.menteeUserProfile, mentee)
+                .on(mentoring.mentorProfile.id.eq(mentorProfileId))
+                .leftJoin(mentoring.menteeProfile, menteeProfile)
                 .orderBy(mentoringCard.createdDate.desc())
                 .fetch();
     }
