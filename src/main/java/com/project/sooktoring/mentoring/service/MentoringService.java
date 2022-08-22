@@ -130,48 +130,6 @@ public class MentoringService {
         mentoring.end();
     }
 
-    @Transactional
-    public void withdraw(Long profileId) {
-        //모든 멘토링 내역(내가 멘토인, 내가 멘티인) WITHDRAW 상태로 변경
-        List<Mentoring> mentoringListToMe = mentoringRepository.findByMentorProfileId(profileId);
-        List<Mentoring> mentoringListFromMe = mentoringRepository.findByMenteeProfileId(profileId);
-        for (Mentoring mentoring : mentoringListToMe) {
-            mentoring.withdraw();
-        }
-        for (Mentoring mentoring : mentoringListFromMe) {
-            mentoring.withdraw();
-        }
-        //탈퇴하는 이용자의 멘토링 FK set null
-        mentoringRepository.updateMentorByProfileId(profileId);
-        mentoringRepository.updateMenteeByProfileId(profileId);
-    }
-
-    @Transactional
-    public void changeStateByRole(Boolean requestedIsMentor, Profile profile) {
-        Long profileId = profile.getId();
-
-        //멘토 -> 멘티 : APPLY -> INVALID, ACCEPT -> END
-        if (profile.getIsMentor() && !requestedIsMentor) {
-            //나에게 온 멘토링 신청내역 APPLY -> INVALID, ACCEPT -> END 로 변경
-            List<Mentoring> appliedMentoringListToMe = mentoringRepository.findByMentorProfileIdAndState(profileId, APPLY);
-            for (Mentoring mentoring : appliedMentoringListToMe) {
-                mentoring.invalid();
-            }
-            List<Mentoring> acceptedMentoringListToMe = mentoringRepository.findByMentorProfileIdAndState(profileId, ACCEPT);
-            for (Mentoring mentoring : acceptedMentoringListToMe) {
-                mentoring.end();
-            }
-        }
-        //멘티 -> 멘토 : INVALID -> APPLY
-        if (!profile.getIsMentor() && requestedIsMentor) {
-            //이전에 멘토 -> 멘티 -> 멘토로 변경하는 경우 INVALID 상태의 나에게 온 멘토링 신청내역 APPLY 로 변경
-            List<Mentoring> invalidMentoringListToMe = mentoringRepository.findByMentorProfileIdAndState(profileId, INVALID);
-            for (Mentoring mentoring : invalidMentoringListToMe) {
-                mentoring.apply();
-            }
-        }
-    }
-
     //=== private 메소드 ===
 
     //해당 멘토링의 존재 여부 & 현재 인증된 이용자가 해당 멘토링의 멘토 or 멘티인지 여부

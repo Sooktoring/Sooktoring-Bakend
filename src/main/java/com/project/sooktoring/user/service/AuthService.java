@@ -50,7 +50,6 @@ public class AuthService {
                     .refreshToken(newRefreshToken.getToken())
                     .build();
         }
-
-        return null; //401 상태코드 넘겨주기
+        throw new CustomException(INVALID_REFRESH_TOKEN);
     }
 }

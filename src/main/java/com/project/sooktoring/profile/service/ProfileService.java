@@ -1,10 +1,10 @@
 package com.project.sooktoring.profile.service;
 
 import com.project.sooktoring.common.exception.CustomException;
-import com.project.sooktoring.common.service.AwsS3Service;
+import com.project.sooktoring.common.utils.MentoringUtil;
 import com.project.sooktoring.common.utils.ProfileUtil;
+import com.project.sooktoring.common.utils.S3Uploader;
 import com.project.sooktoring.common.utils.UserUtil;
-import com.project.sooktoring.mentoring.service.MentoringService;
 import com.project.sooktoring.profile.domain.Profile;
 import com.project.sooktoring.profile.dto.response.ActivityResponse;
 import com.project.sooktoring.profile.dto.response.CareerResponse;
@@ -38,11 +38,11 @@ public class ProfileService {
 
     private final UserUtil userUtil;
     private final ProfileUtil profileUtil;
+    private final MentoringUtil mentoringUtil;
+    private final S3Uploader s3Uploader;
     private final ProfileRepository profileRepository;
     private final ActivityRepository activityRepository;
     private final CareerRepository careerRepository;
-    private final MentoringService mentoringService;
-    private final AwsS3Service awsS3Service;
 
     @Value("${cloud.aws.s3.default.image}")
     private String defaultImageUrl;
@@ -84,7 +84,7 @@ public class ProfileService {
         User user = userUtil.getCurrentUser();
         Profile profile = profileUtil.getCurrentProfile();
 
-        mentoringService.changeStateByRole(profileRequest.getIsMentor(), profile); //Role 변경에 따른 멘토링 상태 변경
+        mentoringUtil.changeStateByRole(profileRequest.getIsMentor(), profile); //Role 변경에 따른 멘토링 상태 변경
         user.changeRole(profileRequest.getIsMentor()); //User ROLE 업데이트
 
         profileRequest.changeImageUrl(_getImageUrl(file, profile.getImageUrl())); //file 저장 후 이미지 url 반환
@@ -94,13 +94,6 @@ public class ProfileService {
         _changeCareer(profileRequest, profile); //Career 추가, 수정, 삭제
 
         return _getProfileResponse(profile.getId());
-    }
-
-    @Transactional
-    public void withdraw(Long profileId) {
-        activityRepository.deleteByProfileId(profileId);
-        careerRepository.deleteByProfileId(profileId);
-        profileRepository.deleteById(profileId);
     }
 
     //=== private 메소드 ===
@@ -128,9 +121,9 @@ public class ProfileService {
     private String _getImageUrl(MultipartFile file, String originImageUrl) {
         if (file != null && !file.isEmpty()) {
             if (StringUtils.hasText(originImageUrl) && !originImageUrl.equals(defaultImageUrl)) {
-                awsS3Service.deleteImg(originImageUrl); //기존 이미지 삭제
+                s3Uploader.deleteImg(originImageUrl); //기존 이미지 삭제
             }
-            return awsS3Service.uploadImg(file, "test"); //새로운 이미지 등록 & 해당 이미지 url 반환
+            return s3Uploader.uploadImg(file, "test"); //새로운 이미지 등록 & 해당 이미지 url 반환
         }
         return originImageUrl;
     }

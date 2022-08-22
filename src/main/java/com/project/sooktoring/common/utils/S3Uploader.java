@@ -1,4 +1,4 @@
-package com.project.sooktoring.common.service;
+package com.project.sooktoring.common.utils;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
@@ -9,7 +9,7 @@ import com.project.sooktoring.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -20,8 +20,8 @@ import static com.project.sooktoring.common.exception.ErrorCode.FAILED_FILE_UPLO
 
 @Slf4j
 @RequiredArgsConstructor
-@Service
-public class AwsS3Service {
+@Component
+public class S3Uploader {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
@@ -55,5 +55,4 @@ public class AwsS3Service {
             log.info("error = ", e);
         }
     }
-
 }
