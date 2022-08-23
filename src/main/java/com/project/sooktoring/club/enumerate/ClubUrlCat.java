@@ -8,7 +8,7 @@ import static com.project.sooktoring.common.exception.ErrorCode.NOT_FOUND_CLUB_U
 
 public enum ClubUrlCat {
 
-    HOMEPAGE("홈페이지"), INSTAGRAM("인스타그램"), TWITTER("트위터"), FACEBOOK("페이스북");
+    HOMEPAGE("홈페이지"), INSTAGRAM("인스타그램"), TWITTER("트위터"), FACEBOOK("페이스북"), RECRUIT("모집");
 
     private final String value;
 

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,23 +20,16 @@ import static org.springframework.http.HttpStatus.OK;
 @RequiredArgsConstructor
 @RequestMapping("/clubs")
 @RestController
-public class ClubController {
+public class ClubController { //현재 최신순 조회만 구현
 
     private final ClubService clubService;
 
-    //현재 최신순 조회만 구현
+    //교내 or 교외 동아리 리스트 조회
     @GetMapping
     public List<ClubListResponse> getClubListByOrder(@RequestParam ClubKind kind,
                                                      @RequestParam String order) {
-        //교내 or 교외 동아리 리스트 조회
-        if (kind == ClubKind.IN) {
-//            if (order.equals("new")) {}
-            return clubService.getClubInListByNewOrder();
-        }
-        else {
-//            if (order.equals("new")) {}
-            return clubService.getClubOutListByNewOrder();
-        }
+//        if (order.equals("new")) {}
+        return clubService.getClubListByNewOrder(kind);
     }
 
     @GetMapping("/recruit")
@@ -50,15 +44,17 @@ public class ClubController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> saveClub(@RequestBody ClubRequest clubRequest) {
-        clubService.save(clubRequest);
+    public ResponseEntity<Void> saveClub(@RequestPart ClubRequest clubRequest,
+                                         @RequestPart(required = false) MultipartFile file) {
+        clubService.save(clubRequest, file);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("/{clubId}")
     public ResponseEntity<Void> updateClub(@PathVariable Long clubId,
-                                           @RequestBody ClubRequest clubRequest) {
-        clubService.update(clubId, clubRequest);
+                                           @RequestPart ClubRequest clubRequest,
+                                           @RequestPart(required = false) MultipartFile file) {
+        clubService.update(clubId, clubRequest, file);
         return ResponseEntity.status(OK).build();
     }
 

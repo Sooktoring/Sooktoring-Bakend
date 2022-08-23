@@ -1,14 +1,22 @@
 package com.project.sooktoring.club.domain;
 
+import com.project.sooktoring.club.dto.request.ClubRequest;
 import com.project.sooktoring.club.enumerate.ClubKind;
+import com.project.sooktoring.common.domain.BaseTimeEntity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-public class Club {
+public class Club extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "club_id")
@@ -39,4 +47,17 @@ public class Club {
 
     @Column(nullable = false)
     private Boolean isRecruit;
+
+    public void update(ClubRequest clubRequest) {
+        this.kind = clubRequest.getKind();
+        this.name = clubRequest.getName();
+        this.desc = clubRequest.getDesc();
+        this.recruitField = clubRequest.getRecruitField();
+        this.recruitTime = clubRequest.getRecruitTime();
+        this.isRecruit = clubRequest.getIsRecruit();
+    }
+
+    public void changeLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
+    }
 }

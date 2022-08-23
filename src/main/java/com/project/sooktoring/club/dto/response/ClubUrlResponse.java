@@ -8,6 +8,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ClubUrlResponse {
 
+    private Long clubUrlId;
+
     private ClubUrlCat cat;
 
     private String url;

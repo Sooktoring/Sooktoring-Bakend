@@ -36,7 +36,9 @@ public enum ErrorCode {
     FORBIDDEN_MENTORING_ACCESS(FORBIDDEN, "해당 멘토링에 접근할 수 없습니다."),
 
     NOT_FOUND_CLUB_KIND(NOT_FOUND, "해당 동아리 종류(교내/교외)를 찾을 수 없습니다."),
-    NOT_FOUND_CLUB_URL_CAT(NOT_FOUND, "해당 동아리 URL 카테고리를 찾을 수 없습니다.");
+    NOT_FOUND_CLUB_URL_CAT(NOT_FOUND, "해당 동아리 URL 카테고리를 찾을 수 없습니다."),
+    NOT_FOUND_CLUB(NOT_FOUND, "해당 동아리를 찾을 수 없습니다."),
+    NOT_FOUND_CLUB_URL(NOT_FOUND, "해당 동아리 URL을 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
