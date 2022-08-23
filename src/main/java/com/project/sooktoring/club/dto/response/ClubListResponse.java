@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ClubInListResponse {
+public class ClubListResponse {
 
     private Long clubId;
 

@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ClubUrlRequest {
 
+    private Long clubUrlId;
+
     private ClubUrlCat cat;
 
     private String url;
