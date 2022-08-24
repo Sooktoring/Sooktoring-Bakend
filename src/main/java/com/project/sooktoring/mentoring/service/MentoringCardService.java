@@ -34,13 +34,18 @@ public class MentoringCardService {
 
     //멘토링 ID는 멘토링 카드의 FK이자 PK
     public MentoringCardFromResponse getMentoringCardFromMe(Long mentoringCardId) {
-        _getMentoringCard(mentoringCardId);
+        _getMentoringCard(mentoringCardId, false);
         return mentoringCardRepository.findFromDtoById(mentoringCardId);
     }
 
     public List<MentoringCardToResponse> getMentoringCardListToMe() {
         Long profileId = profileUtil.getCurrentProfile().getId();
         return mentoringCardRepository.findAllToDto(profileId);
+    }
+
+    public MentoringCardToResponse getMentoringCardToMe(Long mentoringCardId) {
+        _getMentoringCard(mentoringCardId, true);
+        return mentoringCardRepository.findToDtoById(mentoringCardId);
     }
 
     @Transactional
@@ -60,13 +65,13 @@ public class MentoringCardService {
 
     @Transactional
     public void update(Long mentoringCardId, MentoringCardRequest mentoringCardRequest) {
-        MentoringCard mentoringCard = _getMentoringCard(mentoringCardId);
+        MentoringCard mentoringCard = _getMentoringCard(mentoringCardId, false);
         mentoringCard.updateCard(mentoringCardRequest.getTitle(), mentoringCardRequest.getContent());
     }
 
     @Transactional
     public void delete(Long mentoringCardId) {
-        MentoringCard mentoringCard = _getMentoringCard(mentoringCardId);
+        MentoringCard mentoringCard = _getMentoringCard(mentoringCardId, false);
         mentoringCardRepository.delete(mentoringCard);
     }
 
@@ -86,14 +91,14 @@ public class MentoringCardService {
     }
 
     //해당 멘토링의 존재 여부 & 현재 인증된 이용자가 해당 멘토링의 멘티인지 여부 & 해당 멘토링 카드의 존재 여부
-    private MentoringCard _getMentoringCard(Long mentoringCardId) {
+    private MentoringCard _getMentoringCard(Long mentoringCardId, Boolean isMentor) {
         Mentoring mentoring = mentoringRepository.findById(mentoringCardId).orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING));
         Long profileId = profileUtil.getCurrentProfile().getId();
 
-        if (!Objects.equals(mentoring.getMenteeProfile().getId(), profileId)) {
+        if (isMentor && !Objects.equals(mentoring.getMentorProfile().getId(), profileId) ||
+            !isMentor && !Objects.equals(mentoring.getMenteeProfile().getId(), profileId)) {
             throw new CustomException(FORBIDDEN_MENTORING_ACCESS);
         }
-
         return mentoringCardRepository.findById(mentoringCardId).orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING_CARD));
     }
 }
