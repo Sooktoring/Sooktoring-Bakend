@@ -1,5 +1,6 @@
 package com.project.sooktoring.auth.controller;
 
+import com.project.sooktoring.auth.dto.response.UserNameResponse;
 import com.project.sooktoring.common.exception.ErrorResponse;
 import com.project.sooktoring.common.utils.UserUtil;
 import com.project.sooktoring.auth.domain.User;
@@ -41,6 +42,13 @@ public class UserController {
     @GetMapping("/me")
     public User getUser() {
         return userUtil.getCurrentUser();
+    }
+
+    public UserNameResponse getUserName() {
+        User user = userUtil.getCurrentUser();
+        return UserNameResponse.builder()
+                .userName(user.getName())
+                .build();
     }
 
     @Operation(summary = "유저 탈퇴")
