@@ -84,4 +84,8 @@ public class Profile extends BaseTimeEntity {
         this.isMentor = profileRequest.getIsMentor();
         this.imageUrl = profileRequest.getImageUrl();
     }
+
+    public void changeIsMentor(Boolean isMentor) {
+        this.isMentor = isMentor;
+    }
 }

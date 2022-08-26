@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -27,6 +28,16 @@ public class S3Uploader {
     private String bucketName;
 
     private final AmazonS3 amazonS3;
+
+    public String getImageUrl(MultipartFile file, String originImageUrl) {
+        if (file != null && !file.isEmpty()) {
+            if (StringUtils.hasText(originImageUrl)) {
+                deleteImg(originImageUrl); //기존 이미지 삭제
+            }
+            return uploadImg(file, "test"); //새로운 이미지 등록 & 해당 이미지 url 반환
+        }
+        return originImageUrl;
+    }
 
     //이미지 업로드
     public String uploadImg(MultipartFile file, String category) {

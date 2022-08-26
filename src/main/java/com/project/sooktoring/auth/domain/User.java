@@ -53,8 +53,6 @@ public class User extends BaseTimeEntity {
     public void changeRole(Boolean isMentor) {
         if (role == Role.ROLE_MENTEE && isMentor) {
            role = Role.ROLE_MENTOR;
-        } else if (role == Role.ROLE_MENTOR && !isMentor) {
-            role = Role.ROLE_MENTEE;
         }
     }
 }

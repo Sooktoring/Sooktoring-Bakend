@@ -58,7 +58,7 @@ public class ClubService {
     @Transactional
     public void save(ClubRequest clubRequest, MultipartFile file) {
         //Club 저장
-        String logoUrl = _getImageUrl(file, "");
+        String logoUrl = s3Uploader.getImageUrl(file, "");
         Club club = Club.builder()
                 .logoUrl(logoUrl)
                 .kind(clubRequest.getKind())
@@ -85,7 +85,7 @@ public class ClubService {
     @Transactional
     public void update(Long clubId, ClubRequest clubRequest, MultipartFile file) {
         Club club = clubRepository.findById(clubId).orElseThrow(() -> new CustomException(NOT_FOUND_CLUB));
-        String logoUrl = _getImageUrl(file, club.getLogoUrl());
+        String logoUrl = s3Uploader.getImageUrl(file, club.getLogoUrl());
 
         club.update(clubRequest);
         club.changeLogoUrl(logoUrl);
@@ -103,16 +103,6 @@ public class ClubService {
     }
 
     //=== private 메소드 ===
-
-    private String _getImageUrl(MultipartFile file, String originalImageUrl) {
-        if (file != null && !file.isEmpty()) {
-            if (StringUtils.hasText(originalImageUrl)) {
-                s3Uploader.deleteImg(originalImageUrl); //기존 이미지 삭제
-            }
-            return s3Uploader.uploadImg(file, "test"); //새로운 이미지 등록 & 해당 이미지 url 반환
-        }
-        return originalImageUrl;
-    }
 
     private void _changeClubUrl(ClubRequest clubRequest, Club club) {
         List<ClubUrlRequest> clubUrlRequestList = clubRequest.getClubUrlList();

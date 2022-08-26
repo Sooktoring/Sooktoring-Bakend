@@ -20,10 +20,8 @@ import com.project.sooktoring.profile.repository.ActivityRepository;
 import com.project.sooktoring.profile.repository.CareerRepository;
 import com.project.sooktoring.profile.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -43,9 +41,6 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
     private final ActivityRepository activityRepository;
     private final CareerRepository careerRepository;
-
-    @Value("${cloud.aws.s3.default.image}")
-    private String defaultImageUrl;
 
     public List<ProfileResponse> getProfileDtoList() {
         List<ProfileResponse> profileResponseList = profileRepository.findAllDto();
@@ -87,7 +82,7 @@ public class ProfileService {
         mentoringUtil.changeStateByRole(profileRequest.getIsMentor(), profile); //Role 변경에 따른 멘토링 상태 변경
         user.changeRole(profileRequest.getIsMentor()); //User ROLE 업데이트
 
-        profileRequest.changeImageUrl(_getImageUrl(file, profile.getImageUrl())); //file 저장 후 이미지 url 반환
+        profileRequest.changeImageUrl(s3Uploader.getImageUrl(file, profile.getImageUrl())); //file 저장 후 이미지 url 반환
         profile.update(profileRequest); //updated by dirty checking
 
         _changeActivity(profileRequest, profile); //Activity 추가, 수정, 삭제
@@ -116,16 +111,6 @@ public class ProfileService {
                     careerResponseListMap.get(profileId)
             );
         }
-    }
-
-    private String _getImageUrl(MultipartFile file, String originImageUrl) {
-        if (file != null && !file.isEmpty()) {
-            if (StringUtils.hasText(originImageUrl) && !originImageUrl.equals(defaultImageUrl)) {
-                s3Uploader.deleteImg(originImageUrl); //기존 이미지 삭제
-            }
-            return s3Uploader.uploadImg(file, "test"); //새로운 이미지 등록 & 해당 이미지 url 반환
-        }
-        return originImageUrl;
     }
 
     private void _changeActivity(ProfileRequest profileRequest, Profile profile) {

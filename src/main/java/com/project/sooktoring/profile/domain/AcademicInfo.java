@@ -2,10 +2,12 @@ package com.project.sooktoring.profile.domain;
 
 import com.project.sooktoring.auth.domain.User;
 import com.project.sooktoring.common.domain.BaseTimeEntity;
+import com.project.sooktoring.profile.dto.request.AcademicInfoRequest;
 import com.project.sooktoring.profile.enumerate.AcademicStatus;
 import com.project.sooktoring.profile.enumerate.Major;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -18,7 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
 
-@Builder
+@Getter @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
 @Entity
@@ -74,5 +76,20 @@ public class AcademicInfo extends BaseTimeEntity {
                 .user(user)
                 .realName(user.getName())
                 .build();
+    }
+
+    public void update(AcademicInfoRequest academicInfoRequest) {
+        this.realName = academicInfoRequest.getRealName();
+        this.academicStatus = academicInfoRequest.getAcademicStatus();
+        this.entranceDate = academicInfoRequest.getEntranceDate();
+        this.graduationDate = academicInfoRequest.getGraduationDate();
+        this.isGraduation = academicInfoRequest.getIsGraduation();
+        this.mainMajor = academicInfoRequest.getMainMajor();
+        this.doubleMajor = academicInfoRequest.getDoubleMajor();
+        this.minorMajor = academicInfoRequest.getMinorMajor();
+    }
+
+    public void changeImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
