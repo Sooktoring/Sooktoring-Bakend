@@ -28,16 +28,19 @@ public class Activity extends BaseTimeEntity {
     @JoinColumn(name = "profile_id", nullable = false)
     private Profile profile;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 200)
     private String details;
 
     @Column(nullable = false)
     private YearMonth startDate;
 
     private YearMonth endDate;
+
+    @Column(nullable = false)
+    private Boolean isActive;
 
     //연관관계 편의 메소드를 public으로 바꾸고 밖에서 호출하는게 나을라나?
     public static Activity create(String title, String details, YearMonth startDate, YearMonth endDate, Profile profile) {

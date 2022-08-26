@@ -18,6 +18,8 @@ public enum ErrorCode {
     NOT_FOUND_PROFILE(NOT_FOUND, "해당 프로필을 찾을 수 없습니다."),
     NOT_FOUND_MENTOR(NOT_FOUND, "해당 멘토를 찾을 수 없습니다."),
     NOT_FOUND_MAJOR_CAT(NOT_FOUND, "해당 전공명을 찾을 수 없습니다."),
+    NOT_FOUND_ACADEMIC_STATUS(NOT_FOUND, "해당 학적상태를 찾을 수 없습니다."),
+    NOT_FOUND_DEGREE(NOT_FOUND, "해당 학위를 찾을 수 없습니다."),
     FAILED_FILE_UPLOAD(INTERNAL_SERVER_ERROR, "프로필 이미지 파일 업로드에 실패하였습니다."),
 
     ALREADY_MENTORING_EXISTS(BAD_REQUEST, "같은 멘토링 신청내역이 이미 존재합니다."),

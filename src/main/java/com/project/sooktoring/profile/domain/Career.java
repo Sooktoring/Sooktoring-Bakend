@@ -29,21 +29,24 @@ public class Career extends BaseTimeEntity {
     @JoinColumn(name = "profile_id", nullable = false)
     private Profile profile;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private String job;
 
-    @Column(nullable = false)
-    private String company;
+    @Column(nullable = false, length = 50)
+    private String position;
 
     @Column(nullable = false)
     private YearMonth startDate;
 
     private YearMonth endDate;
 
-    public static Career create(String job, String company, YearMonth startDate, YearMonth endDate, Profile profile) {
+    @Column(nullable = false)
+    private Boolean isWork;
+
+    public static Career create(String job, String position, YearMonth startDate, YearMonth endDate, Profile profile) {
         return Career.builder()
                 .job(job)
-                .company(company)
+                .position(position)
                 .startDate(startDate)
                 .endDate(endDate)
                 .build()
@@ -52,7 +55,7 @@ public class Career extends BaseTimeEntity {
 
     public void update(CareerRequest careerRequest) {
         this.job = careerRequest.getJob();
-        this.company = careerRequest.getCompany(); 
+        this.position = careerRequest.getCompany();
         this.startDate = careerRequest.getStartDate();
         this.endDate = careerRequest.getEndDate();
     }

@@ -1,5 +1,6 @@
 package com.project.sooktoring.auth.domain;
 
+import com.project.sooktoring.common.domain.BaseTimeEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -11,7 +12,7 @@ import static lombok.AccessLevel.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-public class RefreshToken {
+public class RefreshToken extends BaseTimeEntity {
 
     @Id
     @Column(name = "token_key")
