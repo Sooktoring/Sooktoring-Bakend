@@ -68,13 +68,12 @@ public class Profile extends BaseTimeEntity {
     @Column(nullable = false)
     private Boolean isMentor = false;
 
-    public static Profile initByUser(User user, String defaultImageUrl) {
+    public static Profile init(User user, AcademicInfo academicInfo) {
         return Profile.builder()
                 .user(user)
-                .nickName(user.getName())
+                .academicInfo(academicInfo)
                 .job("")
-                .workYear(0L)
-                .imageUrl(defaultImageUrl)
+                .nickName("익명" + user.getId())
                 .build();
     }
 
