@@ -43,12 +43,13 @@ public class Activity extends BaseTimeEntity {
     private Boolean isActive;
 
     //연관관계 편의 메소드를 public으로 바꾸고 밖에서 호출하는게 나을라나?
-    public static Activity create(String title, String details, YearMonth startDate, YearMonth endDate, Profile profile) {
+    public static Activity create(ActivityRequest activityRequest, Profile profile) {
         return Activity.builder()
-                .title(title)
-                .details(details)
-                .startDate(startDate)
-                .endDate(endDate)
+                .title(activityRequest.getTitle())
+                .details(activityRequest.getDetails())
+                .startDate(activityRequest.getStartDate())
+                .endDate(activityRequest.getEndDate())
+                .isActive(activityRequest.getIsActive())
                 .build()
                 .changeProfile(profile);
     }
@@ -58,12 +59,13 @@ public class Activity extends BaseTimeEntity {
         this.details = activityRequest.getDetails();
         this.startDate = activityRequest.getStartDate();
         this.endDate = activityRequest.getEndDate();
+        this.isActive = activityRequest.getIsActive();
     }
 
     //연관관계 편의 메소드
     private Activity changeProfile(Profile profile) {
         this.profile = profile;
-        profile.getActivities().add(this);
+        profile.getActivityList().add(this);
         return this;
     }
 }

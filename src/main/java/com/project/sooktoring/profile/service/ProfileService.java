@@ -1,167 +1,156 @@
 package com.project.sooktoring.profile.service;
 
-import com.project.sooktoring.common.exception.CustomException;
-import com.project.sooktoring.common.utils.MentoringUtil;
 import com.project.sooktoring.common.utils.ProfileUtil;
 import com.project.sooktoring.common.utils.S3Uploader;
-import com.project.sooktoring.common.utils.UserUtil;
+import com.project.sooktoring.profile.domain.MasterDoctor;
 import com.project.sooktoring.profile.domain.Profile;
-import com.project.sooktoring.profile.dto.response.ActivityResponse;
-import com.project.sooktoring.profile.dto.response.CareerResponse;
-import com.project.sooktoring.auth.domain.User;
-import com.project.sooktoring.profile.dto.response.MentorProfileResponse;
-import com.project.sooktoring.profile.dto.response.ProfileResponse;
+import com.project.sooktoring.profile.dto.request.*;
+import com.project.sooktoring.profile.dto.response.*;
 import com.project.sooktoring.profile.domain.Activity;
 import com.project.sooktoring.profile.domain.Career;
-import com.project.sooktoring.profile.dto.request.ActivityRequest;
-import com.project.sooktoring.profile.dto.request.CareerRequest;
-import com.project.sooktoring.profile.dto.request.ProfileRequest;
 import com.project.sooktoring.profile.repository.ActivityRepository;
 import com.project.sooktoring.profile.repository.CareerRepository;
+import com.project.sooktoring.profile.repository.MasterDoctorRepository;
 import com.project.sooktoring.profile.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import static com.project.sooktoring.common.exception.ErrorCode.*;
 
 @RequiredArgsConstructor
 @Service
 public class ProfileService {
 
-    private final UserUtil userUtil;
     private final ProfileUtil profileUtil;
-    private final MentoringUtil mentoringUtil;
     private final S3Uploader s3Uploader;
     private final ProfileRepository profileRepository;
+    private final MasterDoctorRepository masterDoctorRepository;
     private final ActivityRepository activityRepository;
     private final CareerRepository careerRepository;
 
-    public List<ProfileResponse> getProfileDtoList() {
-        List<ProfileResponse> profileResponseList = profileRepository.findAllDto();
-        Map<Long, List<ActivityResponse>> activityResponseListMap = activityRepository.findAllMap();
-        Map<Long, List<CareerResponse>> careerResponseListMap = careerRepository.findAllMap();
-        _setActivityAndCareer(profileResponseList, activityResponseListMap, careerResponseListMap);
-
-        return profileResponseList;
-    }
-
-    public ProfileResponse getProfileDto() {
+    public MentorProfileResponse getMyMentorProfile() {
         Long profileId = profileUtil.getCurrentProfile().getId();
-        return _getProfileResponse(profileId);
+        return _getMentorProfileResponse(profileId);
     }
 
-    public ProfileResponse getProfileDto(Long profileId) {
+    public MentorProfileResponse getMentorProfile(Long profileId) {
         profileUtil.getProfile(profileId);
-        return _getProfileResponse(profileId);
+        return _getMentorProfileResponse(profileId);
     }
 
-    public List<MentorProfileResponse> getMentorProfileDtoList() {
-        return profileRepository.findMentors();
+    public MenteeProfileResponse getMyMenteeProfile() {
+        Long profileId = profileUtil.getCurrentProfile().getId();
+        return _getMenteeProfileResponse(profileId);
     }
 
-    public MentorProfileResponse getMentorProfileDto(Long profileId) {
-        Profile profile = profileUtil.getProfile(profileId);
-        if (profile.getIsMentor()) {
-            return profileRepository.findMentor(profileId);
-        }
-        throw new CustomException(NOT_FOUND_MENTOR);
+    public MenteeProfileResponse getMenteeProfile(Long profileId) {
+        profileUtil.getProfile(profileId);
+        return _getMenteeProfileResponse(profileId);
     }
 
-    //Activity, Career 추가, 수정, 삭제 한번에 수행
+    public List<MentorProfileListResponse> getMentorProfileDtoList() {
+        return profileRepository.findAllMentorDto();
+    }
+
     @Transactional
-    public ProfileResponse update(ProfileRequest profileRequest, MultipartFile file) {
-        User user = userUtil.getCurrentUser();
+    public void updateMyMentorProfile(MentorProfileRequest mentorProfileRequest, MultipartFile file) {
         Profile profile = profileUtil.getCurrentProfile();
+        String imageUrl = s3Uploader.getImageUrl(file, profile.getImageUrl());
+        profile.update(imageUrl, mentorProfileRequest.getJob(), mentorProfileRequest.getNickName());
+        profile.changeWorkYear(_getWorkYear(mentorProfileRequest.getCareerList())); //연차 계산
 
-        mentoringUtil.changeStateByRole(profileRequest.getIsMentor(), profile); //Role 변경에 따른 멘토링 상태 변경
-        user.changeRole(profileRequest.getIsMentor()); //User ROLE 업데이트
+        _changeMasterDoctor(mentorProfileRequest.getMasterDoctorList(), profile);
+        _changeCareer(mentorProfileRequest.getCareerList(), profile);
+    }
 
-        profileRequest.changeImageUrl(s3Uploader.getImageUrl(file, profile.getImageUrl())); //file 저장 후 이미지 url 반환
-        profile.update(profileRequest); //updated by dirty checking
+    @Transactional
+    public void updateMyMenteeProfile(MenteeProfileRequest menteeProfileRequest, MultipartFile file) {
+        Profile profile = profileUtil.getCurrentProfile();
+        String imageUrl = s3Uploader.getImageUrl(file, profile.getImageUrl());
+        profile.update(imageUrl, menteeProfileRequest.getJob(), menteeProfileRequest.getNickName());
 
-        _changeActivity(profileRequest, profile); //Activity 추가, 수정, 삭제
-        _changeCareer(profileRequest, profile); //Career 추가, 수정, 삭제
-
-        return _getProfileResponse(profile.getId());
+        _changeActivity(menteeProfileRequest.getActivityList(), profile);
     }
 
     //=== private 메소드 ===
 
-    private ProfileResponse _getProfileResponse(Long profileId) {
-        ProfileResponse profileResponse = profileRepository.findDtoById(profileId);
-        profileResponse.changeList(
-                activityRepository.findAllDto(profileId),
-                careerRepository.findAllDto(profileId)
-        );
-        return profileResponse;
+    private MentorProfileResponse _getMentorProfileResponse(Long profileId) {
+        MentorProfileResponse mentorProfileResponse = profileRepository.findMentorDtoById(profileId);
+        List<MasterDoctorResponse> masterDoctorResponseList = masterDoctorRepository.findAllDtoByProfileId(profileId);
+        List<CareerResponse> careerResponseList = careerRepository.findAllDtoByProfileId(profileId);
+        mentorProfileResponse.changeList(masterDoctorResponseList, careerResponseList);
+        return mentorProfileResponse;
     }
 
-    private void _setActivityAndCareer(List<ProfileResponse> profileResponseList,
-                                       Map<Long, List<ActivityResponse>> activityResponseListMap, Map<Long, List<CareerResponse>> careerResponseListMap) {
-        for (ProfileResponse profileResponse : profileResponseList) {
-            Long profileId = profileResponse.getId();
-            profileResponse.changeList(
-                    activityResponseListMap.get(profileId),
-                    careerResponseListMap.get(profileId)
-            );
-        }
+    private MenteeProfileResponse _getMenteeProfileResponse(Long profileId) {
+        MenteeProfileResponse menteeProfileResponse = profileRepository.findMenteeDtoById(profileId);
+        List<ActivityResponse> activityResponseList = activityRepository.findAllDtoByProfileId(profileId);
+        menteeProfileResponse.changeList(activityResponseList);
+        return menteeProfileResponse;
     }
 
-    private void _changeActivity(ProfileRequest profileRequest, Profile profile) {
-        List<ActivityRequest> activities = profileRequest.getActivityRequests();
-        List<Long> activityIds = new ArrayList<>();
-
-        for (ActivityRequest activityRequest : activities) {
-            if(activityRequest.getId() == null || activityRepository.findById(activityRequest.getId()).isEmpty()) {
-                Activity activity = activityRepository.save(
-                        Activity.create(
-                                activityRequest.getTitle(),
-                                activityRequest.getDetails(),
-                                activityRequest.getStartDate(),
-                                activityRequest.getEndDate(),
-                                profile
-                        )
-                );
-                activityIds.add(activity.getId());
-            } else {
-                Activity activity = activityRepository.findById(activityRequest.getId()).get();
-                activity.update(activityRequest); //updated by dirty checking
-                activityIds.add(activity.getId());
+    private Long _getWorkYear(List<CareerRequest> careerList) {
+        for (CareerRequest careerRequest : careerList) {
+            if (careerRequest.getIsWork()) {
+                return (long) (YearMonth.now().getYear() - careerRequest.getStartDate().getYear());
             }
         }
-        //DTO에 포함되지 않은 activity 삭제
-        activityRepository.deleteByIdsNotInBatch(profile.getId(), activityIds);
+        return null;
     }
 
-    private void _changeCareer(ProfileRequest profileRequest, Profile profile) {
-        List<CareerRequest> careers = profileRequest.getCareerRequests();
+    private void _changeMasterDoctor(List<MasterDoctorRequest> masterDoctorRequestList, Profile profile) {
+        List<Long> masterDoctorIds = new ArrayList<>();
+
+        for (MasterDoctorRequest masterDoctorRequest : masterDoctorRequestList) {
+            if (masterDoctorRequest.getMasterDoctorId() == null ||
+                    masterDoctorRepository.findById(masterDoctorRequest.getMasterDoctorId()).isEmpty()) {
+                MasterDoctor masterDoctor = masterDoctorRepository.save(MasterDoctor.create(masterDoctorRequest, profile));
+                masterDoctorIds.add(masterDoctor.getId());
+            } else {
+                MasterDoctor masterDoctor = masterDoctorRepository.findById(masterDoctorRequest.getMasterDoctorId()).get();
+                masterDoctor.update(masterDoctorRequest);
+                masterDoctorIds.add(masterDoctor.getId());
+            }
+        }
+        //DTO에 포함되지 않은 masterDoctor 삭제
+        masterDoctorRepository.deleteByIdsNotInBatch(profile.getId(), masterDoctorIds);
+    }
+
+    private void _changeCareer(List<CareerRequest> careerRequestList, Profile profile) {
         List<Long> careerIds = new ArrayList<>();
 
-        for (CareerRequest careerRequest : careers) {
-            if (careerRequest.getId() == null || careerRepository.findById(careerRequest.getId()).isEmpty()) {
-                Career career = careerRepository.save(
-                        Career.create(
-                                careerRequest.getJob(),
-                                careerRequest.getCompany(),
-                                careerRequest.getStartDate(),
-                                careerRequest.getEndDate(),
-                                profile
-                        )
-                );
+        for (CareerRequest careerRequest : careerRequestList) {
+            if (careerRequest.getCareerId() == null || careerRepository.findById(careerRequest.getCareerId()).isEmpty()) {
+                Career career = careerRepository.save(Career.create(careerRequest, profile));
                 careerIds.add(career.getId());
             } else {
-                Career career = careerRepository.findById(careerRequest.getId()).get();
+                Career career = careerRepository.findById(careerRequest.getCareerId()).get();
                 career.update(careerRequest); //updated by dirty checking
                 careerIds.add(career.getId());
             }
         }
         //DTO에 포함되지 않은 career 삭제
         careerRepository.deleteByIdsNotInBatch(profile.getId(), careerIds);
+    }
+
+    private void _changeActivity(List<ActivityRequest> activityRequestList, Profile profile) {
+        List<Long> activityIds = new ArrayList<>();
+
+        for (ActivityRequest activityRequest : activityRequestList) {
+            if(activityRequest.getActivityId() == null || activityRepository.findById(activityRequest.getActivityId()).isEmpty()) {
+                Activity activity = activityRepository.save(Activity.create(activityRequest, profile));
+                activityIds.add(activity.getId());
+            } else {
+                Activity activity = activityRepository.findById(activityRequest.getActivityId()).get();
+                activity.update(activityRequest); //updated by dirty checking
+                activityIds.add(activity.getId());
+            }
+        }
+        //DTO에 포함되지 않은 activity 삭제
+        activityRepository.deleteByIdsNotInBatch(profile.getId(), activityIds);
     }
 }

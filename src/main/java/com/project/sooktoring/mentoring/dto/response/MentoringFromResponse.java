@@ -24,9 +24,6 @@ public class MentoringFromResponse {
     @Schema(description = "신청한 멘토 실명", example = "김영희")
     private String mentorRealName;
 
-    @Schema(description = "신청한 멘토 주전공")
-    private MainMajor mentorMainMajor;
-
     @Schema(description = "신청한 멘토 직업", example = "백엔드 개발자")
     private String mentorJob;
 

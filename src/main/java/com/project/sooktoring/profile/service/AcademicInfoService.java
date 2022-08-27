@@ -50,7 +50,6 @@ public class AcademicInfoService {
         User user = userUtil.getCurrentUser();
         Profile profile = profileUtil.getCurrentProfile();
         Boolean isMentor = (academicInfoRequest.getAcademicStatus() != ATTEND && academicInfoRequest.getAcademicStatus() != BREAK);
-
         //멘토 -> 멘티 불가능
         if (user.getRole() == Role.ROLE_MENTOR && !isMentor) {
             throw new CustomException(INVALID_ACADEMIC_STATUS);
@@ -60,8 +59,7 @@ public class AcademicInfoService {
 
         AcademicInfo academicInfo = academicInfoUtil.getCurrentAcademicInfo();
         academicInfo.update(academicInfoRequest);
-
-        String imageUrl = s3Uploader.getImageUrl(file, "");
+        String imageUrl = s3Uploader.getImageUrl(file, academicInfo.getImageUrl());
         academicInfo.changeImageUrl(imageUrl);
     }
 }

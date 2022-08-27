@@ -49,6 +49,8 @@ public class SecurityConfig {
                 .antMatchers("/v3/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**", "/auth/**", "/", "/test", "/clubs/**").permitAll()
                 .antMatchers("/mentoring/to/**").hasRole("MENTOR")
                 .antMatchers("/mentoring/card/to/**").hasRole("MENTOR")
+                .antMatchers("/profile/mentors/me").hasRole("MENTOR")
+                .antMatchers("/profile/mentees/me").hasRole("MENTEE")
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)

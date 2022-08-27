@@ -3,7 +3,6 @@ package com.project.sooktoring.profile.domain;
 import com.project.sooktoring.mentoring.domain.Mentoring;
 import com.project.sooktoring.auth.domain.User;
 import com.project.sooktoring.common.domain.BaseTimeEntity;
-import com.project.sooktoring.profile.dto.request.ProfileRequest;
 import lombok.*;
 
 import javax.persistence.*;
@@ -35,11 +34,11 @@ public class Profile extends BaseTimeEntity {
 
     @Builder.Default //없으면 null로 들어감
     @OneToMany(mappedBy = "profile")
-    private List<Activity> activities = new ArrayList<>();
+    private List<Activity> activityList = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "profile")
-    private List<Career> careers = new ArrayList<>();
+    private List<Career> careerList = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "profile")
@@ -77,12 +76,14 @@ public class Profile extends BaseTimeEntity {
                 .build();
     }
 
-    public void update(ProfileRequest profileRequest) {
-        this.nickName = profileRequest.getRealName();
-        this.job = profileRequest.getJob();
-        this.workYear = profileRequest.getWorkYear();
-        this.isMentor = profileRequest.getIsMentor();
-        this.imageUrl = profileRequest.getImageUrl();
+    public void update(String imageUrl, String job, String nickName) {
+        this.imageUrl = imageUrl;
+        this.job = job;
+        this.nickName = nickName;
+    }
+
+    public void changeWorkYear(Long workYear) {
+        this.workYear = workYear;
     }
 
     public void changeIsMentor(Boolean isMentor) {

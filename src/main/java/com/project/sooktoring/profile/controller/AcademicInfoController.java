@@ -14,22 +14,22 @@ import static org.springframework.http.HttpStatus.*;
 
 @Api(tags = "학적정보 API")
 @RequiredArgsConstructor
-@RequestMapping("/academicInfos")
+@RequestMapping("/academicInfo")
 @RestController
 public class AcademicInfoController {
 
     private final AcademicInfoService academicInfoService;
 
-    @Operation(summary = "처음 학적정보 입력 시 기존 정보 조회")
+    @Operation(summary = "나의 학적정보 조회")
     @GetMapping("/me")
     public AcademicInfoResponse getMyAcademicInfo() {
         return academicInfoService.getMyAcademicInfo();
     }
 
-    @Operation(summary = "학적정보 변경")
+    @Operation(summary = "나의 학적정보 변경")
     @PutMapping("/me")
     public ResponseEntity<Void> updateMyAcademicInfo(@RequestPart AcademicInfoRequest academicInfoRequest,
-                                                   @RequestPart(required = false) MultipartFile file) {
+                                                     @RequestPart(required = false) MultipartFile file) {
         academicInfoService.update(academicInfoRequest, file);
         return ResponseEntity.status(OK).build();
     }

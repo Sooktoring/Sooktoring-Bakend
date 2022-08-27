@@ -10,7 +10,7 @@ import java.util.List;
 @Getter @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MentorProfileResponse {
+public class MenteeProfileResponse {
 
     private Long profileId;
 
@@ -24,11 +24,9 @@ public class MentorProfileResponse {
 
     private Boolean isMentor;
 
-    private List<MasterDoctorResponse> masterDoctorList;
+    private List<ActivityResponse> activityList;
 
-    private List<CareerResponse> careerList;
-
-    public MentorProfileResponse(Long profileId, String profileImageUrl, String job, Long workYear, String nickName, Boolean isMentor) {
+    public MenteeProfileResponse(Long profileId, String profileImageUrl, String job, Long workYear, String nickName, Boolean isMentor) {
         this.profileId = profileId;
         this.profileImageUrl = profileImageUrl;
         this.job = job;
@@ -37,8 +35,7 @@ public class MentorProfileResponse {
         this.isMentor = isMentor;
     }
 
-    public void changeList(List<MasterDoctorResponse> masterDoctorList, List<CareerResponse> careerList) {
-        this.masterDoctorList = masterDoctorList;
-        this.careerList = careerList;
+    public void changeList(List<ActivityResponse> activityList) {
+        this.activityList = activityList;
     }
 }

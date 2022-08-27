@@ -43,27 +43,29 @@ public class Career extends BaseTimeEntity {
     @Column(nullable = false)
     private Boolean isWork;
 
-    public static Career create(String job, String position, YearMonth startDate, YearMonth endDate, Profile profile) {
+    public static Career create(CareerRequest careerRequest, Profile profile) {
         return Career.builder()
-                .job(job)
-                .position(position)
-                .startDate(startDate)
-                .endDate(endDate)
+                .job(careerRequest.getJob())
+                .position(careerRequest.getPosition())
+                .startDate(careerRequest.getStartDate())
+                .endDate(careerRequest.getEndDate())
+                .isWork(careerRequest.getIsWork())
                 .build()
                 .changeProfile(profile);
     }
 
     public void update(CareerRequest careerRequest) {
         this.job = careerRequest.getJob();
-        this.position = careerRequest.getCompany();
+        this.position = careerRequest.getPosition();
         this.startDate = careerRequest.getStartDate();
         this.endDate = careerRequest.getEndDate();
+        this.isWork = careerRequest.getIsWork();
     }
 
     //연관관계 편의 메소드
     private Career changeProfile(Profile profile) {
         this.profile = profile;
-        profile.getCareers().add(this);
+        profile.getCareerList().add(this);
         return this;
     }
 }

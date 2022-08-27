@@ -3,6 +3,7 @@ package com.project.sooktoring.mentoring.dto.response;
 import com.project.sooktoring.profile.domain.MainMajor;
 import com.project.sooktoring.mentoring.enumerate.MentoringCat;
 import com.project.sooktoring.mentoring.enumerate.MentoringState;
+import com.project.sooktoring.profile.enumerate.Major;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,9 +24,6 @@ public class MentoringToResponse {
 
     @Schema(description = "신청한 멘티 실명", example = "이영희")
     private String menteeRealName;
-
-    @Schema(description = "신청한 멘티 주전공")
-    private MainMajor menteeMainMajor;
 
     @Schema(description = "신청한 멘티 프로필 이미지 url")
     private String menteeImageUrl;

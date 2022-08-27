@@ -1,7 +1,6 @@
 package com.project.sooktoring.profile.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,8 +19,7 @@ import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 public class ActivityRequest {
 
     @Schema(description = "대외활동 id", example = "1") //수정 시에는 required = true
-    @JsonProperty("activityId")
-    private Long id;
+    private Long activityId;
 
     @Schema(description = "대외활동명", example = "SOLUX 교내 동아리", required = true)
     @NotNull
@@ -39,4 +37,7 @@ public class ActivityRequest {
     @Schema(description = "대외활동 종료일", example = "2022/07")
     @JsonFormat(pattern = "yyyy/MM", shape = STRING)
     private YearMonth endDate;
+
+    @Schema(description = "활동중 여부", example = "true")
+    private Boolean isActive;
 }
