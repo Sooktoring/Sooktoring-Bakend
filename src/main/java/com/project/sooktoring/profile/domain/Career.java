@@ -29,38 +29,43 @@ public class Career extends BaseTimeEntity {
     @JoinColumn(name = "profile_id", nullable = false)
     private Profile profile;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private String job;
 
-    @Column(nullable = false)
-    private String company;
+    @Column(nullable = false, length = 50)
+    private String position;
 
     @Column(nullable = false)
     private YearMonth startDate;
 
     private YearMonth endDate;
 
-    public static Career create(String job, String company, YearMonth startDate, YearMonth endDate, Profile profile) {
+    @Column(nullable = false)
+    private Boolean isWork;
+
+    public static Career create(CareerRequest careerRequest, Profile profile) {
         return Career.builder()
-                .job(job)
-                .company(company)
-                .startDate(startDate)
-                .endDate(endDate)
+                .job(careerRequest.getJob())
+                .position(careerRequest.getPosition())
+                .startDate(careerRequest.getStartDate())
+                .endDate(careerRequest.getEndDate())
+                .isWork(careerRequest.getIsWork())
                 .build()
                 .changeProfile(profile);
     }
 
     public void update(CareerRequest careerRequest) {
         this.job = careerRequest.getJob();
-        this.company = careerRequest.getCompany(); 
+        this.position = careerRequest.getPosition();
         this.startDate = careerRequest.getStartDate();
         this.endDate = careerRequest.getEndDate();
+        this.isWork = careerRequest.getIsWork();
     }
 
     //연관관계 편의 메소드
     private Career changeProfile(Profile profile) {
         this.profile = profile;
-        profile.getCareers().add(this);
+        profile.getCareerList().add(this);
         return this;
     }
 }

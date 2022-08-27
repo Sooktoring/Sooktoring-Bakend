@@ -25,11 +25,11 @@ public class MentoringFromListResponse {
     @Schema(description = "신청한 멘토 프로필 id", example = "1")
     private Long mentorProfileId;
 
-    @Schema(description = "신청한 멘토 실명", example = "김영희")
-    private String mentorRealName;
+    @Schema(description = "신청한 멘토 닉네임", example = "개발자국")
+    private String mentorNickName;
 
     @Schema(description = "신청한 멘토 프로필 이미지 url")
-    private String mentorImageUrl;
+    private String mentorProfileImageUrl;
 
     @Schema(description = "멘토링 카테고리", example = "자소서")
     protected MentoringCat cat;

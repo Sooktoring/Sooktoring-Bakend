@@ -12,6 +12,7 @@ import java.util.List;
 
 import static com.project.sooktoring.mentoring.domain.QMentoring.mentoring;
 import static com.project.sooktoring.mentoring.domain.QMentoringCard.mentoringCard;
+import static com.project.sooktoring.profile.domain.QAcademicInfo.*;
 
 @RequiredArgsConstructor
 public class MentoringCardRepositoryImpl implements MentoringCardRepositoryCustom {
@@ -26,6 +27,9 @@ public class MentoringCardRepositoryImpl implements MentoringCardRepositoryCusto
                         Projections.constructor(MentoringCardFromResponse.class,
                                 mentoringCard.id,
                                 mentoring.mentorProfile.id,
+                                mentorProfile.nickName,
+                                mentorProfile.job,
+                                mentorProfile.workYear,
                                 mentorProfile.imageUrl,
                                 mentoringCard.title,
                                 mentoringCard.content
@@ -47,6 +51,9 @@ public class MentoringCardRepositoryImpl implements MentoringCardRepositoryCusto
                         Projections.constructor(MentoringCardFromResponse.class,
                                 mentoringCard.id,
                                 mentoring.mentorProfile.id,
+                                mentorProfile.nickName,
+                                mentorProfile.job,
+                                mentorProfile.workYear,
                                 mentorProfile.imageUrl,
                                 mentoringCard.title,
                                 mentoringCard.content
@@ -67,7 +74,9 @@ public class MentoringCardRepositoryImpl implements MentoringCardRepositoryCusto
                         Projections.constructor(MentoringCardToResponse.class,
                                 mentoringCard.id,
                                 mentoring.menteeProfile.id,
-                                menteeProfile.imageUrl,
+                                academicInfo.realName,
+                                academicInfo.mainMajor,
+                                academicInfo.imageUrl,
                                 mentoringCard.title,
                                 mentoringCard.content
                         )
@@ -76,6 +85,7 @@ public class MentoringCardRepositoryImpl implements MentoringCardRepositoryCusto
                 .join(mentoringCard.mentoring, mentoring)
                 .on(mentoring.mentorProfile.id.eq(mentorProfileId))
                 .leftJoin(mentoring.menteeProfile, menteeProfile)
+                .leftJoin(menteeProfile.academicInfo, academicInfo)
                 .orderBy(mentoringCard.createdDate.desc())
                 .fetch();
     }
@@ -88,7 +98,9 @@ public class MentoringCardRepositoryImpl implements MentoringCardRepositoryCusto
                         Projections.constructor(MentoringCardToResponse.class,
                                 mentoringCard.id,
                                 mentoring.menteeProfile.id,
-                                menteeProfile.imageUrl,
+                                academicInfo.realName,
+                                academicInfo.mainMajor,
+                                academicInfo.imageUrl,
                                 mentoringCard.title,
                                 mentoringCard.content
                         )
@@ -97,6 +109,7 @@ public class MentoringCardRepositoryImpl implements MentoringCardRepositoryCusto
                 .join(mentoringCard.mentoring, mentoring)
                 .on(mentoring.id.eq(mentoringCardId))
                 .leftJoin(mentoring.menteeProfile, menteeProfile)
+                .leftJoin(menteeProfile.academicInfo, academicInfo)
                 .fetchOne();
     }
 }

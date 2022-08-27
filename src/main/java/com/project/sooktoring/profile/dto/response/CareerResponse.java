@@ -1,7 +1,6 @@
 package com.project.sooktoring.profile.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,14 +18,13 @@ import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 public class CareerResponse {
 
     @Schema(description = "직무경력 id", example = "1")
-    @JsonProperty("careerId")
-    private Long id;
+    private Long careerId;
 
     @Schema(description = "직무명", example = "테스트 서버 벡엔드")
     private String job;
 
-    @Schema(description = "회사명", example = "네이버")
-    private String company;
+    @Schema(description = "직급", example = "인턴")
+    private String position;
 
     @Schema(description = "직무 시작일", example = "2022/05")
     @JsonFormat(pattern = "yyyy/MM", shape = STRING)
@@ -35,4 +33,7 @@ public class CareerResponse {
     @Schema(description = "직무 종료일", example = "2022/07")
     @JsonFormat(pattern = "yyyy/MM", shape = STRING)
     private YearMonth endDate;
+
+    @Schema(description = "재직중 여부", example = "true")
+    private Boolean isWork;
 }

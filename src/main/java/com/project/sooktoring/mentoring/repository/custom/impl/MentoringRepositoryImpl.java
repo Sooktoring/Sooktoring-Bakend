@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 import static com.project.sooktoring.mentoring.domain.QMentoring.mentoring;
+import static com.project.sooktoring.profile.domain.QAcademicInfo.*;
 
 @RequiredArgsConstructor
 public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
@@ -27,9 +28,9 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                         Projections.constructor(MentoringFromResponse.class,
                                 mentoring.id,
                                 mentorProfile.id,
-                                mentorProfile.realName,
-                                mentorProfile.mainMajor,
+                                mentorProfile.nickName,
                                 mentorProfile.job,
+                                mentorProfile.workYear,
                                 mentorProfile.imageUrl,
                                 mentoring.cat,
                                 mentoring.reason,
@@ -51,7 +52,7 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                         Projections.constructor(MentoringFromListResponse.class,
                                 mentoring.id,
                                 mentorProfile.id,
-                                mentorProfile.realName,
+                                mentorProfile.nickName,
                                 mentorProfile.imageUrl,
                                 mentoring.cat,
                                 mentoring.state,
@@ -73,9 +74,9 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                         Projections.constructor(MentoringToResponse.class,
                                 mentoring.id,
                                 menteeProfile.id,
-                                menteeProfile.realName,
-                                menteeProfile.mainMajor,
-                                menteeProfile.imageUrl,
+                                academicInfo.realName,
+                                academicInfo.mainMajor,
+                                academicInfo.imageUrl,
                                 mentoring.cat,
                                 mentoring.reason,
                                 mentoring.talk,
@@ -84,6 +85,7 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                 )
                 .from(mentoring)
                 .leftJoin(mentoring.menteeProfile, menteeProfile)
+                .leftJoin(menteeProfile.academicInfo, academicInfo)
                 .where(mentoring.id.eq(mentoringId))
                 .fetchOne();
     }
@@ -96,8 +98,8 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                         Projections.constructor(MentoringToListResponse.class,
                                 mentoring.id,
                                 menteeProfile.id,
-                                menteeProfile.realName,
-                                menteeProfile.imageUrl,
+                                academicInfo.realName,
+                                academicInfo.imageUrl,
                                 mentoring.cat,
                                 mentoring.state,
                                 mentoring.createdDate
@@ -105,6 +107,7 @@ public class MentoringRepositoryImpl implements MentoringRepositoryCustom {
                 )
                 .from(mentoring)
                 .leftJoin(mentoring.menteeProfile, menteeProfile)
+                .leftJoin(menteeProfile.academicInfo, academicInfo)
                 .where(mentoring.mentorProfile.id.eq(mentorProfileId))
                 .orderBy(mentoring.createdDate.desc())
                 .fetch();

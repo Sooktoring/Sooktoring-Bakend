@@ -15,10 +15,15 @@ public enum ErrorCode {
     INVALID_GOOGLE_ID_TOKEN(UNAUTHORIZED, "유효하지 않은 구글 id 토큰입니다."),
 
     NOT_FOUND_USER(NOT_FOUND, "해당 이용자를 찾을 수 없습니다."),
+    NOT_FOUND_ACADEMIC_INFO(NOT_FOUND, "해당 학적정보를 찾을 수 없습니다."),
     NOT_FOUND_PROFILE(NOT_FOUND, "해당 프로필을 찾을 수 없습니다."),
     NOT_FOUND_MENTOR(NOT_FOUND, "해당 멘토를 찾을 수 없습니다."),
+    NOT_FOUND_MENTEE(NOT_FOUND, "해당 멘티를 찾을 수 없습니다."),
     NOT_FOUND_MAJOR_CAT(NOT_FOUND, "해당 전공명을 찾을 수 없습니다."),
+    NOT_FOUND_ACADEMIC_STATUS(NOT_FOUND, "해당 학적상태를 찾을 수 없습니다."),
+    NOT_FOUND_DEGREE(NOT_FOUND, "해당 학위를 찾을 수 없습니다."),
     FAILED_FILE_UPLOAD(INTERNAL_SERVER_ERROR, "프로필 이미지 파일 업로드에 실패하였습니다."),
+    INVALID_ACADEMIC_STATUS(BAD_REQUEST, "멘토의 학적상태는 졸업 or 수료 or 유예 중 하나이어야 합니다."),
 
     ALREADY_MENTORING_EXISTS(BAD_REQUEST, "같은 멘토링 신청내역이 이미 존재합니다."),
     ALREADY_MENTORING_CARD_EXISTS(BAD_REQUEST, "해당 멘토링에 대한 감사카드가 이미 존재합니다."),

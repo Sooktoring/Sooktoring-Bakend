@@ -1,7 +1,8 @@
 package com.project.sooktoring.profile.repository.custom.impl;
 
+import com.project.sooktoring.profile.dto.response.MenteeProfileResponse;
+import com.project.sooktoring.profile.dto.response.MentorProfileListResponse;
 import com.project.sooktoring.profile.dto.response.MentorProfileResponse;
-import com.project.sooktoring.profile.dto.response.ProfileResponse;
 import com.project.sooktoring.profile.repository.custom.ProfileRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -16,16 +17,16 @@ public class ProfileRepositoryImpl implements ProfileRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<MentorProfileResponse> findMentors() {
+    public List<MentorProfileListResponse> findAllMentorDto() {
         return queryFactory
                 .select(
-                        Projections.constructor(MentorProfileResponse.class,
+                        Projections.constructor(MentorProfileListResponse.class,
                                 profile.id,
-                                profile.realName,
+                                profile.imageUrl,
                                 profile.job,
                                 profile.workYear,
-                                profile.mainMajor,
-                                profile.imageUrl
+                                profile.nickName,
+                                profile.isMentor
                         )
                 )
                 .from(profile)
@@ -34,40 +35,16 @@ public class ProfileRepositoryImpl implements ProfileRepositoryCustom {
     }
 
     @Override
-    public MentorProfileResponse findMentor(Long profileId) {
+    public MentorProfileResponse findMentorDtoById(Long profileId) {
         return queryFactory
                 .select(
                         Projections.constructor(MentorProfileResponse.class,
                                 profile.id,
-                                profile.realName,
+                                profile.imageUrl,
                                 profile.job,
                                 profile.workYear,
-                                profile.mainMajor,
-                                profile.imageUrl
-                        )
-                )
-                .from(profile)
-                .where(profile.id.eq(profileId), profile.isMentor.isTrue())
-                .fetchOne();
-    }
-
-    @Override
-    public ProfileResponse findDtoById(Long profileId) {
-        //DTO로 조회
-        return queryFactory
-                .select(
-                        Projections.constructor(ProfileResponse.class,
-                                profile.id,
-                                profile.realName,
-                                profile.mainMajor,
-                                profile.doubleMajor,
-                                profile.minor,
-                                profile.entranceDate,
-                                profile.graduationDate,
-                                profile.job,
-                                profile.workYear,
-                                profile.isMentor,
-                                profile.imageUrl
+                                profile.nickName,
+                                profile.isMentor
                         )
                 )
                 .from(profile)
@@ -76,24 +53,20 @@ public class ProfileRepositoryImpl implements ProfileRepositoryCustom {
     }
 
     @Override
-    public List<ProfileResponse> findAllDto() {
+    public MenteeProfileResponse findMenteeDtoById(Long profileId) {
         return queryFactory
                 .select(
-                        Projections.constructor(ProfileResponse.class,
+                        Projections.constructor(MenteeProfileResponse.class,
                                 profile.id,
-                                profile.realName,
-                                profile.mainMajor,
-                                profile.doubleMajor,
-                                profile.minor,
-                                profile.entranceDate,
-                                profile.graduationDate,
+                                profile.imageUrl,
                                 profile.job,
                                 profile.workYear,
-                                profile.isMentor,
-                                profile.imageUrl
+                                profile.nickName,
+                                profile.isMentor
                         )
                 )
                 .from(profile)
-                .fetch();
+                .where(profile.id.eq(profileId))
+                .fetchOne();
     }
 }

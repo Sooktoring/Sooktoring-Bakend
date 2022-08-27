@@ -1,5 +1,6 @@
 package com.project.sooktoring.auth.service;
 
+import com.project.sooktoring.profile.domain.AcademicInfo;
 import com.project.sooktoring.profile.domain.Profile;
 import com.project.sooktoring.auth.info.GoogleUserInfo;
 import com.project.sooktoring.auth.dto.request.AuthRequest;
@@ -9,10 +10,10 @@ import com.project.sooktoring.auth.jwt.AuthTokenProvider;
 import com.project.sooktoring.auth.domain.RefreshToken;
 import com.project.sooktoring.auth.repository.RefreshTokenRepository;
 import com.project.sooktoring.auth.domain.User;
+import com.project.sooktoring.profile.repository.AcademicInfoRepository;
 import com.project.sooktoring.profile.repository.ProfileRepository;
 import com.project.sooktoring.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,10 +27,8 @@ public class GoogleAuthService {
     private final AuthTokenProvider authTokenProvider;
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final AcademicInfoRepository academicInfoRepository;
     private final ProfileRepository profileRepository;
-
-    @Value("${cloud.aws.s3.default.image}")
-    private String defaultImageUrl;
 
     @Transactional
     public AuthResponse login(AuthRequest authRequest) {
@@ -56,7 +55,9 @@ public class GoogleAuthService {
             isNewUser = true;
 
             //기본 유저 프로필 생성
-            Profile profile = Profile.initByUser(loginUser, defaultImageUrl);
+            AcademicInfo academicInfo = AcademicInfo.init(loginUser);
+            academicInfo = academicInfoRepository.save(academicInfo);
+            Profile profile = Profile.init(loginUser, academicInfo);
             profileRepository.save(profile);
         }
 

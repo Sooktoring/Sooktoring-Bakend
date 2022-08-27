@@ -64,10 +64,6 @@ public class Mentoring extends BaseTimeEntity {
         this.talk = talk;
     }
 
-    public void apply() {
-        this.state = APPLY;
-    }
-
     public void accept() {
         this.state = ACCEPT;
     }
@@ -78,10 +74,6 @@ public class Mentoring extends BaseTimeEntity {
 
     public void end() {
         this.state = END;
-    }
-
-    public void invalid() {
-        this.state = INVALID;
     }
 
     public void withdraw() {

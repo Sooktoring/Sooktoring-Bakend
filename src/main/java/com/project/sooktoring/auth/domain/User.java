@@ -30,11 +30,6 @@ public class User extends BaseTimeEntity {
 
     private String imageUrl;
 
-    @Builder.Default
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role = Role.ROLE_MENTEE;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AuthProvider provider;
@@ -43,18 +38,21 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private String providerId;
 
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role = Role.ROLE_MENTEE;
+
     public void updateUser(User user) {
-        this.providerId = user.getProviderId();
-        this.name = user.getName();
         this.email = user.getEmail();
+        this.name = user.getName();
         this.imageUrl = user.getImageUrl();
+        this.providerId = user.getProviderId();
     }
 
     public void changeRole(Boolean isMentor) {
         if (role == Role.ROLE_MENTEE && isMentor) {
            role = Role.ROLE_MENTOR;
-        } else if (role == Role.ROLE_MENTOR && !isMentor) {
-            role = Role.ROLE_MENTEE;
         }
     }
 }
