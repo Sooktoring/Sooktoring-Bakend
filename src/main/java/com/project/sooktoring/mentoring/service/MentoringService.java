@@ -65,7 +65,7 @@ public class MentoringService {
     @Transactional
     public void update(Long mentoringId, MentoringUpdateRequest mentoringUpdateRequest) {
         Mentoring mentoring = _getMentoring(mentoringId, false);
-        if (mentoring.getState() != APPLY && mentoring.getState() != INVALID) {
+        if (mentoring.getState() != APPLY) {
             throw new CustomException(FORBIDDEN_MENTORING_UPDATE);
         }
 
