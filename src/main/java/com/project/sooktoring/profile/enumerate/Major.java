@@ -37,6 +37,11 @@ public enum Major {
     MECHANICAL_SYSTEMS_DEPT("기계시스템학부"),
     BASIC_ENGINEERING_DEPT("기초공학부"),
 
+    IT_ENGINEERING_MAJOR("IT공학전공"),
+    ELECTRONIC_ENGINEERING_MAJOR("전자공학전공"),
+    PHYSICS_MAJOR("응용물리전공"),
+    SW_MAJOR("SW융합전공"),
+
     //생활과학대학
     FAMILY_RESOURCE_MANAGEMENT_DEPT("가족자원경영학과"),
     CHILD_WELFARE_DEPT("아동복지학부"),
