@@ -29,7 +29,7 @@ public class MentorProfileController {
         return profileService.getMyMentorProfile();
     }
 
-    @Operation(summary = "특정 이용자 프로필 상세 조회 - 멘토")
+    @Operation(summary = "특정 이용자 프로필 상세 조회")
     @GetMapping("/{profileId}")
     public MentorProfileResponse getMentorProfile(@PathVariable Long profileId) {
         return profileService.getMentorProfile(profileId);
@@ -41,7 +41,7 @@ public class MentorProfileController {
         return profileService.getMentorProfileDtoList();
     }
 
-    @Operation(summary = "나의 프로필 수정 - 멘토")
+    @Operation(summary = "나의 프로필 수정")
     @PutMapping("/me")
     public ResponseEntity<Void> updateMyMentorProfile(@RequestPart MentorProfileRequest mentorProfileRequest,
                                                       @RequestPart(required = false) MultipartFile file) {

@@ -1,5 +1,6 @@
 package com.project.sooktoring.profile.service;
 
+import com.project.sooktoring.common.exception.CustomException;
 import com.project.sooktoring.common.utils.ProfileUtil;
 import com.project.sooktoring.common.utils.S3Uploader;
 import com.project.sooktoring.profile.domain.MasterDoctor;
@@ -21,6 +22,8 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.project.sooktoring.common.exception.ErrorCode.*;
+
 @RequiredArgsConstructor
 @Service
 public class ProfileService {
@@ -38,7 +41,11 @@ public class ProfileService {
     }
 
     public MentorProfileResponse getMentorProfile(Long profileId) {
-        profileUtil.getProfile(profileId);
+        Profile profile = profileUtil.getProfile(profileId);
+        if (!profile.getIsMentor()) {
+            throw new CustomException(NOT_FOUND_MENTOR);
+        }
+
         return _getMentorProfileResponse(profileId);
     }
 
@@ -48,7 +55,11 @@ public class ProfileService {
     }
 
     public MenteeProfileResponse getMenteeProfile(Long profileId) {
-        profileUtil.getProfile(profileId);
+        Profile profile = profileUtil.getProfile(profileId);
+        if (profile.getIsMentor()) {
+            throw new CustomException(NOT_FOUND_MENTEE);
+        }
+
         return _getMenteeProfileResponse(profileId);
     }
 

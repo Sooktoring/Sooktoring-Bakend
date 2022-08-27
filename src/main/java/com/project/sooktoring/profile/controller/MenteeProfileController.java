@@ -20,19 +20,19 @@ public class MenteeProfileController {
 
     private final ProfileService profileService;
 
-    @Operation(summary = "나의 프로필 상세 조회 - 멘티")
+    @Operation(summary = "나의 프로필 상세 조회")
     @GetMapping("/me")
     public MenteeProfileResponse getMyMenteeProfile() {
         return profileService.getMyMenteeProfile();
     }
 
-    @Operation(summary = "특정 이용자 프로필 상세 조회 - 멘티")
+    @Operation(summary = "특정 이용자 프로필 상세 조회")
     @GetMapping("/{profileId}")
     public MenteeProfileResponse getMenteeProfile(@PathVariable Long profileId) {
         return profileService.getMenteeProfile(profileId);
     }
 
-    @Operation(summary = "나의 프로필 수정 - 멘티")
+    @Operation(summary = "나의 프로필 수정")
     @PutMapping("/me")
     public ResponseEntity<Void> updateMyMenteeProfile(@RequestPart MenteeProfileRequest menteeProfileRequest,
                                                       @RequestPart(required = false) MultipartFile file) {
