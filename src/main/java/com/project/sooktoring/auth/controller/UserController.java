@@ -44,6 +44,7 @@ public class UserController {
         return userUtil.getCurrentUser();
     }
 
+    @GetMapping("/name")
     public UserNameResponse getUserName() {
         User user = userUtil.getCurrentUser();
         return UserNameResponse.builder()

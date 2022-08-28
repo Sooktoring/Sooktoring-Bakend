@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.project.sooktoring.common.exception.ErrorCode.*;
 
@@ -85,6 +86,14 @@ public class ProfileService {
         profile.update(imageUrl, menteeProfileRequest.getJob(), menteeProfileRequest.getNickName());
 
         _changeActivity(menteeProfileRequest.getActivityList(), profile);
+    }
+
+    public void checkNickName(String nickName) {
+        Long profileId = profileUtil.getCurrentProfile().getId();
+        Optional<Profile> profileOptional = profileRepository.findByNickName(profileId, nickName);
+        if (profileOptional.isPresent()) {
+            throw new CustomException(ALREADY_NICKNAME_EXISTS);
+        }
     }
 
     //=== private 메소드 ===
