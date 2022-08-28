@@ -62,7 +62,7 @@ public class MentorProfileController {
             @ApiResponse(responseCode = "200", description = "정상적으로 나의 프로필 수정된 경우"),
             @ApiResponse(responseCode = "401", description = "유효하지 않은 엑세스 토큰"),
             @ApiResponse(responseCode = "403", description = "현재 이용자가 멘티인 경우"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 프로필"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 프로필 or 학사 이후 학력 or 직무경력"),
             @ApiResponse(responseCode = "500", description = "이미지 파일 업로드 실패")
     })
     @PutMapping("/me")

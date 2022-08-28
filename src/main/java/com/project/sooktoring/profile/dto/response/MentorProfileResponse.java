@@ -35,7 +35,7 @@ public class MentorProfileResponse {
     @Schema(description = "학사 이후 학력 리스트")
     private List<MasterDoctorResponse> masterDoctorList;
 
-    @Schema(description = "경력 리스트")
+    @Schema(description = "직무경력 리스트")
     private List<CareerResponse> careerList;
 
     public MentorProfileResponse(Long profileId, String profileImageUrl, String job, Long workYear, String nickName, Boolean isMentor) {

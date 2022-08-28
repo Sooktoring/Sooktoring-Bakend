@@ -24,6 +24,6 @@ public class MentorProfileRequest {
     @Schema(description = "학사 이후 학력 리스트", required = true)
     private List<MasterDoctorRequest> masterDoctorList;
 
-    @Schema(description = "경력 리스트", required = true)
+    @Schema(description = "직무경력 리스트", required = true)
     private List<CareerRequest> careerList;
 }

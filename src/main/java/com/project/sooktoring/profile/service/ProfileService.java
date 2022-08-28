@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.project.sooktoring.common.exception.ErrorCode.*;
@@ -132,6 +133,10 @@ public class ProfileService {
                 masterDoctorIds.add(masterDoctor.getId());
             } else {
                 MasterDoctor masterDoctor = masterDoctorRepository.findById(masterDoctorRequest.getMasterDoctorId()).get();
+                if (!Objects.equals(masterDoctor.getProfile().getId(), profile.getId())) {
+                    throw new CustomException(NOT_FOUND_MASTER_DOCTOR);
+                }
+
                 masterDoctor.update(masterDoctorRequest);
                 masterDoctorIds.add(masterDoctor.getId());
             }
@@ -149,6 +154,10 @@ public class ProfileService {
                 careerIds.add(career.getId());
             } else {
                 Career career = careerRepository.findById(careerRequest.getCareerId()).get();
+                if (!Objects.equals(career.getProfile().getId(), profile.getId())) {
+                    throw new CustomException(NOT_FOUND_CAREER);
+                }
+
                 career.update(careerRequest); //updated by dirty checking
                 careerIds.add(career.getId());
             }
@@ -166,6 +175,10 @@ public class ProfileService {
                 activityIds.add(activity.getId());
             } else {
                 Activity activity = activityRepository.findById(activityRequest.getActivityId()).get();
+                if (!Objects.equals(activity.getProfile().getId(), profile.getId())) {
+                    throw new CustomException(NOT_FOUND_ACTIVITY);
+                }
+
                 activity.update(activityRequest); //updated by dirty checking
                 activityIds.add(activity.getId());
             }
