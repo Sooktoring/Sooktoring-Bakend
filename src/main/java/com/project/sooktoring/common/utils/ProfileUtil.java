@@ -8,6 +8,7 @@ import com.project.sooktoring.profile.repository.MasterDoctorRepository;
 import com.project.sooktoring.profile.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import static com.project.sooktoring.common.exception.ErrorCode.*;
 
@@ -15,6 +16,7 @@ import static com.project.sooktoring.common.exception.ErrorCode.*;
 @Component
 public class ProfileUtil {
 
+    private final S3Uploader s3Uploader;
     private final ProfileRepository profileRepository;
     private final ActivityRepository activityRepository;
     private final CareerRepository careerRepository;
@@ -30,10 +32,16 @@ public class ProfileUtil {
                 .orElseThrow(() -> new CustomException(NOT_FOUND_PROFILE));
     }
 
-    public void withdraw(Long profileId) {
+    public void withdraw(Profile profile) {
+        Long profileId = profile.getId();
         activityRepository.deleteByProfileId(profileId);
         careerRepository.deleteByProfileId(profileId);
         masterDoctorRepository.deleteByProfileId(profileId);
-        profileRepository.deleteById(profileId);
+
+        //프로필 이미지 삭제
+        if (StringUtils.hasText(profile.getImageUrl())) {
+            s3Uploader.deleteImg(profile.getImageUrl());
+        }
+        profileRepository.delete(profile);
     }
 }
