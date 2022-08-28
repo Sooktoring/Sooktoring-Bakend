@@ -44,6 +44,7 @@ public class UserController {
         return userUtil.getCurrentUser();
     }
 
+    @Operation(summary = "현재 로그인한 유저 이름 조회", description = "구글 계정 이름 조회")
     @GetMapping("/name")
     public UserNameResponse getUserName() {
         User user = userUtil.getCurrentUser();
