@@ -22,7 +22,7 @@ public enum ErrorCode {
     NOT_FOUND_MAJOR_CAT(NOT_FOUND, "해당 전공명을 찾을 수 없습니다."),
     NOT_FOUND_ACADEMIC_STATUS(NOT_FOUND, "해당 학적상태를 찾을 수 없습니다."),
     NOT_FOUND_DEGREE(NOT_FOUND, "해당 학위를 찾을 수 없습니다."),
-    FAILED_FILE_UPLOAD(INTERNAL_SERVER_ERROR, "프로필 이미지 파일 업로드에 실패하였습니다."),
+    FAILED_FILE_UPLOAD(INTERNAL_SERVER_ERROR, "이미지 파일 업로드에 실패하였습니다."),
     INVALID_ACADEMIC_STATUS(BAD_REQUEST, "멘토의 학적상태는 졸업 or 수료 or 유예 중 하나이어야 합니다."),
     ALREADY_NICKNAME_EXISTS(BAD_REQUEST, "해당 닉네임이 이미 존재합니다."),
 
