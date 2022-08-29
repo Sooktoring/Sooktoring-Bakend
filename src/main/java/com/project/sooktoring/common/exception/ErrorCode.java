@@ -15,6 +15,7 @@ public enum ErrorCode {
     INVALID_GOOGLE_ID_TOKEN(UNAUTHORIZED, "유효하지 않은 구글 id 토큰입니다."),
 
     NOT_FOUND_USER(NOT_FOUND, "해당 이용자를 찾을 수 없습니다."),
+    NOT_FOUND_FCM_TOKEN(NOT_FOUND, "현재 이용자의 FCM 토큰을 찾을 수 없습니다."),
     NOT_FOUND_ACADEMIC_INFO(NOT_FOUND, "해당 학적정보를 찾을 수 없습니다."),
     NOT_FOUND_PROFILE(NOT_FOUND, "해당 프로필을 찾을 수 없습니다."),
     NOT_FOUND_MENTOR(NOT_FOUND, "해당 멘토를 찾을 수 없습니다."),

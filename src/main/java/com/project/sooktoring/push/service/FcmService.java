@@ -3,6 +3,7 @@ package com.project.sooktoring.push.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.project.sooktoring.common.exception.CustomException;
 import com.project.sooktoring.push.dto.FcmMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,10 +11,13 @@ import okhttp3.*;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+
+import static com.project.sooktoring.common.exception.ErrorCode.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -24,6 +28,9 @@ public class FcmService {
     private final ObjectMapper objectMapper;
 
     public void sendMessageTo(String targetToken, String title, String body) throws IOException {
+        if (!StringUtils.hasText(targetToken)) {
+            throw new CustomException(NOT_FOUND_FCM_TOKEN);
+        }
         String message = makeMessage(targetToken, title, body);
 
         OkHttpClient client = new OkHttpClient();

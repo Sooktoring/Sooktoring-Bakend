@@ -43,6 +43,8 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private Role role = Role.ROLE_MENTEE;
 
+    private String fcmToken; //firebase registration token
+
     public void updateUser(User user) {
         this.email = user.getEmail();
         this.name = user.getName();
@@ -54,5 +56,9 @@ public class User extends BaseTimeEntity {
         if (role == Role.ROLE_MENTEE && isMentor) {
            role = Role.ROLE_MENTOR;
         }
+    }
+
+    public void changeFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 }
