@@ -77,7 +77,8 @@ public class MentoringToController {
             @ApiResponse(responseCode = "200", description = "정상적으로 멘토링 신청내역 종료된 경우"),
             @ApiResponse(responseCode = "401", description = "유효하지 않은 엑세스 토큰"),
             @ApiResponse(responseCode = "403", description = "접근 권한 없는 멘토링에 접근 or 종료 권한 없는 멘토링 종료"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 프로필 or 멘토링")
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 프로필 or 멘토링"),
+            @ApiResponse(responseCode = "500", description = "멘토링 푸시 알림 실패")
     })
     @DeleteMapping("/{mentoringId}")
     public ResponseEntity<Void> endMentoringToMe(@Parameter(description = "멘토링 id") @PathVariable Long mentoringId) {

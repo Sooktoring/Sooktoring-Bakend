@@ -2,6 +2,7 @@ package com.project.sooktoring.mentoring.service;
 
 import com.project.sooktoring.common.exception.CustomException;
 import com.project.sooktoring.common.utils.ProfileUtil;
+import com.project.sooktoring.common.utils.UserUtil;
 import com.project.sooktoring.mentoring.enumerate.MentoringState;
 import com.project.sooktoring.profile.domain.Profile;
 import com.project.sooktoring.mentoring.domain.Mentoring;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -25,6 +27,7 @@ import static com.project.sooktoring.mentoring.enumerate.MentoringState.*;
 @Service
 public class MentoringService {
 
+    private final UserUtil userUtil;
     private final ProfileUtil profileUtil;
     private final FcmService fcmService;
     private final MentoringRepository mentoringRepository;
@@ -99,21 +102,23 @@ public class MentoringService {
     public void endByMentee(Long mentoringId) {
         Mentoring mentoring = _getMentoring(mentoringId, false);
         MentoringState state = mentoring.getState();
-        String body;
+        String title, body;
 
         if (state != ACCEPT && state != END_MENTOR) {
             throw new CustomException(FORBIDDEN_MENTORING_END);
         }
         else if (state == ACCEPT) {
             mentoring.endMentee();
-            body = "멘티가 멘토링 종료를 요청하였습니다.";
+            title = "멘토링 종료 요청 알림"; body = "멘티가 멘토링 종료를 요청하였습니다.";
         }
         else {
             mentoring.end();
-            body = "멘티가 멘토링 종료를 수락하였습니다.";
+            title = "멘토링 종료 알림"; body = "멘티가 멘토링 종료를 수락하였습니다.";
         }
 
         //푸시 알림 send to 멘토
+        Long toProfileId = mentoring.getMentorProfile().getId();
+        _sendPushNotification(toProfileId, title, body);
     }
 
     //To
@@ -149,21 +154,23 @@ public class MentoringService {
     public void endByMentor(Long mentoringId) {
         Mentoring mentoring = _getMentoring(mentoringId, true);
         MentoringState state = mentoring.getState();
-        String body;
+        String title, body;
 
         if (state != ACCEPT && state != END_MENTEE) {
             throw new CustomException(FORBIDDEN_MENTORING_END);
         }
         else if (state == ACCEPT) {
             mentoring.endMentor();
-            body = "멘토가 멘토링 종료를 요청하였습니다.";
+            title = "멘토링 종료 요청 알림"; body = "멘토가 멘토링 종료를 요청하였습니다.";
         }
         else {
             mentoring.end();
-            body = "멘토가 멘토링 종료를 수락하였습니다.";
+            title = "멘토링 종료 알림"; body = "멘토가 멘토링 종료를 수락하였습니다.";
         }
 
-        //푸시 알림 send to 멘티 
+        //푸시 알림 send to 멘티
+        Long toProfileId = mentoring.getMenteeProfile().getId();
+        _sendPushNotification(toProfileId, title, body);
     }
 
     //=== private 메소드 ===
@@ -179,5 +186,16 @@ public class MentoringService {
             if (Objects.equals(mentoring.getMenteeProfile().getId(), profileId)) return mentoring;
         }
         throw new CustomException(FORBIDDEN_MENTORING_ACCESS);
+    }
+
+    private void _sendPushNotification(Long toProfileId, String title, String body) {
+        Long userId = profileUtil.getProfile(toProfileId).getUser().getId();
+        String targetToken = userUtil.getUser(userId).getFcmToken();
+
+        try {
+            fcmService.sendMessageTo(targetToken, title, body);
+        } catch (IOException e) {
+            throw new CustomException(FAILED_MENTORING_PUSH);
+        }
     }
 }
