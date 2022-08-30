@@ -72,6 +72,14 @@ public class Mentoring extends BaseTimeEntity {
         this.state = REJECT;
     }
 
+    public void endMentor() {
+        this.state = END_MENTOR;
+    }
+
+    public void endMentee() {
+        this.state = END_MENTEE;
+    }
+
     public void end() {
         this.state = END;
     }

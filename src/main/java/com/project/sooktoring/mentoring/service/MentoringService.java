@@ -2,12 +2,14 @@ package com.project.sooktoring.mentoring.service;
 
 import com.project.sooktoring.common.exception.CustomException;
 import com.project.sooktoring.common.utils.ProfileUtil;
+import com.project.sooktoring.mentoring.enumerate.MentoringState;
 import com.project.sooktoring.profile.domain.Profile;
 import com.project.sooktoring.mentoring.domain.Mentoring;
 import com.project.sooktoring.mentoring.dto.request.MentoringRequest;
 import com.project.sooktoring.mentoring.dto.request.MentoringUpdateRequest;
 import com.project.sooktoring.mentoring.dto.response.*;
 import com.project.sooktoring.mentoring.repository.MentoringRepository;
+import com.project.sooktoring.push.service.FcmService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,7 @@ import static com.project.sooktoring.mentoring.enumerate.MentoringState.*;
 public class MentoringService {
 
     private final ProfileUtil profileUtil;
+    private final FcmService fcmService;
     private final MentoringRepository mentoringRepository;
 
     //From
@@ -92,6 +95,27 @@ public class MentoringService {
         mentoringRepository.deleteById(mentoringId);
     }
 
+    @Transactional
+    public void endByMentee(Long mentoringId) {
+        Mentoring mentoring = _getMentoring(mentoringId, false);
+        MentoringState state = mentoring.getState();
+        String body;
+
+        if (state != ACCEPT && state != END_MENTOR) {
+            throw new CustomException(FORBIDDEN_MENTORING_END);
+        }
+        else if (state == ACCEPT) {
+            mentoring.endMentee();
+            body = "멘티가 멘토링 종료를 요청하였습니다.";
+        }
+        else {
+            mentoring.end();
+            body = "멘티가 멘토링 종료를 수락하였습니다.";
+        }
+
+        //푸시 알림 send to 멘토
+    }
+
     //To
     public List<MentoringToListResponse> getMentoringListToMe() {
         Long profileId = profileUtil.getCurrentProfile().getId();
@@ -122,12 +146,24 @@ public class MentoringService {
     }
 
     @Transactional
-    public void end(Long mentoringId) {
+    public void endByMentor(Long mentoringId) {
         Mentoring mentoring = _getMentoring(mentoringId, true);
-        if (mentoring.getState() != ACCEPT) {
+        MentoringState state = mentoring.getState();
+        String body;
+
+        if (state != ACCEPT && state != END_MENTEE) {
             throw new CustomException(FORBIDDEN_MENTORING_END);
         }
-        mentoring.end();
+        else if (state == ACCEPT) {
+            mentoring.endMentor();
+            body = "멘토가 멘토링 종료를 요청하였습니다.";
+        }
+        else {
+            mentoring.end();
+            body = "멘토가 멘토링 종료를 수락하였습니다.";
+        }
+
+        //푸시 알림 send to 멘티 
     }
 
     //=== private 메소드 ===

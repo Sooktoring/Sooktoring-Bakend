@@ -88,4 +88,16 @@ public class MentoringFromController {
         mentoringService.cancel(mentoringId);
         return ResponseEntity.status(NO_CONTENT).build();
     }
+
+    @Operation(summary = "진행 중인 멘토링 종료 요청", description = "멘토링 승인 상태 or 멘토가 멘토링 종료 요청한 상태일 때만 가능", responses = {
+            @ApiResponse(responseCode = "200", description = "정상적으로 멘토링 신청내역 종료된 경우"),
+            @ApiResponse(responseCode = "401", description = "유효하지 않은 엑세스 토큰"),
+            @ApiResponse(responseCode = "403", description = "접근 권한 없는 멘토링에 접근 or 종료 권한 없는 멘토링 종료"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 프로필 or 멘토링")
+    })
+    @DeleteMapping("/{mentoringId}")
+    public ResponseEntity<Void> endMentoringToMe(@Parameter(description = "멘토링 id") @PathVariable Long mentoringId) {
+        mentoringService.endByMentee(mentoringId);
+        return ResponseEntity.status(OK).build();
+    }
 }
