@@ -53,7 +53,7 @@ public class MentoringToController {
             @ApiResponse(responseCode = "403", description = "접근 권한 없는 멘토링에 접근 or 수락 권한 없는 멘토링 수락"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 프로필 or 멘토링")
     })
-    @PostMapping("/{mentoringId}")
+    @PutMapping("/{mentoringId}/accept")
     public ResponseEntity<Void> acceptMentoringToMe(@Parameter(description = "멘토링 id") @PathVariable Long mentoringId) {
         mentoringService.accept(mentoringId);
         return ResponseEntity.status(OK).build();
@@ -66,7 +66,7 @@ public class MentoringToController {
             @ApiResponse(responseCode = "403", description = "접근 권한 없는 멘토링에 접근 or 거절 권한 없는 멘토링 거절"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 프로필 or 멘토링")
     })
-    @PutMapping("/{mentoringId}")
+    @PutMapping("/{mentoringId}/reject")
     public ResponseEntity<Void> rejectMentoringToMe(@Parameter(description = "멘토링 id") @PathVariable Long mentoringId) {
         mentoringService.reject(mentoringId);
         return ResponseEntity.status(OK).build();
