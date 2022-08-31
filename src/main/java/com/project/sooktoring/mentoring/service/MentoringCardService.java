@@ -2,6 +2,7 @@ package com.project.sooktoring.mentoring.service;
 
 import com.project.sooktoring.common.exception.CustomException;
 import com.project.sooktoring.common.utils.ProfileUtil;
+import com.project.sooktoring.common.utils.UserUtil;
 import com.project.sooktoring.mentoring.domain.Mentoring;
 import com.project.sooktoring.mentoring.domain.MentoringCard;
 import com.project.sooktoring.mentoring.dto.request.MentoringCardRequest;
@@ -10,10 +11,12 @@ import com.project.sooktoring.mentoring.dto.response.MentoringCardToResponse;
 import com.project.sooktoring.mentoring.enumerate.MentoringState;
 import com.project.sooktoring.mentoring.repository.MentoringCardRepository;
 import com.project.sooktoring.mentoring.repository.MentoringRepository;
+import com.project.sooktoring.push.service.FcmService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,7 +26,9 @@ import static com.project.sooktoring.common.exception.ErrorCode.*;
 @Service
 public class MentoringCardService {
 
+    private final UserUtil userUtil;
     private final ProfileUtil profileUtil;
+    private final FcmService fcmService;
     private final MentoringRepository mentoringRepository;
     private final MentoringCardRepository mentoringCardRepository;
 
@@ -48,6 +53,7 @@ public class MentoringCardService {
         return mentoringCardRepository.findToDtoById(mentoringCardId);
     }
 
+    //알림
     @Transactional
     public void save(Long mentoringId, MentoringCardRequest mentoringCardRequest) {
         Mentoring mentoring = _getMentoring(mentoringId);
@@ -61,6 +67,10 @@ public class MentoringCardService {
                 .content(mentoringCardRequest.getContent())
                 .build();
         mentoringCardRepository.save(mentoringCard);
+
+        //푸시 알림 send to 멘토
+        Long toProfileId = mentoring.getMentorProfile().getId();
+        _sendPushNotification(toProfileId, "멘토링 감사카드 알림", "멘티가 감사카드를 전달하였습니다.");
     }
 
     @Transactional
@@ -100,5 +110,16 @@ public class MentoringCardService {
             throw new CustomException(FORBIDDEN_MENTORING_ACCESS);
         }
         return mentoringCardRepository.findById(mentoringCardId).orElseThrow(() -> new CustomException(NOT_FOUND_MENTORING_CARD));
+    }
+
+    private void _sendPushNotification(Long toProfileId, String title, String body) {
+        Long userId = profileUtil.getProfile(toProfileId).getUser().getId();
+        String targetToken = userUtil.getUser(userId).getFcmToken();
+
+        try {
+            fcmService.sendMessageTo(targetToken, title, body);
+        } catch (IOException e) {
+            throw new CustomException(FAILED_MENTORING_PUSH);
+        }
     }
 }
