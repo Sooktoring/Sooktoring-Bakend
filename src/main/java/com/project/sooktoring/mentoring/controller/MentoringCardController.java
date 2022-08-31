@@ -71,7 +71,7 @@ public class MentoringCardController {
     }
 
 
-    @Operation(summary = "감사카드 작성", description = "해당 멘토링 종료 상태일 때에만 작성 가능", responses = {
+    @Operation(summary = "감사카드 작성 (to 멘토 알림)", description = "해당 멘토링 종료 상태일 때에만 작성 가능", responses = {
             @ApiResponse(responseCode = "201", description = "정상적으로 감사카드 작성된 경우"),
             @ApiResponse(responseCode = "400", description = "해당 멘토링에 대한 멘토링 카드 이미 존재 (카드 중복 작성)"),
             @ApiResponse(responseCode = "401", description = "유효하지 않은 엑세스 토큰"),

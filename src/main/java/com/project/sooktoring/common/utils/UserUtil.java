@@ -18,4 +18,9 @@ public class UserUtil {
         return userRepository.findById(SecurityUtil.getCurrentUserId())
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
     }
+
+    public User getUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
+    }
 }

@@ -2,19 +2,22 @@ package com.project.sooktoring.mentoring.service;
 
 import com.project.sooktoring.common.exception.CustomException;
 import com.project.sooktoring.common.utils.ProfileUtil;
+import com.project.sooktoring.common.utils.UserUtil;
+import com.project.sooktoring.mentoring.enumerate.MentoringState;
 import com.project.sooktoring.profile.domain.Profile;
 import com.project.sooktoring.mentoring.domain.Mentoring;
 import com.project.sooktoring.mentoring.dto.request.MentoringRequest;
 import com.project.sooktoring.mentoring.dto.request.MentoringUpdateRequest;
 import com.project.sooktoring.mentoring.dto.response.*;
 import com.project.sooktoring.mentoring.repository.MentoringRepository;
+import com.project.sooktoring.push.service.FcmService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import static com.project.sooktoring.common.exception.ErrorCode.*;
 import static com.project.sooktoring.mentoring.enumerate.MentoringState.*;
@@ -23,7 +26,9 @@ import static com.project.sooktoring.mentoring.enumerate.MentoringState.*;
 @Service
 public class MentoringService {
 
+    private final UserUtil userUtil;
     private final ProfileUtil profileUtil;
+    private final FcmService fcmService;
     private final MentoringRepository mentoringRepository;
 
     //From
@@ -37,14 +42,15 @@ public class MentoringService {
         return mentoringRepository.findFromDtoById(mentoringId);
     }
 
+    //알림
     @Transactional
     public void save(MentoringRequest mentoringRequest) {
         //같은 멘토링 신청내역 존재하는 경우
-        Optional<Mentoring> mentoringOptional = mentoringRepository.findByMentorProfileIdAndCat(mentoringRequest.getMentorProfileId(), mentoringRequest.getCat());
-        if (mentoringOptional.isPresent() &&
-                (mentoringOptional.get().getState() != REJECT &&
-                 mentoringOptional.get().getState() != END)) {
-            throw new CustomException(ALREADY_MENTORING_EXISTS);
+        List<Mentoring> mentoringList = mentoringRepository.findByMentorProfileIdAndCat(mentoringRequest.getMentorProfileId(), mentoringRequest.getCat());
+        for (Mentoring _mentoring : mentoringList) {
+            if (_mentoring.getState() != REJECT && _mentoring.getState() != END) {
+                throw new CustomException(ALREADY_MENTORING_EXISTS);
+            }
         }
 
         Profile mentor = profileUtil.getProfile(mentoringRequest.getMentorProfileId());
@@ -60,6 +66,10 @@ public class MentoringService {
         Mentoring mentoring = Mentoring.create(mentoringRequest.getCat(), mentoringRequest.getReason(), mentoringRequest.getTalk());
         mentoring.setMentorAndMentee(mentor, mentee);
         mentoringRepository.save(mentoring);
+
+        //푸시 알림 send to 멘토
+        Long toProfileId = mentoring.getMentorProfile().getId();
+        _sendPushNotification(toProfileId, "멘토링 신청 알림", "멘티가 멘토링을 신청하였습니다.");
     }
 
     @Transactional
@@ -72,11 +82,11 @@ public class MentoringService {
         //멘토링 카테고리 수정할 경우, 같은 멘토 & 같은 카테고리 신청내역 존재 여부 확인
         if (mentoring.getCat() != mentoringUpdateRequest.getCat()) {
             Long mentorId = mentoring.getMentorProfile().getId();
-            Optional<Mentoring> mentoringOptional = mentoringRepository.findByMentorProfileIdAndCat(mentorId, mentoringUpdateRequest.getCat());
-            if (mentoringOptional.isPresent() &&
-                    (mentoringOptional.get().getState() != REJECT &&
-                     mentoringOptional.get().getState() != END)) {
-                throw new CustomException(ALREADY_MENTORING_EXISTS);
+            List<Mentoring> mentoringList = mentoringRepository.findByMentorProfileIdAndCat(mentorId, mentoringUpdateRequest.getCat());
+            for (Mentoring _mentoring : mentoringList) {
+                if (_mentoring.getState() != REJECT && _mentoring.getState() != END) {
+                    throw new CustomException(ALREADY_MENTORING_EXISTS);
+                }
             }
         }
 
@@ -92,6 +102,30 @@ public class MentoringService {
         mentoringRepository.deleteById(mentoringId);
     }
 
+    //알림
+    @Transactional
+    public void endByMentee(Long mentoringId) {
+        Mentoring mentoring = _getMentoring(mentoringId, false);
+        MentoringState state = mentoring.getState();
+        String title, body;
+
+        if (state != ACCEPT && state != END_MENTOR) {
+            throw new CustomException(FORBIDDEN_MENTORING_END);
+        }
+        else if (state == ACCEPT) {
+            mentoring.endMentee();
+            title = "멘토링 종료 요청 알림"; body = "멘티가 멘토링 종료를 요청하였습니다.";
+        }
+        else {
+            mentoring.end();
+            title = "멘토링 종료 알림"; body = "멘티가 멘토링 종료를 수락하였습니다.";
+        }
+
+        //푸시 알림 send to 멘토
+        Long toProfileId = mentoring.getMentorProfile().getId();
+        _sendPushNotification(toProfileId, title, body);
+    }
+
     //To
     public List<MentoringToListResponse> getMentoringListToMe() {
         Long profileId = profileUtil.getCurrentProfile().getId();
@@ -103,6 +137,7 @@ public class MentoringService {
         return mentoringRepository.findToDtoById(mentoringId);
     }
 
+    //알림
     @Transactional
     public void accept(Long mentoringId) {
         Mentoring mentoring = _getMentoring(mentoringId, true);
@@ -110,8 +145,13 @@ public class MentoringService {
             throw new CustomException(FORBIDDEN_MENTORING_ACCEPT);
         }
         mentoring.accept();
+
+        //푸시 알림 send to 멘티
+        Long toProfileId = mentoring.getMenteeProfile().getId();
+        _sendPushNotification(toProfileId, "멘토링 수락 알림", "멘토가 멘토링을 수락하였습니다.");
     }
 
+    //알림
     @Transactional
     public void reject(Long mentoringId) {
         Mentoring mentoring = _getMentoring(mentoringId, true);
@@ -119,15 +159,34 @@ public class MentoringService {
             throw new CustomException(FORBIDDEN_MENTORING_REJECT);
         }
         mentoring.reject();
+
+        //푸시 알림 send to 멘티
+        Long toProfileId = mentoring.getMenteeProfile().getId();
+        _sendPushNotification(toProfileId, "멘토링 거절 알림", "멘토가 멘토링을 거절하였습니다.");
     }
 
+    //알림
     @Transactional
-    public void end(Long mentoringId) {
+    public void endByMentor(Long mentoringId) {
         Mentoring mentoring = _getMentoring(mentoringId, true);
-        if (mentoring.getState() != ACCEPT) {
+        MentoringState state = mentoring.getState();
+        String title, body;
+
+        if (state != ACCEPT && state != END_MENTEE) {
             throw new CustomException(FORBIDDEN_MENTORING_END);
         }
-        mentoring.end();
+        else if (state == ACCEPT) {
+            mentoring.endMentor();
+            title = "멘토링 종료 요청 알림"; body = "멘토가 멘토링 종료를 요청하였습니다.";
+        }
+        else {
+            mentoring.end();
+            title = "멘토링 종료 알림"; body = "멘토가 멘토링 종료를 수락하였습니다.";
+        }
+
+        //푸시 알림 send to 멘티
+        Long toProfileId = mentoring.getMenteeProfile().getId();
+        _sendPushNotification(toProfileId, title, body);
     }
 
     //=== private 메소드 ===
@@ -143,5 +202,16 @@ public class MentoringService {
             if (Objects.equals(mentoring.getMenteeProfile().getId(), profileId)) return mentoring;
         }
         throw new CustomException(FORBIDDEN_MENTORING_ACCESS);
+    }
+
+    private void _sendPushNotification(Long toProfileId, String title, String body) {
+        Long userId = profileUtil.getProfile(toProfileId).getUser().getId();
+        String targetToken = userUtil.getUser(userId).getFcmToken();
+
+        try {
+            fcmService.sendMessageTo(targetToken, title, body);
+        } catch (IOException e) {
+            throw new CustomException(FAILED_MENTORING_PUSH);
+        }
     }
 }

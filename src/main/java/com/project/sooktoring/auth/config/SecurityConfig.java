@@ -46,7 +46,8 @@ public class SecurityConfig {
                 .httpBasic().disable()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
-                .antMatchers("/v3/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**", "/auth/**", "/", "/test", "/image/**", "/clubs/**").permitAll()
+                .antMatchers("/v3/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**", "/auth/**", "/",
+                        "/test", "/image/**", "/clubs/**", "/push/test").permitAll()
                 .antMatchers("/mentoring/to/**").hasRole("MENTOR")
                 .antMatchers("/mentoring/card/to/**").hasRole("MENTOR")
                 .antMatchers("/profile/mentors/me").hasRole("MENTOR")

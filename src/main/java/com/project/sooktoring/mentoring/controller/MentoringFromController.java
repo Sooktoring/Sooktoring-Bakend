@@ -49,7 +49,7 @@ public class MentoringFromController {
 
 
     //일단 DTO 반환 안하고 상태코드만 반환
-    @Operation(summary = "멘토링 신청내역 등록", description = "상태 기본값 APPLY", responses = {
+    @Operation(summary = "멘토링 신청내역 등록 (to 멘토 알림)", description = "상태 기본값 APPLY", responses = {
             @ApiResponse(responseCode = "201", description = "정상적으로 멘토링 신청내역 등록된 경우"),
             @ApiResponse(responseCode = "400", description = "같은 멘토링 신청내역 존재 or 멘토 == 멘티 or 멘티에게 멘토링 신청"),
             @ApiResponse(responseCode = "401", description = "유효하지 않은 엑세스 토큰"),
@@ -87,5 +87,20 @@ public class MentoringFromController {
     public ResponseEntity<Void> cancelMentoring(@Parameter(description = "멘토링 id") @PathVariable Long mentoringId) {
         mentoringService.cancel(mentoringId);
         return ResponseEntity.status(NO_CONTENT).build();
+    }
+
+
+    @Operation(summary = "진행 중인 멘토링 종료 요청 (to 멘토 알림)",
+            description = "멘토링 승인 상태 or 멘토가 멘토링 종료 요청한 상태일 때만 가능", responses = {
+            @ApiResponse(responseCode = "200", description = "정상적으로 멘토링 신청내역 종료된 경우"),
+            @ApiResponse(responseCode = "401", description = "유효하지 않은 엑세스 토큰"),
+            @ApiResponse(responseCode = "403", description = "접근 권한 없는 멘토링에 접근 or 종료 권한 없는 멘토링 종료"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 프로필 or 멘토링"),
+            @ApiResponse(responseCode = "500", description = "멘토링 푸시 알림 실패")
+    })
+    @PutMapping("/{mentoringId}/end")
+    public ResponseEntity<Void> endMentoringToMe(@Parameter(description = "멘토링 id") @PathVariable Long mentoringId) {
+        mentoringService.endByMentee(mentoringId);
+        return ResponseEntity.status(OK).build();
     }
 }

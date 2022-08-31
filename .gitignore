@@ -4,3 +4,4 @@ build/
 bin/
 application-db.properties
 application-oauth.properties
+src/main/resources/firebase/
