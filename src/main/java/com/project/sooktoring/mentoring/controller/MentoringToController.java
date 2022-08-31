@@ -80,7 +80,7 @@ public class MentoringToController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 프로필 or 멘토링"),
             @ApiResponse(responseCode = "500", description = "멘토링 푸시 알림 실패")
     })
-    @DeleteMapping("/{mentoringId}")
+    @PutMapping("/{mentoringId}/end")
     public ResponseEntity<Void> endMentoringToMe(@Parameter(description = "멘토링 id") @PathVariable Long mentoringId) {
         mentoringService.endByMentor(mentoringId);
         return ResponseEntity.status(OK).build();
