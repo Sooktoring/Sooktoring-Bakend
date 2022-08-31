@@ -44,7 +44,7 @@ public class FcmController {
     })
     @PutMapping
     public ResponseEntity<Void> updateFcmToken(@Parameter(description = "파이어베이스 등록 토큰") @RequestParam String fcmToken) {
-        userUtil.getCurrentUser().changeFcmToken(fcmToken);
+        fcmService.updateFcmToken(fcmToken);
         return ResponseEntity.status(OK).build();
     }
 }

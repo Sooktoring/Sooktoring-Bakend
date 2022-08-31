@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.project.sooktoring.common.exception.CustomException;
+import com.project.sooktoring.common.utils.UserUtil;
 import com.project.sooktoring.push.dto.FcmMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import okhttp3.*;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
@@ -24,6 +26,7 @@ import static com.project.sooktoring.common.exception.ErrorCode.*;
 @Service
 public class FcmService {
 
+    private final UserUtil userUtil;
     private final String API_URL = "https://fcm.googleapis.com/v1/projects/sooktoring-push/messages:send";
     private final ObjectMapper objectMapper;
 
@@ -71,5 +74,10 @@ public class FcmService {
                 .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
         googleCredentials.refreshIfExpired();
         return googleCredentials.getAccessToken().getTokenValue();
+    }
+
+    @Transactional
+    public void updateFcmToken(String fcmToken) {
+        userUtil.getCurrentUser().changeFcmToken(fcmToken);
     }
 }
