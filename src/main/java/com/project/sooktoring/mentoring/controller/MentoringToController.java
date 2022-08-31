@@ -47,7 +47,7 @@ public class MentoringToController {
     }
 
 
-    @Operation(summary = "나에게 요청된 멘토링 신청내역 수락", description = "멘토링 신청 상태일 때만 가능", responses = {
+    @Operation(summary = "나에게 요청된 멘토링 신청내역 수락 (to 멘티 알림)", description = "멘토링 신청 상태일 때만 가능", responses = {
             @ApiResponse(responseCode = "200", description = "정상적으로 멘토링 신청내역 수락된 경우"),
             @ApiResponse(responseCode = "401", description = "유효하지 않은 엑세스 토큰"),
             @ApiResponse(responseCode = "403", description = "접근 권한 없는 멘토링에 접근 or 수락 권한 없는 멘토링 수락"),
@@ -60,7 +60,7 @@ public class MentoringToController {
     }
 
 
-    @Operation(summary = "나에게 요청된 멘토링 신청내역 거절", description = "멘토링 신청 상태일 때만 가능", responses = {
+    @Operation(summary = "나에게 요청된 멘토링 신청내역 거절 (to 멘티 알림)", description = "멘토링 신청 상태일 때만 가능", responses = {
             @ApiResponse(responseCode = "200", description = "정상적으로 멘토링 신청내역 거절된 경우"),
             @ApiResponse(responseCode = "401", description = "유효하지 않은 엑세스 토큰"),
             @ApiResponse(responseCode = "403", description = "접근 권한 없는 멘토링에 접근 or 거절 권한 없는 멘토링 거절"),
@@ -73,7 +73,8 @@ public class MentoringToController {
     }
 
 
-    @Operation(summary = "진행 중인 멘토링 종료 요청", description = "멘토링 승인 상태 or 멘티가 멘토링 종료 요청한 상태일 때만 가능", responses = {
+    @Operation(summary = "진행 중인 멘토링 종료 요청 (to 멘티 알림)",
+            description = "멘토링 승인 상태 or 멘티가 멘토링 종료 요청한 상태일 때만 가능", responses = {
             @ApiResponse(responseCode = "200", description = "정상적으로 멘토링 신청내역 종료된 경우"),
             @ApiResponse(responseCode = "401", description = "유효하지 않은 엑세스 토큰"),
             @ApiResponse(responseCode = "403", description = "접근 권한 없는 멘토링에 접근 or 종료 권한 없는 멘토링 종료"),

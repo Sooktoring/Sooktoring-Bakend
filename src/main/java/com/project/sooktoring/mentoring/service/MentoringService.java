@@ -42,6 +42,7 @@ public class MentoringService {
         return mentoringRepository.findFromDtoById(mentoringId);
     }
 
+    //알림
     @Transactional
     public void save(MentoringRequest mentoringRequest) {
         //같은 멘토링 신청내역 존재하는 경우
@@ -65,6 +66,10 @@ public class MentoringService {
         Mentoring mentoring = Mentoring.create(mentoringRequest.getCat(), mentoringRequest.getReason(), mentoringRequest.getTalk());
         mentoring.setMentorAndMentee(mentor, mentee);
         mentoringRepository.save(mentoring);
+
+        //푸시 알림 send to 멘토
+        Long toProfileId = mentoring.getMentorProfile().getId();
+        _sendPushNotification(toProfileId, "멘토링 신청 알림", "멘티가 멘토링을 신청하였습니다.");
     }
 
     @Transactional
@@ -97,6 +102,7 @@ public class MentoringService {
         mentoringRepository.deleteById(mentoringId);
     }
 
+    //알림
     @Transactional
     public void endByMentee(Long mentoringId) {
         Mentoring mentoring = _getMentoring(mentoringId, false);
@@ -131,6 +137,7 @@ public class MentoringService {
         return mentoringRepository.findToDtoById(mentoringId);
     }
 
+    //알림
     @Transactional
     public void accept(Long mentoringId) {
         Mentoring mentoring = _getMentoring(mentoringId, true);
@@ -138,8 +145,13 @@ public class MentoringService {
             throw new CustomException(FORBIDDEN_MENTORING_ACCEPT);
         }
         mentoring.accept();
+
+        //푸시 알림 send to 멘티
+        Long toProfileId = mentoring.getMenteeProfile().getId();
+        _sendPushNotification(toProfileId, "멘토링 수락 알림", "멘토가 멘토링을 수락하였습니다.");
     }
 
+    //알림
     @Transactional
     public void reject(Long mentoringId) {
         Mentoring mentoring = _getMentoring(mentoringId, true);
@@ -147,8 +159,13 @@ public class MentoringService {
             throw new CustomException(FORBIDDEN_MENTORING_REJECT);
         }
         mentoring.reject();
+
+        //푸시 알림 send to 멘티
+        Long toProfileId = mentoring.getMenteeProfile().getId();
+        _sendPushNotification(toProfileId, "멘토링 거절 알림", "멘토가 멘토링을 거절하였습니다.");
     }
 
+    //알림
     @Transactional
     public void endByMentor(Long mentoringId) {
         Mentoring mentoring = _getMentoring(mentoringId, true);
