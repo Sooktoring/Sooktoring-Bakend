@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface MentoringRepository extends JpaRepository<Mentoring, Long>, MentoringRepositoryCustom {
 
@@ -22,7 +21,7 @@ public interface MentoringRepository extends JpaRepository<Mentoring, Long>, Men
     void updateMenteeByProfileId(Long profileId);
 
     @Query("select mtr from Mentoring mtr where mtr.mentorProfile.id = :mentorProfileId and mtr.cat = :cat")
-    Optional<Mentoring> findByMentorProfileIdAndCat(Long mentorProfileId, MentoringCat cat);
+    List<Mentoring> findByMentorProfileIdAndCat(Long mentorProfileId, MentoringCat cat);
 
     @Query("select mtr from Mentoring mtr where mtr.mentorProfile.id = :mentorProfileId and mtr.state = :state")
     List<Mentoring> findByMentorProfileIdAndState(Long mentorProfileId, MentoringState state);

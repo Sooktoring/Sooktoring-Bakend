@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import static com.project.sooktoring.common.exception.ErrorCode.*;
 import static com.project.sooktoring.mentoring.enumerate.MentoringState.*;
@@ -46,11 +45,11 @@ public class MentoringService {
     @Transactional
     public void save(MentoringRequest mentoringRequest) {
         //같은 멘토링 신청내역 존재하는 경우
-        Optional<Mentoring> mentoringOptional = mentoringRepository.findByMentorProfileIdAndCat(mentoringRequest.getMentorProfileId(), mentoringRequest.getCat());
-        if (mentoringOptional.isPresent() &&
-                (mentoringOptional.get().getState() != REJECT &&
-                 mentoringOptional.get().getState() != END)) {
-            throw new CustomException(ALREADY_MENTORING_EXISTS);
+        List<Mentoring> mentoringList = mentoringRepository.findByMentorProfileIdAndCat(mentoringRequest.getMentorProfileId(), mentoringRequest.getCat());
+        for (Mentoring _mentoring : mentoringList) {
+            if (_mentoring.getState() != REJECT && _mentoring.getState() != END) {
+                throw new CustomException(ALREADY_MENTORING_EXISTS);
+            }
         }
 
         Profile mentor = profileUtil.getProfile(mentoringRequest.getMentorProfileId());
@@ -78,11 +77,11 @@ public class MentoringService {
         //멘토링 카테고리 수정할 경우, 같은 멘토 & 같은 카테고리 신청내역 존재 여부 확인
         if (mentoring.getCat() != mentoringUpdateRequest.getCat()) {
             Long mentorId = mentoring.getMentorProfile().getId();
-            Optional<Mentoring> mentoringOptional = mentoringRepository.findByMentorProfileIdAndCat(mentorId, mentoringUpdateRequest.getCat());
-            if (mentoringOptional.isPresent() &&
-                    (mentoringOptional.get().getState() != REJECT &&
-                     mentoringOptional.get().getState() != END)) {
-                throw new CustomException(ALREADY_MENTORING_EXISTS);
+            List<Mentoring> mentoringList = mentoringRepository.findByMentorProfileIdAndCat(mentorId, mentoringUpdateRequest.getCat());
+            for (Mentoring _mentoring : mentoringList) {
+                if (_mentoring.getState() != REJECT && _mentoring.getState() != END) {
+                    throw new CustomException(ALREADY_MENTORING_EXISTS);
+                }
             }
         }
 
