@@ -2,12 +2,14 @@ package com.project.sooktoring.contest.domain;
 
 import com.project.sooktoring.common.domain.BaseTimeEntity;
 import lombok.Builder;
+import lombok.Getter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 @Entity
 public class Contest extends BaseTimeEntity {
 

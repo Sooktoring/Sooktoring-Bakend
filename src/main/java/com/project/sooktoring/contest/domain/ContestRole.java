@@ -2,9 +2,11 @@ package com.project.sooktoring.contest.domain;
 
 import com.project.sooktoring.common.domain.BaseTimeEntity;
 import lombok.Builder;
+import lombok.Getter;
 
 import javax.persistence.*;
 
+@Getter
 @Entity
 public class ContestRole extends BaseTimeEntity {
 
