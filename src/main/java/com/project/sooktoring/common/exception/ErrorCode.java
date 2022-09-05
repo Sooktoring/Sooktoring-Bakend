@@ -49,7 +49,9 @@ public enum ErrorCode {
     NOT_FOUND_CLUB_KIND(NOT_FOUND, "해당 동아리 종류(교내/교외)를 찾을 수 없습니다."),
     NOT_FOUND_CLUB_URL_CAT(NOT_FOUND, "해당 동아리 URL 카테고리를 찾을 수 없습니다."),
     NOT_FOUND_CLUB(NOT_FOUND, "해당 동아리를 찾을 수 없습니다."),
-    NOT_FOUND_CLUB_URL(NOT_FOUND, "해당 동아리 URL을 찾을 수 없습니다.");
+    NOT_FOUND_CLUB_URL(NOT_FOUND, "해당 동아리 URL을 찾을 수 없습니다."),
+
+    NOT_FOUND_CONTEST_STATE(NOT_FOUND, "해당 공모전 상태를 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
