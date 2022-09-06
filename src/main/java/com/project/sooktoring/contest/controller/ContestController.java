@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class ContestController {
             @ApiResponse(responseCode = "401", description = "유효하지 않은 엑세스 토큰")
     })
     @PostMapping
-    public ResponseEntity<Void> saveContest(@RequestBody ContestRequest contestRequest) {
+    public ResponseEntity<Void> saveContest(@RequestBody @Validated ContestRequest contestRequest) {
         contestService.saveContest(contestRequest);
         return ResponseEntity.status(CREATED).build();
     }
@@ -51,7 +52,7 @@ public class ContestController {
     })
     @PutMapping("/{contestId}")
     public ResponseEntity<Void> updateContest(@Parameter(description = "공모전 id") @PathVariable Long contestId,
-                                              @RequestBody ContestRequest contestRequest) {
+                                              @RequestBody @Validated ContestRequest contestRequest) {
         contestService.updateContest(contestId, contestRequest);
         return ResponseEntity.status(OK). build();
     }
