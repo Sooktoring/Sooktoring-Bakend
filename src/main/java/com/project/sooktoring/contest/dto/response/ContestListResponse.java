@@ -2,6 +2,7 @@ package com.project.sooktoring.contest.dto.response;
 
 import com.project.sooktoring.contest.domain.Contest;
 import com.project.sooktoring.contest.enumerate.ContestState;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,19 +11,25 @@ import lombok.NoArgsConstructor;
 import java.time.*;
 import java.util.List;
 
+@Schema(description = "공모전 모집 리스트 조회 시 반환하는 DTO")
 @Getter @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContestListResponse {
 
+    @Schema(description = "공모전 id", example = "1")
     private Long contestId;
 
+    @Schema(description = "공모전 이름", example = "교내 해커톤")
     private String contestName;
 
+    @Schema(description = "공모전 모집상태", example = "모집 완료")
     private ContestState contestState;
 
+    @Schema(description = "모집 d-day", example = "7")
     private Long dDay;
 
+    @Schema(description = "공모전 모집역할 리스트")
     private List<ContestRoleResponse> contestRoles;
 
     private static final long SEC_OF_3DAYS = 259200;
