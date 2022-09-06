@@ -1,12 +1,16 @@
 package com.project.sooktoring.contest.domain;
 
 import com.project.sooktoring.common.domain.BaseTimeEntity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Getter
+@Getter @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class ContestRole extends BaseTimeEntity {
 
@@ -24,4 +28,9 @@ public class ContestRole extends BaseTimeEntity {
     @Builder.Default
     @Column(nullable = false)
     private Boolean isRecruit = true;
+
+    public void update(String name, Boolean isRecruit) {
+        this.name = name;
+        this.isRecruit = isRecruit;
+    }
 }
